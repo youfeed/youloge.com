@@ -15,7 +15,8 @@ export default defineConfig({
       // input:'index.html',
       input:{
         index: 'index.html',
-        about: 'document.html'
+        document: 'document.html',
+        article: 'article.html',
       },
       output:{
         entryFileNames:'assets/[name].js',
@@ -27,14 +28,14 @@ export default defineConfig({
           'youloge':'youloge'
         },
         // inlineDynamicImports:true,
-        plugins: [
-          {
-            name: 'inline-css',
-            options: {
-              enabled: true
-            }
-          }
-        ]
+        // plugins: [
+        //   {
+        //     name: 'inline-css',
+        //     options: {
+        //       enabled: true
+        //     }
+        //   }
+        // ]
       }
     }
   }
