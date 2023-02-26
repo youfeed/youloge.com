@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/loge.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Youloge.sso 开放式单点登录服务</title>
+    <meta property="og:title" content="Youloge.sso 但行好事 莫问前程">
+    <meta property="og:type" content="website">
+    <meta name="description" content="做最好的视频、新闻、购物、作品分享平台">
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div>单点登录</div>
+    </div>
+    <script src="./public/youloge.sso.umd.js"></script>
+    <script>
+      youloge.sso.run().then(res=>{
+        console.log(res)
+      }).catch(err=>{
+        console.log(err)
+      })
+    </script>
+    <!-- <script type="module" src="/src/entry/sso.js"></script> -->
+  </body>
+</html>
+
+
