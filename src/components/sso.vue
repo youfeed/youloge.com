@@ -148,7 +148,10 @@ const onSubmit = ()=>{
 
 // 授权签名 - 统一返回
 const onSign = ()=>{
-  postMessage('success',{uuid:'uuid'})
+  onFetch('sign',{uuid:state.sign,mail:state.word,sign:state.sign}).then(res=>{
+    let {err,msg} = res;
+    postMessage('success',{uuid:'uuid'})
+  })
 }
 const onClose = ()=>{
   postMessage('close',{msg:'用户主动取消登录'})
