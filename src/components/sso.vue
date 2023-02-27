@@ -1,25 +1,40 @@
 <template>
-  <div class="sso">
+  <div :class="sso">
     <div class="head">
       <div class="title">登录·注册</div>
-      <div class="source">快捷登录:<span>{{host}}</span></div>
-      <div class="close" @click="onClose">x</div>
     </div>
 
+    <div class="progress"><span class="rate"></span></div>
+
     <div class="quick" v-show="mode=='quick'">
-      <div>
-        <div>
-          <div>头像 昵称 邮箱 </div>
+      <template v-for="item in local" :key="item.uuid">
+        <div class="profile" @click="onQuick(item)">
+          <div class="avatar">
+            <img :src="'//img.youloge.com/'+item.avatar+'!80'">
+          </div>
+          <div class="account">
+            <div class="name">{{item.name}}</div>
+            <div class="mail">{{item.mail}}</div>
+          </div>
+        </div>
+      </template>
+      <div class="profile" @click="onToggle">
+        <div class="avatar">
+          <img src="//img.youloge.com/FjjHFE7RwJqfjiwM9aqL4G53kPv3!80">
+        </div>
+        <div class="account ">
+          <div class="name" style="color:#03a9f4">使用新账户</div>
+          <div class="mail">安全邮箱登录</div>
         </div>
       </div>
     </div>
 
-    <div class="body">
+    <div class="body" v-show="mode=='normal'">
 
       <div>
         <div class="formitem">
           <div class="field">
-            <input type="email" v-model="pass" required autocomplete="off" :class="passCls" list="mailist">
+            <input if="email" type="email" v-model="pass" required autocomplete="off" :class="passCls">
             <label for="email" title="邮箱" data-title="邮箱"></label>
           </div>
         </div>
@@ -42,12 +57,14 @@
       </div>
     </div>
     <div class="foot">
-      <div>关联账户</div>
+      <a class="create" href="//youfeed.github.io/sso" target="_blank">关于账户</a>
+      <div class="source">来源:<span>{{host}}</span></div>
+    </div>
+    <div class="close" @click="onClose">
+      <svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
     </div>
     <datalist id="mailist">
-      <block v-for="(item,index) in onOption" v-bind:key="index">
-        <option :value="item.value" :data-suffix="item"></option>
-      </block>
+        <option value="" data-suffix=""></option>
     </datalist>
   </div>
 </template>
@@ -58,39 +75,49 @@ import { computed, onMounted, reactive, toRefs } from "vue";
 const state = reactive({
   ak:'',
   msg:'获取验证码',
-  mode:'normal',// quick
-  host:'',
+  mask:false,
+  mode:'quick',// quick normal
+  host:'未知',
   local:[],
   pass:'',
   word:'',
   sign:'',
   mailist:['@qq.com','@gmail.com','@163.com','@126.com','@live.com','@icloud.com','@outlook.com'],
 })
+
 onMounted(()=>{
-  let account = localStorage.getItem('account');
-  if(account == null){
-    state.mode = 'normal'
-  }
+  let account = getStorage('account');
+  console.log('account',account)
+  account == null ? (state.mode = 'normal') : (state.local = account);
+  
   // 批量同步 uuid：token
 
-  console.log(account)
   // if(){}
   // authorized
   // 接收初始参数
   window.addEventListener('message',event=>{
     let {origin,data} = event,{name,ak} = data
+    console.log('message',event)
     if(name === 'youloge.sso'){
       let {hostname} =  new URL(origin);
       state.host = hostname;state.ak = ak;
-      console.log(2334,event)
     }
   },false)
 })
+const getStorage = (key)=>{
+  let item = localStorage.getItem(key);
+  return item && JSON.parse(item)
+}
+const setStorage = (key,val)=>{
+  localStorage.setItem(key,JSON.stringify(val));
+}
 const onFetch = (method,params)=>{
+  state.mask = true;
   return fetch('//api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
-    return res
+    state.mask = false;return res
   }) 
 }
+const sso = computed(()=>['sso',{'mask':state.mask}])
 const passCls = computed(()=>{
   return ['field',{'stop':state.sign !== ''}]
 })
@@ -109,9 +136,9 @@ const onOption = computed(()=>{
     return {value:`${prefix}${is}`,suffix:is}
   })
 })
-// 快捷登录
-const onQuick = ()=>{
-
+// 关联账户
+const onToggle = ()=>{
+  state.mode = 'normal'
 }
 // 获取验证码
 const onCode = ()=>{
@@ -130,29 +157,39 @@ const onCode = ()=>{
   })
   console.log('onCode')
 }
+// 获取长期Token
 const onSubmit = ()=>{
   onFetch('login',{pass:state.sign,word:state.word}).then(res=>{
-    let {err,msg} = res;
+    console.log(res)
+    let {err,msg,data} = res;
     if(err == 300){
-      state.hint = msg
-      state.word = ''
+      state.hint = msg;state.word = '';
     }else{
-      let {access,expire} = res.data
-      localStorage.setItem('token',access)
-      localStorage.setItem('expire',expire)
-      props.onClose()
-      props.onSuccess()
+      let account = getStorage('account') || [];account.unshift(data);
+      setStorage('account',account);state.mode = 'quick';state.local.unshift(data);
     }
   })
 }
-
-// 授权签名 - 统一返回
-const onSign = ()=>{
-  onFetch('sign',{uuid:state.sign,mail:state.word,sign:state.sign}).then(res=>{
-    let {err,msg} = res;
-    postMessage('success',{uuid:'uuid'})
+// 快捷登录 - 授权签名
+const onQuick = (event)=>{
+  let {uuid,signer} = event
+  console.log('onQuick',signer,event)
+  // onFetch('sign',data).then(res=>{
+  //   let {err,msg,data} = res;
+  //   postMessage('success',{uuid:'uuid',data:data})
+  // })
+}
+// 同步资料
+const onSync = ()=>{
+  let data = state.local.map(item=>{
+    return {uuid:item.uuid,sign:item.sign}
+  })
+  console.log('data',data)
+  onFetch('sync',data).then(res=>{
+    console.log(res)
   })
 }
+// 关闭弹窗
 const onClose = ()=>{
   postMessage('close',{msg:'用户主动取消登录'})
 }
@@ -170,50 +207,62 @@ const {msg,host,mode,pass,word,local,mailist} = toRefs(state)
 *{margin: 0;padding: 0;}
 .grecaptcha-badge{visibility: hidden;}
 .sso{
-  padding: 10px;
+  position: relative;
+  height: 100vh;
   .stop{
     opacity: .5;
     pointer-events: none;
   }
   .head{
-    position: relative;
+    padding-left: 10px;
+    padding-top: 10px;
     .title{
-      color: #202124;
+      color: #2e2e2e;
       font-size: 24px;
       font-weight: 400;
+      margin-bottom: 10px;
     }
-    .source{
-      border-top: 1px solid #bfb8b8;
-      text-align: center;
-      padding: 10px 0;
-      span{
-        color: #fff;
-        background: #318f34;
-        border-radius: 4px;
-        padding: 0px 4px;
-      }
-    }
-    .close{
+  }
+  .quick{
+    max-height: 200px;
+    overflow-y: scroll;
+    .profile{
       cursor: pointer;
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 30px;
-      height: 30px;
-      font-size: 30px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 1px #333;
-      line-height: 30px;
-      vertical-align: middle;
-      border-radius: 50%;
-      transform: rotate(-90deg);
+      margin-left: 5px;
+      border-bottom: 1px solid #ddd;
+      &:hover{
+        background: #fff;
+      }
+      .avatar{
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        img{
+          max-width: 100%;
+        }
+      }
+      .account{
+        margin-left: 10px;
+        .name{
+          font-size: 18px;
+          font-weight: 400;
+        }
+        .mail{
+          margin-top: 5px;
+          font-size: 14px;
+          color: #333;
+        }
+      }
     }
   }
   .body{
-    .next{position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
-    .label-before,
+    padding: 10px;
+    height: 200px;
+    .next{cursor: pointer;position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
+    .label::before,
     .field input:valid + label::before,
     .field input:focus + label::before {
       line-height: 20px;
@@ -229,6 +278,7 @@ const {msg,host,mode,pass,word,local,mailist} = toRefs(state)
     }
     .field label::before {
       content: attr(title);
+      pointer-events: none;
       position: absolute;
       top: 0;
       left: 15px;
@@ -265,7 +315,91 @@ const {msg,host,mode,pass,word,local,mailist} = toRefs(state)
       justify-content: center;
       height: 40px;
       color: #fff;
+      cursor: pointer;
     }
   }
+  .foot{
+    font-size: 14px;
+    right: 10px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #03a9f4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .create{
+      cursor: pointer;
+      color: #03a9f4;
+      text-decoration: none;
+    }
+    .source{
+      color: #4caf50;
+    }
+  }
+  .progress{
+    height: 4px;
+    position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+    background: #2196f3;
+    .rate{
+      height: 4px;
+      position: absolute;
+    }
+  }
+  .close{
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    line-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    &:hover{
+      background: #f1f1f1;
+    }
+  }
+}
+.mask{
+  opacity: 0.7;
+  pointer-events: none;
+  .rate{
+    width:100% !important;
+    animation:.5s keymask infinite;
+  }
+}
+@keyframes keymask {
+
+  0%{
+    background: #00f;
+    transform: scaleX(0%);
+  }
+  50% {
+    background: #f00;
+    transform: scaleX(50%);
+  }
+  75%{
+    background:#ff0;
+    transform: scaleX(75%);
+  }
+  100% {
+    background:#f0f;
+    transform: scaleX(100%);
+  }
+}
+::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
 }
 </style>
