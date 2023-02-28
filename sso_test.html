@@ -14,9 +14,10 @@
     <div id="app">
       <div>单点登录</div>
     </div>
-    <script src="./public/youloge.sso.umd.js"></script>
+    <script src="https://unpkg.com/youloge.sso"></script>
+    <!-- <script src="./public/youloge.sso.umd.js"></script> -->
     <script>
-      youloge.sso.run().then(res=>{
+      youloge.sso.run({ak:111111111115}).then(res=>{
         console.log(res)
       }).catch(err=>{
         console.log(err)

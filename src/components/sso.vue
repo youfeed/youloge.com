@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, toRefs } from "vue";
+import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
 
 const state = reactive({
   ak:'',
@@ -88,12 +88,8 @@ const state = reactive({
 onMounted(()=>{
   let account = getStorage('account');
   console.log('account',account)
-  account == null ? (state.mode = 'normal') : (state.local = account);
-  
-  // 批量同步 uuid：token
+  account == null ? (state.mode = 'normal') : [state.local = account,onSync()];
 
-  // if(){}
-  // authorized
   // 接收初始参数
   window.addEventListener('message',event=>{
     let {origin,data} = event,{name,ak} = data
@@ -173,21 +169,24 @@ const onSubmit = ()=>{
 // 快捷登录 - 授权签名
 const onQuick = (event)=>{
   let {uuid,signer} = event
-  console.log('onQuick',signer,event)
-  // onFetch('sign',data).then(res=>{
-  //   let {err,msg,data} = res;
-  //   postMessage('success',{uuid:'uuid',data:data})
-  // })
+  onFetch('sign',{ak:state.ak,uuid:uuid,signer:signer}).then(res=>{
+    let {err,msg,data} = res;
+    event.signer = data.signer || '';
+    let json = Object.assign(markRaw({}),event);
+    console.log(json)
+    err == 0 ? postMessage('success',json) : postMessage('fail',{msg:msg});
+  })
 }
 // 同步资料
 const onSync = ()=>{
+  let time = new Date().getTime() / 1000 >> 0;
   let data = state.local.map(item=>{
-    return {uuid:item.uuid,sign:item.sign}
+    return {uuid:item.uuid,signer:item.signer}
   })
   console.log('data',data)
-  onFetch('sync',data).then(res=>{
-    console.log(res)
-  })
+  // onFetch('sync',data).then(res=>{
+  //   console.log(res)
+  // })
 }
 // 关闭弹窗
 const onClose = ()=>{

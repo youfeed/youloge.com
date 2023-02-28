@@ -4,25 +4,25 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   build:{
-    cssCodeSplit:false,
-    modulePreload:{
-      polyfill:false
-    },
+    cssCodeSplit:true,
+    modulePreload:{ polyfill:false },
     rollupOptions: {
       external: ['vue','youloge'],
       // input:'article.html',
       // input:'document.html',
       // input:'index.html',
+      // input:'sso.html',
       input:{
         index: 'index.html',
         document: 'document.html',
         article: 'article.html',
+        sso: 'sso.html',
       },
       output:{
         entryFileNames:'assets/[name].js',
         chunkFileNames: 'assets/[name].chunk.js',
         assetFileNames:'assets/[name][extname]',
-        format: 'es',
+        // format: 'umd',
         globals: {
           vue: 'Vue',
           'youloge':'youloge'
