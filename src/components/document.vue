@@ -15,21 +15,30 @@
             <span>{{size}}</span>
           </div>
           <div class="item">
-            <span>时间</span>
-            <span>mp4</span>
-          </div>
-          <div class="item">
-            <span>时间</span>
+            <span>创建时间</span>
             <span>{{created}}</span>
           </div>
           <div class="item">
-            <span>售价</span>
-            <span>{{cost}}</span>
+            <span>更新时间</span>
+            <span>{{updated}}</span>
+          </div>
+          <div class="item">
+            <span>复制外链</span>
+            <span>登录状态下:默认复制推广外链</span>
           </div>
         </div>
         <div class="foot">
-          <button v-login="download">立即下载</button>
-          <div class="tip">支付成功后 24小时内可无限制下载</div>
+          <div class="down">
+            <div class="left">
+              <img src="https://qun.qq.com/qrcode/index?data=https://www.youloge.com/j22bBcXUBGHd1y2BQsfCG2RTgoPoh?cost=0.01">
+              <p>售价:{{cost}}</p>
+            </div>
+            <div class="right">
+              <button v-login="download">登录下载</button>
+              <button v-login="download">临时下载</button>
+            </div>
+          </div>
+          <div class="tip">支付成功后 24小时内可无限制下载<br>临时下载可凭订单号在下载中心重复下载</div>
         </div>
       </div>
     </main>
@@ -38,7 +47,7 @@
 </template>
 
 <script setup>
-import { inject,reactive,toRefs } from 'vue';
+import { inject,onMounted,reactive,toRefs } from 'vue';
 const useFetch = inject('useFetch')
 const data = reactive({
   uuid:'2333',
@@ -47,7 +56,11 @@ const data = reactive({
   mime:'265',
   size:'265',
   cost:'12',
-  created:'16156'
+  created:'16156',
+  updated:'16156',
+})
+onMounted(()=>{
+  console.log(RAWDATA)
 })
 useFetch.api('document',{uuid:'PHT7MtdGcbKd1AG4yxgs3Dd71qV1L'}).then(res=>{
   console.log(res)
@@ -67,7 +80,8 @@ console.log(useFetch)
   margin: 40px auto;
   .box{
     box-shadow: 0px 0px 4px #9e9e9e;
-    padding: 5px;
+    padding: 10px;
+    margin: 5px;
     border-radius: 5px;
   }
   .head{
@@ -92,6 +106,25 @@ console.log(useFetch)
   .foot{
     margin: 20px 0;
     text-align: center;
+    .down{
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 150px;
+      .right{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        height: 100%;
+      }
+      .left{
+
+        img{
+          height: 120px;
+        }
+      }
+    }
     button{
       border: 0;
       outline: 0;

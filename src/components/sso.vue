@@ -60,7 +60,7 @@
       <a class="create" href="//youfeed.github.io/sso" target="_blank">关于账户</a>
       <div class="source">来源:<span>{{host}}</span></div>
     </div>
-    <div class="close" @click="onClose">
+    <div class="close" @click="onClose" v-show="close">
       <svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
     </div>
     <datalist id="mailist">
@@ -82,21 +82,20 @@ const state = reactive({
   pass:'',
   word:'',
   sign:'',
+  close:true,
   mailist:['@qq.com','@gmail.com','@163.com','@126.com','@live.com','@icloud.com','@outlook.com'],
 })
 
 onMounted(()=>{
   let account = getStorage('account');
-  console.log('account',account)
   account == null ? (state.mode = 'normal') : [state.local = account,onSync()];
 
   // 接收初始参数
   window.addEventListener('message',event=>{
-    let {origin,data} = event,{name,ak} = data
-    console.log('message',event)
+    let {origin,data} = event,{ak,name,close} = data
     if(name === 'youloge.sso'){
       let {hostname} =  new URL(origin);
-      state.host = hostname;state.ak = ak;
+      state.host = hostname;state.ak = ak;state.close = close;
     }
   },false)
 })
@@ -151,12 +150,10 @@ const onCode = ()=>{
       }
     },1000)
   })
-  console.log('onCode')
 }
 // 获取长期Token
 const onSubmit = ()=>{
   onFetch('login',{pass:state.sign,word:state.word}).then(res=>{
-    console.log(res)
     let {err,msg,data} = res;
     if(err == 300){
       state.hint = msg;state.word = '';
@@ -173,7 +170,6 @@ const onQuick = (event)=>{
     let {err,msg,data} = res;
     event.signer = data.signer || '';
     let json = Object.assign(markRaw({}),event);
-    console.log(json)
     err == 0 ? postMessage('success',json) : postMessage('fail',{msg:msg});
   })
 }
@@ -183,10 +179,6 @@ const onSync = ()=>{
   let data = state.local.map(item=>{
     return {uuid:item.uuid,signer:item.signer}
   })
-  console.log('data',data)
-  // onFetch('sync',data).then(res=>{
-  //   console.log(res)
-  // })
 }
 // 关闭弹窗
 const onClose = ()=>{
@@ -199,7 +191,7 @@ const postMessage = (emit,data)=>{
     data
   }, '*')
 }
-const {msg,host,mode,pass,word,local,mailist} = toRefs(state)
+const {msg,host,mode,pass,word,local,close,mailist} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -208,6 +200,7 @@ const {msg,host,mode,pass,word,local,mailist} = toRefs(state)
 .sso{
   position: relative;
   height: 100vh;
+  background: #f1f1f1;
   .stop{
     opacity: .5;
     pointer-events: none;
