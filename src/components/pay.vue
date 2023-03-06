@@ -1,5 +1,5 @@
 <template>
-  <div class="y-payment">
+  <div :class="['y-payment',{'mask':!payment}]">
     <div class="head">
       <div class="title">支付金额</div>
       <div class="money">￥ {{money}}</div>
@@ -18,13 +18,13 @@
 <script setup>
 import { computed, onMounted, reactive, toRefs } from 'vue';
 const state = reactive({
-  version:'V 1.06',
+  version:'V 1.08',
   money:'0.00',
   code:'',
   state:'',
   uuid:'',
   config:[], // 多渠道
-  payment:{}
+  payment:null
 })
 // 微信支付宝直接支付 银行卡支付不在这里
 const onQuery = ()=>{
@@ -90,10 +90,15 @@ onMounted(()=>{
   document.addEventListener('AlipayJSBridgeReady', onAlipay, false);
   document.addEventListener('WeixinJSBridgeReady', onWeixin, false);
 })
-const {uuid,code,money,version} = toRefs(state)
+const {uuid,code,money,version,payment} = toRefs(state)
 </script>
 <style lang="scss">
 *{margin: 0;padding: 0;}
+.mask{
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
 .y-payment{
   max-width: 400px;
   margin: 0 auto;
