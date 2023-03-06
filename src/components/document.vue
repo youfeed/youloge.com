@@ -22,16 +22,17 @@
             <span>更新时间</span>
             <span>{{updated}}</span>
           </div>
-          <div class="item">
+          <div class="item" v-copy>
             <span>复制外链</span>
-            <span>登录状态下:默认复制推广外链</span>
+            <span title="登录状态下:默认复制推广外链">点击复制外链</span>
           </div>
         </div>
         <div class="foot">
           <div class="down">
-            <div class="left">
+            <div class="left" title="随机售价:最低仅需0.01元即可下载">
               <img src="https://qun.qq.com/qrcode/index?data=https://www.youloge.com/j22bBcXUBGHd1y2BQsfCG2RTgoPoh?cost=0.01">
-              <p>售价:{{cost}}</p>
+              <p>固定售价:{{cost}}</p>
+              <p>随机售价:{{cost}}</p>
             </div>
             <div class="right">
               <button v-login="download">登录下载</button>
@@ -48,7 +49,8 @@
 
 <script setup>
 import { inject,onMounted,reactive,toRefs } from 'vue';
-const useFetch = inject('useFetch')
+const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useLoading = inject('useLoading');
+console.log()
 const data = reactive({
   uuid:'2333',
   title:'sadawf',
@@ -61,17 +63,20 @@ const data = reactive({
 })
 onMounted(()=>{
   console.log(RAWDATA)
+  // useLoading().show()
 })
-useFetch.api('document',{uuid:'PHT7MtdGcbKd1AG4yxgs3Dd71qV1L'}).then(res=>{
+useFetch().api('document',{uuid:'PHT7MtdGcbKd1AG4yxgs3Dd71qV1L'}).then(res=>{
   console.log(res)
 })
-
+console.log('useDialog',useLoading())
 const download = ()=>{
+  // useDialog({title:'支付确认',content:'您需要支付 0.01 元'}).alert()
+  // useDialog({title:'余额不足',content:'前往个人中心-钱包 充值'}).confirm()
+  useDialog({title:'随机支付',content:'支付任意金额即可下载'}).prompt({type:'number',placeholder:'0.01~5000'})
   console.log('quxiaz')
 }
 
 const {uuid,title,description,mime,size,cost,created} = toRefs(data)
-console.log(useFetch)
 </script>
 
 <style lang="scss">

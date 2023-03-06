@@ -11,7 +11,7 @@
   "dependencies": {
     "sass": "^1.58.3",
     "vue": "^3.2.45",
-    "youloge": "^0.2.3"
+    "youloge": "^0.2.7"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

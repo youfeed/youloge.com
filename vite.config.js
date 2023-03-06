@@ -12,17 +12,19 @@ export default defineConfig({
       // input:'document.html',
       // input:'index.html',
       // input:'sso.html',
-      input:{
-        index: 'index.html',
-        document: 'document.html',
-        article: 'article.html',
-        sso: 'sso.html',
-      },
+      input:'pay.html',
+      // input:{
+      //   index: 'index.html',
+      //   document: 'document.html',
+      //   article: 'article.html',
+      //   sso: 'sso.html',
+      //   pay: 'pay.html',
+      // },
       output:{
         entryFileNames:'assets/[name].js',
         chunkFileNames: 'assets/[name].chunk.js',
         assetFileNames:'assets/[name][extname]',
-        // format: 'umd',
+        format: 'umd',
         globals: {
           vue: 'Vue',
           'youloge':'youloge'
