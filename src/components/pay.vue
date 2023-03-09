@@ -2,7 +2,7 @@
   <div :class="['y-payment',{'mask':!payment}]">
     <div class="head">
       <div class="title">支付金额</div>
-      <div class="money">￥ {{money}}</div>
+      <div class="money" v-text="onMoney"></div>
     </div>
 
     <div class="body">
@@ -19,13 +19,14 @@
 import { computed, onMounted, reactive, toRefs } from 'vue';
 const state = reactive({
   version:'V 1.08',
-  money:'0.00',
+  money:0,
   code:'',
   state:'',
   uuid:'',
   config:[], // 多渠道
   payment:null
 })
+const onMoney = computed(()=>`￥ - ${state.money.toFixed(2)}`)
 // 微信支付宝直接支付 银行卡支付不在这里
 const onQuery = ()=>{
   let query = {};new URL(location.href).searchParams.forEach((value, key)=>{
@@ -86,7 +87,7 @@ const onClose = ()=>{
 onMounted(()=>{
   let {code,auth_code,u,m} = onQuery();
   state.code = code;state.auth_code = auth_code;state.uuid = u;state.money = m;
-
+  (typeof WeixinJSBridge == "undefined" && typeof WeixinJSBridge == "undefined") && (location.href = '/');
   document.addEventListener('AlipayJSBridgeReady', onAlipay, false);
   document.addEventListener('WeixinJSBridgeReady', onWeixin, false);
 })

@@ -7,7 +7,7 @@
     <div class="progress"><span class="rate"></span></div>
 
     <div class="quick" v-show="mode=='quick'">
-      <template v-for="item in local" :key="item.uuid">
+      <template v-for="item in account" :key="item.uuid">
         <div class="profile" @click="onQuick(item)">
           <div class="avatar">
             <img :src="'//img.youloge.com/'+item.avatar+'!80'">
@@ -63,9 +63,6 @@
     <div class="close" @click="onClose" v-show="close">
       <svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
     </div>
-    <datalist id="mailist">
-        <option value="" data-suffix=""></option>
-    </datalist>
   </div>
 </template>
 
@@ -73,29 +70,26 @@
 import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
 
 const state = reactive({
-  ak:'',
+  ukey:'',
   msg:'获取验证码',
   mask:false,
   mode:'quick',// quick normal
   host:'未知',
-  local:[],
+  account:[],
   pass:'',
   word:'',
   sign:'',
-  close:true,
-  mailist:['@qq.com','@gmail.com','@163.com','@126.com','@live.com','@icloud.com','@outlook.com'],
+  close:true
 })
 
 onMounted(()=>{
-  let account = getStorage('account');
-  account == null ? (state.mode = 'normal') : [state.local = account,onSync()];
-
+  window.self === window.top ? location.href ='/' : onSync();
   // 接收初始参数
   window.addEventListener('message',event=>{
-    let {origin,data} = event,{ak,name,close} = data
+    let {origin,data} = event,{ukey,name,close} = data
     if(name === 'youloge.sso'){
       let {hostname} =  new URL(origin);
-      state.host = hostname;state.ak = ak;state.close = close;
+      state.host = hostname;state.ukey = ukey;state.close = close;
     }
   },false)
 })
@@ -110,27 +104,16 @@ const onFetch = (method,params)=>{
   state.mask = true;
   return fetch('//api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
     state.mask = false;return res
-  }) 
+  }).catch(err=>{
+    postMessage('fail',{msg:'网络网关错误',err:err})
+  })
 }
 const sso = computed(()=>['sso',{'mask':state.mask}])
-const passCls = computed(()=>{
-  return ['field',{'stop':state.sign !== ''}]
-})
-const codeCls = computed(()=>{
-  return ['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}]
-})
-const wordCls = computed(()=>{
-  return ['field',{'stop':state.sign == ''}]
-})
-const submCls = computed(()=>{
-  return ['submit',{'stop':!(state.word.length == 6 && state.sign !== '')}]
-})
-const onOption = computed(()=>{
-  let {pass} = state,[prefix] = pass.split('@');
-  return state.mailist.map(is=>{
-    return {value:`${prefix}${is}`,suffix:is}
-  })
-})
+const passCls = computed(()=>['field',{'stop':state.sign !== ''}])
+const codeCls = computed(()=>['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}])
+const wordCls = computed(()=>['field',{'stop':state.sign == ''}])
+const submCls = computed(()=>['submit',{'stop':!(state.word.length == 6 && state.sign !== '')}])
+
 // 关联账户
 const onToggle = ()=>{
   state.mode = 'normal'
@@ -155,30 +138,33 @@ const onCode = ()=>{
 const onSubmit = ()=>{
   onFetch('login',{pass:state.sign,word:state.word}).then(res=>{
     let {err,msg,data} = res;
-    if(err == 300){
-      state.hint = msg;state.word = '';
+    if(err == 0){
+      state.mode = 'quick';
+      let index = state.account.findIndex(item=>item.uuid == data.uuid);
+      index == -1 ?   state.account.unshift(data) : state.account[index] = data;
+      setStorage('account',state.account);
     }else{
-      let account = getStorage('account') || [];account.unshift(data);
-      setStorage('account',account);state.mode = 'quick';state.local.unshift(data);
+      state.hint = msg,state.word = '';
     }
   })
 }
 // 快捷登录 - 授权签名
 const onQuick = (event)=>{
   let {uuid,signer} = event
-  onFetch('sign',{ak:state.ak,uuid:uuid,signer:signer}).then(res=>{
-    let {err,msg,data} = res;
-    event.signer = data.signer || '';
-    let json = Object.assign(markRaw({}),event);
-    err == 0 ? postMessage('success',json) : postMessage('fail',{msg:msg});
+  onFetch('sign',{ukey:state.ukey,uuid:uuid,signer:signer}).then(res=>{
+    let json = Object.assign(markRaw({}),event,res.data);
+    res.err == 0 ? postMessage('success',json) : postMessage('fail',{msg:res.msg});
   })
 }
 // 同步资料
 const onSync = ()=>{
-  let time = new Date().getTime() / 1000 >> 0;
-  let data = state.local.map(item=>{
-    return {uuid:item.uuid,signer:item.signer}
-  })
+  state.account = getStorage('account') || [];
+  let params = state.account.map(item=>{
+    return {'signer':item.signer,'wallet':false}
+  });
+  params.length > 0 && onFetch('sync',params).then(res=>{
+    res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : postMessage('fail',{msg:res.msg})
+  });
 }
 // 关闭弹窗
 const onClose = ()=>{
@@ -191,7 +177,7 @@ const postMessage = (emit,data)=>{
     data
   }, '*')
 }
-const {msg,host,mode,pass,word,local,close,mailist} = toRefs(state)
+const {msg,host,mode,pass,word,close,account} = toRefs(state)
 </script>
 
 <style lang="scss">

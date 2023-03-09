@@ -13,6 +13,7 @@ export default defineConfig({
       // input:'index.html',
       // input:'sso.html',
       input:'pay.html',
+      // input:'payment.html',
       // input:{
       //   index: 'index.html',
       //   document: 'document.html',
