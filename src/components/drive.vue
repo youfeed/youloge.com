@@ -4,11 +4,11 @@
     <main class="document">
       <div class="box">
         <div class="head">
-          <span>文件名：xxxxxxxxxxxx<sub>MP4</sub></span></div>
+          <span>{{title}}<em>.{{ext}}</em></span></div>
         <div class="body">
           <div class="item">
             <span>类型</span>
-            <span>mime</span>
+            <span>{{mime}}</span>
           </div>
           <div class="item">
             <span>大小</span>
@@ -22,24 +22,23 @@
             <span>更新时间</span>
             <span>{{updated}}</span>
           </div>
-          <div class="item" v-copy>
+          <div class="item" v-copy="onCopy">
             <span>复制外链</span>
             <span title="登录状态下:默认复制推广外链">点击复制外链</span>
           </div>
         </div>
         <div class="foot">
           <div class="down">
-            <div class="left" title="随机售价:最低仅需0.01元即可下载">
-              <img src="https://qun.qq.com/qrcode/index?data=https://www.youloge.com/j22bBcXUBGHd1y2BQsfCG2RTgoPoh?cost=0.01">
-              <p>固定售价:{{cost}}</p>
-              <p>随机售价:{{cost}}</p>
+            <div class="left" title="用户通过你的推广外链下载可获得奖励">
+              <img :src="qrcode">
+              <p>文件二维码</p>
             </div>
             <div class="right">
               <button v-login="download">登录下载</button>
               <button v-login="download">临时下载</button>
             </div>
           </div>
-          <div class="tip">支付成功后 24小时内可无限制下载<br>临时下载可凭订单号在下载中心重复下载</div>
+          <div class="tip">支付成功后 24小时内可无限制重复下载<br>有效期内一个资源只会支付一次</div>
         </div>
       </div>
     </main>
@@ -48,35 +47,48 @@
 </template>
 
 <script setup>
-import { inject,onMounted,reactive,toRefs } from 'vue';
+import { computed, inject,onMounted,reactive,toRefs } from 'vue';
 const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useLoading = inject('useLoading');
 console.log()
-const data = reactive({
-  uuid:'2333',
-  title:'sadawf',
-  description:'adawdaf',
-  mime:'265',
-  size:'265',
-  cost:'12',
-  created:'16156',
-  updated:'16156',
+let state = reactive({
+  uuid:'',
+  title:'',
+  description:'',
+  ext:'',
+  mime:'',
+  etag:'',
+  size:'',
+  cost:'',
+  created:'',
+  updated:'',
 })
+const qrcode = computed(()=>{
+  let data = encodeURIComponent(`https://youloge.com/${state.uuid}?share=none`)
+  return `https://qun.qq.com/qrcode/index?data=${data}`
+})
+const onCopy = ()=>{
+  let {uuid,title,size,mime,created} = state;
+  let text = [`文件名：${title}`,`大小：${size}`,`类型：${mime}`,`创建时间：${created}`,`地址：youloge.com/${uuid}`];
+  return text.join('\r\n');
+}
 onMounted(()=>{
-  console.log(RAWDATA)
-  // useLoading().show()
+  let {uuid} = document.querySelector('#app').dataset;state.uuid = uuid;
+  uuid ? useFetch().api('drive',{uuid:uuid}).then(res=>{
+    let {err,data} = res
+    err == 0 ? Object.entries(data).forEach(([key,val])=>{
+      state[key] = val
+    }): console.log(res)
+    console.log(state)
+  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then()
 })
-useFetch().api('document',{uuid:'PHT7MtdGcbKd1AG4yxgs3Dd71qV1L'}).then(res=>{
-  console.log(res)
-})
-console.log('useDialog',useLoading())
+// console.log('useDialog',useLoading())
 const download = ()=>{
   // useDialog({title:'支付确认',content:'您需要支付 0.01 元'}).alert()
   // useDialog({title:'余额不足',content:'前往个人中心-钱包 充值'}).confirm()
   useDialog({title:'随机支付',content:'支付任意金额即可下载'}).prompt({type:'number',placeholder:'0.01~5000'})
   console.log('quxiaz')
 }
-
-const {uuid,title,description,mime,size,cost,created} = toRefs(data)
+const {uuid,title,description,ext,mime,etag,size,cost,created,updated} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -94,6 +106,11 @@ const {uuid,title,description,mime,size,cost,created} = toRefs(data)
     font-size: 24px;
     height: 50px;
     border-bottom: 1px solid #999;
+    em{
+      color: #4caf50;
+      text-transform: uppercase;
+      font-style: normal;
+    }
   }
   .body{
     display: inline;

@@ -1,9 +1,9 @@
 import { createApp } from "vue"
 import youloge from 'youloge'
-import Document from '../components/document.vue'
-createApp(Document).use(youloge,{
+import Drive from '../components/drive.vue'
+createApp(Drive).use(youloge,{
   // 配置参数 s
-  ak:'j1KvLbGE6eK2bPQv9Zp1DdTgz8xHo',
+  ukey:'6FGakMxMJe1mBPs9pFD-Ixyxv3j__eo5vnu36jkILEwn6LnZ5QOXfNAlJ6EburKIxSKkB1O59FHJedrefDCSvw==',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://vip.youloge.com',
   fontsize:'12px'

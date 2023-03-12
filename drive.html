@@ -4,18 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/loge.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?=$title?> - Youloge</title>
+    <title><?=$title?> - Youloge.Drive</title>
     <meta property="og:title" content="<?=$title?> - Youloge">
     <meta property="og:type" content="website">
-    <meta name="description" content="做最好的视频、新闻、购物、作品分享平台">
+    <meta property="og:id" content="<?=$uuid?>">
+    <meta name="description" content="<?=$description?>">
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/youloge"></script>
   </head>
   <body>
-    <div id="app">
-      <div>文档</div>
+    <div id="app" data-uuid="<?=$uuid?>">
+      <script type="application/ld+json">
+
+      </script>
     </div>
-    <script>window.RAWDATA = {'uuid':'F236561564785',title:'文件名',signal:{color:'red',value:100,info:'严重违纪，禁止浏览：根据传播范围叠加处罚'}}</script>
-    <script type="module" src="/src/entry/document.js"></script>
+    <script type="module" src="/src/entry/drive.js"></script>
   </body>
 </html>

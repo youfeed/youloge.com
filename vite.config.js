@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue','youloge'],
       // input:'article.html',
-      // input:'document.html',
+      // input:'drive.html',
       // input:'index.html',
       // input:'sso.html',
       input:'pay.html',

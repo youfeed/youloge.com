@@ -9,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "sass": "^1.58.3",
+    "sass": "^1.59.2",
     "vue": "^3.2.45",
-    "youloge": "^0.2.7"
+    "youloge": "^0.2.9"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
