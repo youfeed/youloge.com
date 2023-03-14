@@ -17,10 +17,11 @@
           <div class="avatar">
             <img src="//img.youloge.com/FjjHFE7RwJqfjiwM9aqL4G53kPv3!80">
           </div>
-          <div class="account ">
+          <div class="account">
             <div class="name">{{item.name}}</div>
             <div class="mail">{{item.mail}}</div>
           </div>
+          <div class="amount">￥{{ item.wallet.amount }}</div>
         </div>
       </template>
       <div class="profile" @click="onMode('normal')">
@@ -58,7 +59,7 @@
     <div class="body" v-show="mode=='password'">
       <div class="password" @click="onClern">
         <div class="coded" v-text="onPassword"></div>
-        <div class="clern">点击验证码可重置</div>
+        <div class="clern">点击此处重置验证码</div>
       </div>
       <div class="calc">
         <div @click="onCalc(1)">1</div>
@@ -78,10 +79,10 @@
       <div class="back" @click="reFresh">返回·刷新余额</div>
       <div class="deposit">
         <div class="left">
-          <img src="https://qun.qq.com/qrcode/index?data=https://qun.qq.com/qrcode/" class="qrcode"/>
+          <img :src="qrcode" class="qrcode" :style="{filter: 'blur('+blur+'px)'}"/>
         </div>
         <div class="right">
-          <div class="amount"><label for="deposit-number">金额：</label><input type="number" id="deposit-number" placeholder="0.01 - 3000元"></div>
+          <div class="amount"><label for="deposit-number">金额：</label><input type="number" id="deposit-number" v-model="deposit" @focus="onFocusDeposit" @blur="onBlurDeposit" placeholder="0.01 - 3000元"></div>
           <div class="account"><label>账户：</label><input type="mail" placeholder="" readonly value="11247005@qq.com"></div>
           <div class="support">支持微信·支付宝扫码</div>
         </div>
@@ -107,14 +108,14 @@ const state = reactive({
   mask:false,
   mode:'quick',// quick normal password success fail deposit
   host:'未知',
-  order:{
-    money:'0.00'
-  },
+
+  deposit:'10.00',
+  blur:0,
+
   rand:'MisU',
   code:[],
 
-  seller:{}, // 卖家
-  buyer:{}, // 买家
+  local:'', // 卖家
   money:'0.00', // 金额
 
   pass:'',
@@ -122,18 +123,20 @@ const state = reactive({
   sign:'',
   close:true,
   account:[],
-  selected:{}
+  selected:{
+    payment:{}
+  },
+  paysign:{}
 })
 
 onMounted(()=>{
   window.self === window.top ? location.href = '/' : onSync();
   // 接收初始参数
   window.addEventListener('message',event=>{
-    let {origin,data} = event,{ukey,name,close,order} = data
-    console.log(event)
+    let {origin,data} = event,{ukey,name,close,local,money} = data
     if(name === 'youloge.payment'){
       let {hostname} =  new URL(origin);
-      state.host = hostname;state.ukey = ukey;state.close = close;state.order = order;
+      state.host = hostname;state.ukey = ukey;state.close = close;state.local = local,state.money = money;
     }
   },false)
 })
@@ -146,9 +149,22 @@ const codeCls = computed(()=>{
   return ['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}]
 })
 const onPassword = computed(()=>{
-  let {code,rand} = state;
-  return code.length == 0 ? `【${rand}】` : code.join(' - ');
+  let {code,paysign} = state;
+  return code.length == 0 ? `****** ${paysign.random || ''}` : code.join(' - ');
 })
+const qrcode = computed(()=>{
+  let {deposit,blur,selected} = state, money = blur == 0 ? deposit : '10.00';
+  let data = encodeURIComponent(`https://open.youloge.com/pay?u=${selected.uuid}&m=${money}`);
+  return `https://qun.qq.com/qrcode/index?data=${data}`
+})
+const onFocusDeposit = ()=>{
+  state.blur = 5;
+}
+const onBlurDeposit = ()=>{
+  let money = Math.max('0.01',state.deposit).toFixed(2);
+  state.blur = 0;
+  state.deposit = money;
+}
 const getStorage = (key)=>{
   let item = localStorage.getItem(key);
   return item && JSON.parse(item)
@@ -172,6 +188,7 @@ const onCode = ()=>{
     },1000)
   })
 }
+// 确认登录
 const onSubmit = ()=>{
   onFetch('login',{pass:state.sign,word:state.word}).then(res=>{
     let {err,msg,data} = res;
@@ -187,13 +204,20 @@ const onSubmit = ()=>{
 }
 // 快捷支付 - 邮件
 const onQuick = (item)=>{
-  state.selected = item;
-  let {singer,wallet} = item,{ukey,local,money} = state;
-  wallet.amount < money ? onMode('deposit') : onFetch('sendpaysms',{ukey:ukey,local:local,money:money,singer:singer}).then(res=>{
+  let {signer,wallet} = item,{ukey,local,money,host} = state;state.selected = item;
+  wallet.amount < money ? onMode('deposit') : onFetch('paycode',{ukey:ukey,local:local,money:money,signer:signer,host:host}).then(res=>{
+    state.paysign = res.data;
     res.err == 0 ? onMode('password') : postMessage('fail',{data:res.msg});
   })
 }
-// 
+// 确认支付
+const onPayment = ()=>{
+  let {paysign,code} = state,{signer} = paysign;
+  onFetch('payenter',{code:code.join(''),signer:signer}).then(res=>{
+    res.err == 0 ? postMessage('success',{data:res.data}) : postMessage('fail',{data:res.msg});
+  })
+}
+// 刷新余额
 const reFresh = ()=>{
   state.mode = 'quick';onSync();
 }
@@ -203,10 +227,7 @@ const onClern = ()=>{
 // 验证支付
 const onCalc = (n)=>{
   state.code.push(n);
-  let {ukey,local,money,selected} = state;
-  state.code.length == 6 && onFetch('pay',{ukey:ukey,local:local,money:money,singer:singer}).then(res=>{
-
-  })
+  state.code.length == 6 && onPayment()
 }
 // 同步资料
 const onSync = ()=>{
@@ -215,7 +236,6 @@ const onSync = ()=>{
   })
   params.length > 0 && onFetch('sync',params).then(res=>{
     let {data} = res;setStorage('account',data)
-    console.log('params',params)
     state.account = data
   }).catch()
 }
@@ -237,7 +257,7 @@ const onClose = ()=>{
 const postMessage = (emit,data)=>{
   window.parent.postMessage({ emit:emit,data }, '*')
 }
-const {pass,word,code,sign,msg,host,mode,close,order,account,selected} = toRefs(state)
+const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,selected} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -248,6 +268,7 @@ const {pass,word,code,sign,msg,host,mode,close,order,account,selected} = toRefs(
   position: relative;
   height: 100vh;
   background: #f1f1f1;
+  user-select: none;
   .tips{
     color: #9e9e9e;
     font-size: 12px;
@@ -322,6 +343,7 @@ const {pass,word,code,sign,msg,host,mode,close,order,account,selected} = toRefs(
             width:100%;
             border: 0;
             outline: 0;
+            color: #4caf50;
           }
         }
         .support{
@@ -370,10 +392,32 @@ const {pass,word,code,sign,msg,host,mode,close,order,account,selected} = toRefs(
       display: flex;
       align-items: center;
       border: 1px solid #eee;
-      height: 80px;
+      height: 70px;
       border-radius: 5px;
       margin: 5px 0;
       cursor: pointer;
+      position: relative;
+      .avatar{
+        width: 70px;
+        height: 70px;
+        img{
+          max-width: 100%;
+        }
+      }
+      .mail{
+        color: #999;
+        font-size: 14px;
+      }
+      .name{
+        color: #222;
+        font-size: 16px;
+      }
+      .amount{
+        color: #f44336;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+      }
     }
     .next{cursor: pointer;position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
     .label::before,
