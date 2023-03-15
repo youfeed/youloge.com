@@ -123,10 +123,8 @@ const state = reactive({
   sign:'',
   close:true,
   account:[],
-  selected:{
-    payment:{}
-  },
-  paysign:{}
+  selected:{},
+  paysign:{random:''}
 })
 
 onMounted(()=>{
@@ -136,6 +134,8 @@ onMounted(()=>{
     let {origin,data} = event,{ukey,name,close,local,money} = data
     if(name === 'youloge.payment'){
       let {hostname} =  new URL(origin);
+      if(local == ''){postMessage('fail',{msg:'缺少local参数'})}
+      if(money <= 0){postMessage('fail',{msg:'缺少money参数'})}
       state.host = hostname;state.ukey = ukey;state.close = close;state.local = local,state.money = money;
     }
   },false)
@@ -148,14 +148,14 @@ const submCls = computed(()=>['submit',{'stop':!(state.word.length == 6 && state
 const codeCls = computed(()=>{
   return ['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}]
 })
-const onPassword = computed(()=>{
-  let {code,paysign} = state;
-  return code.length == 0 ? `****** ${paysign.random || ''}` : code.join(' - ');
-})
 const qrcode = computed(()=>{
   let {deposit,blur,selected} = state, money = blur == 0 ? deposit : '10.00';
   let data = encodeURIComponent(`https://open.youloge.com/pay?u=${selected.uuid}&m=${money}`);
   return `https://qun.qq.com/qrcode/index?data=${data}`
+})
+const onPassword = computed(()=>{
+  let {code,paysign} = state,{random} = paysign;
+  return code.length == 0 ? `****** ${random}` : code.join(' - ');
 })
 const onFocusDeposit = ()=>{
   state.blur = 5;
@@ -207,14 +207,14 @@ const onQuick = (item)=>{
   let {signer,wallet} = item,{ukey,local,money,host} = state;state.selected = item;
   wallet.amount < money ? onMode('deposit') : onFetch('paycode',{ukey:ukey,local:local,money:money,signer:signer,host:host}).then(res=>{
     state.paysign = res.data;
-    res.err == 0 ? onMode('password') : postMessage('fail',{data:res.msg});
+    res.err == 0 ? onMode('password') : postMessage('fail',{msg:res.msg});
   })
 }
 // 确认支付
 const onPayment = ()=>{
   let {paysign,code} = state,{signer} = paysign;
   onFetch('payenter',{code:code.join(''),signer:signer}).then(res=>{
-    res.err == 0 ? postMessage('success',{data:res.data}) : postMessage('fail',{data:res.msg});
+    res.err == 0 ? postMessage('success',res.data) : postMessage('fail',{msg:res.msg});
   })
 }
 // 刷新余额

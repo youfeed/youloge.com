@@ -24,18 +24,18 @@
           </div>
           <div class="item" v-copy="onCopy">
             <span>复制外链</span>
-            <span title="登录状态下:默认复制推广外链">点击复制外链</span>
+            <span>点击复制外链</span>
           </div>
         </div>
         <div class="foot">
           <div class="down">
-            <div class="left" title="用户通过你的推广外链下载可获得奖励">
+            <div class="left">
               <img :src="qrcode">
               <p>文件二维码</p>
             </div>
             <div class="right">
               <button v-login="download">登录下载</button>
-              <button v-login="download">临时下载</button>
+              <button v-login="shareing">推广外链</button>
             </div>
           </div>
           <div class="tip">支付成功后 24小时内可无限制重复下载<br>有效期内一个资源只会支付一次</div>
@@ -48,8 +48,8 @@
 
 <script setup>
 import { computed, inject,onMounted,reactive,toRefs } from 'vue';
-const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useLoading = inject('useLoading');
-console.log()
+const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useMessage = inject('useMessage');
+const usePayment = inject('usePayment');
 let state = reactive({
   uuid:'',
   title:'',
@@ -61,33 +61,63 @@ let state = reactive({
   cost:'',
   created:'',
   updated:'',
+  downsign:null
 })
+onMounted(()=>{
+  let {uuid} = document.querySelector('#app').dataset;state.uuid = uuid;
+  uuid ? useFetch().api('drive',{uuid:uuid}).then(res=>{
+    let {err,msg,data} = res
+    err == 0 ? Object.entries(data).forEach(([key,val])=>{
+      state[key] = val
+    }): useMessage().warning(msg)
+  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then()
+})
+// 二维码
 const qrcode = computed(()=>{
   let data = encodeURIComponent(`https://youloge.com/${state.uuid}?share=none`)
   return `https://qun.qq.com/qrcode/index?data=${data}`
 })
+// 复制外链
 const onCopy = ()=>{
   let {uuid,title,size,mime,created} = state;
   let text = [`文件名：${title}`,`大小：${size}`,`类型：${mime}`,`创建时间：${created}`,`地址：youloge.com/${uuid}`];
   return text.join('\r\n');
 }
-onMounted(()=>{
-  let {uuid} = document.querySelector('#app').dataset;state.uuid = uuid;
-  uuid ? useFetch().api('drive',{uuid:uuid}).then(res=>{
-    let {err,data} = res
-    err == 0 ? Object.entries(data).forEach(([key,val])=>{
-      state[key] = val
-    }): console.log(res)
-    console.log(state)
-  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then()
-})
-// console.log('useDialog',useLoading())
-const download = ()=>{
-  // useDialog({title:'支付确认',content:'您需要支付 0.01 元'}).alert()
-  // useDialog({title:'余额不足',content:'前往个人中心-钱包 充值'}).confirm()
-  useDialog({title:'随机支付',content:'支付任意金额即可下载'}).prompt({type:'number',placeholder:'0.01~5000'})
-  console.log('quxiaz')
+// 创建下载
+const createURL = ()=>{
+  var ele = document.createElement('a');
+  ele.download = 'xxx.zip';
+  ele.style.display = 'none';
+  ele.href = 'https://api.youloge.com/?method=download?signr=signr';
+  document.body.appendChild(ele);
+  ele.click();
+  document.body.removeChild(ele);
 }
+// 推广分享
+const shareing = ()=>{  
+  useMessage().warning('推广分享内测中')
+}
+// 获取下载
+const download = ()=>{
+  let {uuid,downsign} = state;
+  downsign == null ? useFetch({mask:true}).vip('drive_query',{uuid:uuid}).then(res=>{
+    useMessage().warning(res.msg)
+    state.downsign = res.data
+    res.err == 0 ? createURL() : onPayment();
+  }).catch() : createURL()
+}
+// 调起支付
+const onPayment = ()=>{
+  usePayment({
+    local:'uuid',
+    money:0.01
+  }).pay().then(res=>{
+    
+  }).catch(err=>{
+    useMessage().warning(err.msg)
+  });
+}
+// 确认支付
 const {uuid,title,description,ext,mime,etag,size,cost,created,updated} = toRefs(state)
 </script>
 

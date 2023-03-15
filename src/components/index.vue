@@ -43,8 +43,9 @@
 </template>
 <script setup>
 import { inject, onMounted, reactive, toRefs } from 'vue'
-
 const useFetch = inject('useFetch')
+const usePayment = inject('usePayment')
+console.log(usePayment.version)
 const state = reactive({
   uuid:'',
   data:{
@@ -59,13 +60,18 @@ onMounted(()=>{
   let uuid = location.pathname.substr(1)
   state.uuid = uuid
   console.log(uuid)
-  useFetch.api('document',{uuid:uuid}).then(res=>{
+  usePayment().pay({local:'5',money:'0.01'}).then(res=>{
+    console.log(111,res)
+  }).catch(e=>{
+    console.log(2222,e)
+  })
+  useFetch({mask:true}).api('document',{uuid:uuid}).then(res=>{
     state.data = res.data
   })
 })
 const onDown = ()=>{
   let {uuid} = state;
-  useFetch.vip('document_download',{uuid:uuid}).then(res=>{
+  useFetch().vip('document_download',{uuid:uuid}).then(res=>{
     console.log(res)
   })
   console.log('onDown')
