@@ -103,6 +103,10 @@
 import {reactive,onMounted, toRefs,computed} from 'vue'
 
 const state = reactive({
+  name:'youloge.payment',
+  hash:location.hash,
+  origin:null,
+
   ukey:'',
   msg:'获取验证码',
   mask:false,
@@ -130,15 +134,15 @@ const state = reactive({
 onMounted(()=>{
   window.self === window.top ? location.href = '/' : onSync();
   // 接收初始参数
-  window.addEventListener('message',event=>{
-    let {origin,data} = event,{ukey,name,close,local,money} = data
-    if(name === 'youloge.payment'){
+  window.onmessage = event=>{
+    let {origin,data} = event,{ukey,name,hash,close,local,money} = data;
+    if(name === state.name && hash === state.hash){
       let {hostname} =  new URL(origin);
-      if(local == ''){postMessage('fail',{msg:'缺少local参数'})}
-      if(money <= 0){postMessage('fail',{msg:'缺少money参数'})}
-      state.host = hostname;state.ukey = ukey;state.close = close;state.local = local,state.money = money;
+      state.host = hostname;state.ukey = ukey;state.close = close;state.local = local,state.money = money;state.origin = origin;
+      local == '' && postMessage('fail',{msg:'缺少local参数'})
+      money <= 0 && postMessage('fail',{msg:'缺少money参数'})
     }
-  },false)
+  }
 })
 const onMoney = computed(()=>`￥ - ${Number(state.money || 0).toFixed(2)}`)
 const payment = computed(()=>['y-payment',{'mask':state.mask}])
@@ -165,13 +169,8 @@ const onBlurDeposit = ()=>{
   state.blur = 0;
   state.deposit = money;
 }
-const getStorage = (key)=>{
-  let item = localStorage.getItem(key);
-  return item && JSON.parse(item)
-}
-const setStorage = (key,val)=>{
-  localStorage.setItem(key,JSON.stringify(val));
-}
+const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '{}');
+const setStorage = (key,val)=>localStorage.setItem(key,JSON.stringify(val));
 // 快速登录
 const onCode = ()=>{
   state.sign = true
@@ -195,7 +194,7 @@ const onSubmit = ()=>{
     if(err == 0){
       state.mode = 'quick';
       let index = state.account.findIndex(item=>item.uuid == data.uuid);
-      index == -1 ?   state.account.unshift(data) : state.account[index] = data;
+      index == -1 ? state.account.unshift(data) : state.account[index] = data;
       setStorage('account',state.account);
     }else{
       state.hint = msg,state.word = '';
@@ -239,9 +238,7 @@ const onSync = ()=>{
     state.account = data
   }).catch()
 }
-const onMode = (mode)=>{
-  state.mode = mode;
-}
+
 const onFetch = (method,params)=>{
   state.mask = true;
   return fetch('https://api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
@@ -250,12 +247,13 @@ const onFetch = (method,params)=>{
     postMessage('fail',{msg:'网络网关错误',err:err})
   })
 }
-const onClose = ()=>{
-  postMessage('close',{msg:'用户主动关闭支付'})
-}
+
+const onMode = (mode)=>state.mode = mode;
+const onClose = ()=>postMessage('close',{msg:'用户主动关闭支付'});
 // postMessage
 const postMessage = (emit,data)=>{
-  window.parent.postMessage({ emit:emit,data }, '*')
+  let {name,hash,origin} = state
+  window.parent.postMessage({ name:name,hash:hash,emit:emit,data }, origin)
 }
 const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,selected} = toRefs(state)
 </script>

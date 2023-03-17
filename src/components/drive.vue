@@ -12,7 +12,7 @@
           </div>
           <div class="item">
             <span>大小</span>
-            <span>{{size}}</span>
+            <span>{{sized}}</span>
           </div>
           <div class="item">
             <span>创建时间</span>
@@ -23,7 +23,7 @@
             <span>{{updated}}</span>
           </div>
           <div class="item" v-copy="onCopy">
-            <span>复制外链</span>
+            <span>资源外链</span>
             <span>点击复制外链</span>
           </div>
         </div>
@@ -31,14 +31,25 @@
           <div class="down">
             <div class="left">
               <img :src="qrcode">
-              <p>文件二维码</p>
+              <a href="javascript:;" v-login="shareing" class="share">获得推广外链</a>
             </div>
             <div class="right">
-              <button v-login="download">登录下载</button>
-              <button v-login="shareing">推广外链</button>
+              <div class="cost">￥ <em>{{cost}}</em> 元(24小时下载权限)</div>
+              <div class="load" v-login="download">
+                <div>立即下载(无限速)</div>
+                <p>有效期内重复点击下载不收费</p>
+              </div>
             </div>
           </div>
-          <div class="tip">支付成功后 24小时内可无限制重复下载<br>有效期内一个资源只会支付一次</div>
+          <div class="rule">
+            <ul>
+              <li>文件标识：{{ uuid }}</li>
+              <li>来源标识：{{ owner }}</li>
+              <li>哈希标识：{{ etag }}</li>
+              <li>·</li>
+              <li>但行好事 莫问前程</li>
+            </ul>
+          </div>
         </div>
       </div>
     </main>
@@ -47,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, inject,onMounted,reactive,toRefs } from 'vue';
+import { computed, inject,onMounted,reactive,ref,toRefs } from 'vue';
 const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useMessage = inject('useMessage');
 const usePayment = inject('usePayment');
 let state = reactive({
@@ -59,19 +70,19 @@ let state = reactive({
   etag:'',
   size:'',
   cost:'',
+  owner:'',
   created:'',
   updated:'',
+  record:{},
   downsign:null
 })
 onMounted(()=>{
-  let {uuid} = document.querySelector('#app').dataset;state.uuid = uuid;
-  uuid ? useFetch().api('drive',{uuid:uuid}).then(res=>{
-    let {err,msg,data} = res
-    err == 0 ? Object.entries(data).forEach(([key,val])=>{
-      state[key] = val
-    }): useMessage().warning(msg)
+  let {uuid} = document.querySelector('#app').dataset;
+  uuid ? useFetch().api('drive',{uuid:uuid}).then(({err,msg,data})=>{
+    err == 0 ? Object.assign(state, data): useMessage().warning(msg)
   }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then()
 })
+const sized = computed(()=>`${(state.size / 1024 / 1024).toFixed(2)} Mb`)
 // 二维码
 const qrcode = computed(()=>{
   let data = encodeURIComponent(`https://youloge.com/${state.uuid}?share=none`)
@@ -79,19 +90,23 @@ const qrcode = computed(()=>{
 })
 // 复制外链
 const onCopy = ()=>{
-  let {uuid,title,size,mime,created} = state;
-  let text = [`文件名：${title}`,`大小：${size}`,`类型：${mime}`,`创建时间：${created}`,`地址：youloge.com/${uuid}`];
-  return text.join('\r\n');
+  let {uuid,title,mime,created} = state;
+  return [`文件：${title}`,`大小：${sized.value}`,`类型：${mime}`,`时间：${created}`,`地址：youloge.com/${uuid}`].join('\r\n');
 }
 // 创建下载
 const createURL = ()=>{
-  var ele = document.createElement('a');
-  ele.download = 'xxx.zip';
-  ele.style.display = 'none';
-  ele.href = 'https://api.youloge.com/?method=download?signr=signr';
-  document.body.appendChild(ele);
-  ele.click();
-  document.body.removeChild(ele);
+  let {downsign,title,ext} = state,attname = `${title}.${ext}`;
+  useDialog({title:'下载文件',content:`大小：${sized.value} - 24小时无限制下载`}).alert().then(res=>{
+    var ele = document.createElement('a');
+    ele.download = attname;
+    ele.style.display = 'none';
+    ele.href = `${downsign}&attname=${attname}`;
+    document.body.appendChild(ele);
+    ele.click();
+    document.body.removeChild(ele);
+  }).catch(err=>{
+    useMessage().warning('关闭下载')
+  })
 }
 // 推广分享
 const shareing = ()=>{  
@@ -100,31 +115,38 @@ const shareing = ()=>{
 // 获取下载
 const download = ()=>{
   let {uuid,downsign} = state;
-  downsign == null ? useFetch({mask:true}).vip('drive_query',{uuid:uuid}).then(res=>{
-    useMessage().warning(res.msg)
-    state.downsign = res.data
-    res.err == 0 ? createURL() : onPayment();
-  }).catch() : createURL()
+  downsign == null ? useFetch({mask:true}).vip('drive_within',{uuid:uuid}).then(res=>{
+    res.err == 0 ? (state.downsign = res.data,createURL()) : (useMessage().warning(res.msg),onPayment());
+  }) : createURL()
 }
 // 调起支付
 const onPayment = ()=>{
+  let {cost,uuid} = state
   usePayment({
-    local:'uuid',
-    money:0.01
+    local:uuid, // 商品ID
+    money:cost, // 金额
   }).pay().then(res=>{
-    
+    onEnter(res)
+    console.log('res',res)
   }).catch(err=>{
+    console.log('err',err)
     useMessage().warning(err.msg)
   });
 }
 // 确认支付
-const {uuid,title,description,ext,mime,etag,size,cost,created,updated} = toRefs(state)
+const onEnter = (data)=>{
+  useFetch({mask:true}).vip('drive_payment',data).then(res=>{
+    res.err == 0 ? (state.downsign = res.data,createURL())  : useMessage().warning(res.msg);
+  })
+}
+const {uuid,title,description,ext,mime,etag,size,cost,owner,created,updated} = toRefs(state)
 </script>
 
 <style lang="scss">
 .document{
   max-width: 600px;
   margin: 40px auto;
+  font-family: math;
   .box{
     box-shadow: 0px 0px 4px #9e9e9e;
     padding: 10px;
@@ -143,7 +165,7 @@ const {uuid,title,description,ext,mime,etag,size,cost,created,updated} = toRefs(
     }
   }
   .body{
-    display: inline;
+    margin: 10px 0;
     .item{
       display: flex;
       align-items: center;
@@ -156,40 +178,69 @@ const {uuid,title,description,ext,mime,etag,size,cost,created,updated} = toRefs(
     }
   }
   .foot{
-    margin: 20px 0;
-    text-align: center;
+    padding: 20px 10px;
+    background: #eee;
+    border-radius: 5px;
     .down{
       display: flex;
       align-items: center;
       justify-content: space-evenly;
-      height: 150px;
+      .left{
+        background: #fff;
+        padding-bottom: 10px;
+        text-align: center;
+        .share{
+          display: block;
+          color: blue;
+          text-decoration: none;
+        }
+      }
       .right{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
-        height: 100%;
+        .cost{
+          color: #FF5722;
+          em{
+            font-size: 24px;
+            font-style: normal;
+            color: #f00;
+          }
+        }
+        .load{
+          background: #0080ff;
+          padding: 5px 10px;
+          margin-top: 10px;
+          border-radius: 5px;
+          text-align: center;
+          color: #fff;
+          cursor: pointer;
+          div{
+            font-weight: 600;
+            font-size: 18px;
+          }
+          p{
+            font-size: 12px;
+            color: #eee;
+          }
+          &:hover{
+            opacity: .7;
+          }
+        }
       }
       .left{
 
         img{
-          height: 120px;
+          height: 100px;
         }
       }
     }
-    button{
-      border: 0;
-      outline: 0;
-      padding: 5px 8px;
-      background: #4caf50;
-      border-radius: 5px;
-      font-size: 16px;
-      color: #fff;
-    }
-    .tip{
-      font-size: 12px;
-      color: #999;
-      margin-top: 16px;
+    .rule{
+      ul{
+        list-style: none;
+        font-family: monospace;
+        margin-top: 20px;
+        color: #999;
+        text-align: center;
+        list-style: none;
+      }
     }
   }
 }

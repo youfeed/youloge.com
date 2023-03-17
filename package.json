@@ -11,10 +11,10 @@
   "dependencies": {
     "sass": "^1.59.3",
     "vue": "^3.2.45",
-    "youloge": "^1.0.8"
+    "youloge": "^1.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
-    "vite": "^4.1.0"
+    "@vitejs/plugin-vue": "^4.1.0",
+    "vite": "^4.2.0"
   }
 }

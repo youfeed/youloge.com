@@ -70,9 +70,13 @@
 import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
 
 const state = reactive({
+  name:'youloge.sso',
+  hash:location.hash,
+  origin:null,
   ukey:'',
   msg:'获取验证码',
   mask:false,
+
   mode:'quick',// quick normal
   host:'未知',
   account:[],
@@ -85,29 +89,16 @@ const state = reactive({
 onMounted(()=>{
   window.self === window.top ? location.href ='/' : onSync();
   // 接收初始参数
-  window.addEventListener('message',event=>{
-    let {origin,data} = event,{ukey,name,close} = data
-    if(name === 'youloge.sso'){
+  window.onmessage = event=>{
+    let {origin,data} = event,{ukey,name,hash,close} = data
+    if(name === state.name && hash === state.hash){
       let {hostname} =  new URL(origin);
-      state.host = hostname;state.ukey = ukey;state.close = close;
+      state.host = hostname;state.ukey = ukey;state.close = close;state.origin = origin
     }
-  },false)
+  }
 })
-const getStorage = (key)=>{
-  let item = localStorage.getItem(key);
-  return item && JSON.parse(item)
-}
-const setStorage = (key,val)=>{
-  localStorage.setItem(key,JSON.stringify(val));
-}
-const onFetch = (method,params)=>{
-  state.mask = true;
-  return fetch('//api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
-    state.mask = false;return res
-  }).catch(err=>{
-    postMessage('fail',{msg:'网络网关错误',err:err})
-  })
-}
+const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '{}');
+const setStorage = (key,val)=>localStorage.setItem(key,JSON.stringify(val));
 const sso = computed(()=>['sso',{'mask':state.mask}])
 const passCls = computed(()=>['field',{'stop':state.sign !== ''}])
 const codeCls = computed(()=>['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}])
@@ -141,7 +132,7 @@ const onSubmit = ()=>{
     if(err == 0){
       state.mode = 'quick';
       let index = state.account.findIndex(item=>item.uuid == data.uuid);
-      index == -1 ?   state.account.unshift(data) : state.account[index] = data;
+      index == -1 ? state.account.unshift(data) : state.account[index] = data;
       setStorage('account',state.account);
     }else{
       state.hint = msg,state.word = '';
@@ -166,16 +157,21 @@ const onSync = ()=>{
     res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : postMessage('fail',{msg:res.msg})
   });
 }
-// 关闭弹窗
-const onClose = ()=>{
-  postMessage('close',{msg:'用户主动取消登录'})
+// 发起请求
+const onFetch = (method,params)=>{
+  state.mask = true;
+  return fetch('https://api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
+    state.mask = false;return res
+  }).catch(err=>{
+    postMessage('fail',{msg:'网络网关错误',err:err})
+  })
 }
+// 关闭弹窗
+const onClose = ()=>postMessage('close',{msg:'用户主动取消登录'})
 // postMessage
 const postMessage = (emit,data)=>{
-  window.parent.postMessage({
-    emit:emit,
-    data
-  }, '*')
+  let {name,hash,origin} = state;
+  window.parent.postMessage({ name:name,hash:hash,emit:emit,data }, origin)
 }
 const {msg,host,mode,pass,word,close,account} = toRefs(state)
 </script>
@@ -202,7 +198,7 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
     }
   }
   .quick{
-    max-height: 200px;
+    max-height: 210px;
     overflow-y: scroll;
     .profile{
       cursor: pointer;
@@ -214,8 +210,8 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
         background: #fff;
       }
       .avatar{
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         overflow: hidden;
         img{
@@ -226,19 +222,19 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
         margin-left: 10px;
         .name{
           font-size: 18px;
-          font-weight: 400;
+          color: #333;
         }
         .mail{
           margin-top: 5px;
           font-size: 14px;
-          color: #333;
+          color: #999;
         }
       }
     }
   }
   .body{
     padding: 10px;
-    height: 200px;
+    height: 210px;
     .next{cursor: pointer;position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
     .label::before,
     .field input:valid + label::before,
