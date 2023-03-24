@@ -21,7 +21,7 @@
             <div class="name">{{item.name}}</div>
             <div class="mail">{{item.mail}}</div>
           </div>
-          <div class="amount">￥{{ item.wallet.amount }}</div>
+          <div class="amount">￥{{ item.wallet ?. amount || '0.00' }}</div>
         </div>
       </template>
       <div class="profile" @click="onMode('normal')">
@@ -105,9 +105,12 @@ import {reactive,onMounted, toRefs,computed} from 'vue'
 const state = reactive({
   name:'youloge.payment',
   hash:location.hash,
-  origin:null,
+  referrer:document.referrer,
 
   ukey:'',
+  local:'', // 卖家
+  money:'0.00', // 金额
+
   msg:'获取验证码',
   mask:false,
   mode:'quick',// quick normal password success fail deposit
@@ -116,11 +119,8 @@ const state = reactive({
   deposit:'10.00',
   blur:0,
 
-  rand:'MisU',
+  rand:'',
   code:[],
-
-  local:'', // 卖家
-  money:'0.00', // 金额
 
   pass:'',
   word:'',
@@ -132,15 +132,26 @@ const state = reactive({
 })
 
 onMounted(()=>{
-  window.self === window.top ? location.href = '/' : onSync();
+  window.self === window.top ? location.href ='/' : postMessage('ready',{msg:'youloge.payment is ready'});
   // 接收初始参数
-  window.onmessage = event=>{
-    let {origin,data} = event,{ukey,name,hash,close,local,money} = data;
-    if(name === state.name && hash === state.hash){
-      let {hostname} =  new URL(origin);
-      state.host = hostname;state.ukey = ukey;state.close = close;state.local = local,state.money = money;state.origin = origin;
-      local == '' && postMessage('fail',{msg:'缺少local参数'})
-      money <= 0 && postMessage('fail',{msg:'缺少money参数'})
+  const {referrer,hash,ukey} = state;
+  window.onmessage = ({origin,data})=>{
+    let {method,params} = data[hash] || {};
+    if(referrer.startsWith(origin) && method && ukey == ''){
+      let work = {
+        'init':()=>{
+          params.ukey.length < 64 && postMessage('fail',{msg:'Ukey undefined'})
+          params.local == '' && postMessage('fail',{msg:'缺少local参数'});
+          params.money <= 0 && postMessage('fail',{msg:'缺少money参数'});
+          state.host = new URL(origin).hostname;
+          state.ukey = params.ukey;
+          state.close = params.close;
+          state.local = params.local;
+          state.money = params.money;
+          onSync();
+        }
+      };
+      work[method] ? work[method]() : console.log('not method');
     }
   }
 })
@@ -159,8 +170,9 @@ const qrcode = computed(()=>{
 })
 const onPassword = computed(()=>{
   let {code,paysign} = state,{random} = paysign;
-  return code.length == 0 ? `****** ${random}` : code.join(' - ');
+  return code.length == 0 ? `***${random}***` : code.join(' - ');
 })
+
 const onFocusDeposit = ()=>{
   state.blur = 5;
 }
@@ -169,8 +181,8 @@ const onBlurDeposit = ()=>{
   state.blur = 0;
   state.deposit = money;
 }
-const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '{}');
-const setStorage = (key,val)=>localStorage.setItem(key,JSON.stringify(val));
+const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '[]');
+const setStorage = (key,val=[])=>localStorage.setItem(key,JSON.stringify(val));
 // 快速登录
 const onCode = ()=>{
   state.sign = true
@@ -203,8 +215,8 @@ const onSubmit = ()=>{
 }
 // 快捷支付 - 邮件
 const onQuick = (item)=>{
-  let {signer,wallet} = item,{ukey,local,money,host} = state;state.selected = item;
-  wallet.amount < money ? onMode('deposit') : onFetch('paycode',{ukey:ukey,local:local,money:money,signer:signer,host:host}).then(res=>{
+  let {signer,wallet} = item,{local,money,host} = state;state.selected = item;
+  wallet.amount < money ? onMode('deposit') : onFetch('paycode',{local:local,money:money,signer:signer,host:host}).then(res=>{
     state.paysign = res.data;
     res.err == 0 ? onMode('password') : postMessage('fail',{msg:res.msg});
   })
@@ -230,18 +242,18 @@ const onCalc = (n)=>{
 }
 // 同步资料
 const onSync = ()=>{
-  let params = (getStorage('account') || []).map(item=>{
+  state.account = getStorage('account');
+  let params = state.account.map(item=>{
     return {signer:item.signer,wallet:true}
   })
-  params.length > 0 && onFetch('sync',params).then(res=>{
-    let {data} = res;setStorage('account',data)
-    state.account = data
+  params.length > 0 && onFetch('sync',{account:params}).then(res=>{
+    res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : postMessage('fail',{msg:res.msg});
   }).catch()
 }
 
 const onFetch = (method,params)=>{
   state.mask = true;
-  return fetch('https://api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
+  return fetch('https://api.youloge.com',{method:'post',headers:{ukey:state.ukey},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
     state.mask = false;return res
   }).catch(err=>{
     postMessage('fail',{msg:'网络网关错误',err:err})
@@ -251,9 +263,9 @@ const onFetch = (method,params)=>{
 const onMode = (mode)=>state.mode = mode;
 const onClose = ()=>postMessage('close',{msg:'用户主动关闭支付'});
 // postMessage
-const postMessage = (emit,data)=>{
-  let {name,hash,origin} = state
-  window.parent.postMessage({ name:name,hash:hash,emit:emit,data }, origin)
+const postMessage = (method,params)=>{
+  let {hash,referrer} = state
+  window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
 }
 const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,selected} = toRefs(state)
 </script>
@@ -265,8 +277,11 @@ const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,sele
 .y-payment{
   position: relative;
   height: 100vh;
-  background: #f1f1f1;
+  background: #fffffff2;
+  backdrop-filter: blur(4px);
   user-select: none;
+  display: flex;
+  flex-direction: column;
   .tips{
     color: #9e9e9e;
     font-size: 12px;
@@ -303,8 +318,8 @@ const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,sele
   }
   .body{
     padding: 10px;
-    height: 200px;
-    overflow: scroll;
+    flex: 1;
+    overflow-y: scroll;
     background: #fff;
     .back{
       color: #1b82d3;
@@ -395,6 +410,9 @@ const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,sele
       margin: 5px 0;
       cursor: pointer;
       position: relative;
+      &:hover{
+        background: #fff;
+      }
       .avatar{
         width: 70px;
         height: 70px;
@@ -477,13 +495,12 @@ const {pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,sele
   }
   .foot{
     font-size: 12px;
-    right: 10px;
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
+    position: sticky;
+    bottom: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 5px;
     .about{
       cursor: pointer;
       color: #03a9f4;

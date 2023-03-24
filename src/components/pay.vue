@@ -87,8 +87,6 @@ const onClose = ()=>{
 onMounted(()=>{
   let {code,auth_code,u,m} = onQuery();
   state.code = code;state.auth_code = auth_code;state.uuid = u;state.money = Math.max(0.01,Number(m)).toFixed(2);
-  console.log(state)
-  // (typeof WeixinJSBridge == "undefined" && typeof WeixinJSBridge == "undefined") && (location.href = '/');
   document.addEventListener('AlipayJSBridgeReady', onAlipay, false);
   document.addEventListener('WeixinJSBridgeReady', onWeixin, false);
 })

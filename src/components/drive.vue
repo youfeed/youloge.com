@@ -24,7 +24,7 @@
           </div>
           <div class="item" v-copy="onCopy">
             <span>资源外链</span>
-            <span>点击复制外链</span>
+            <span class="copylink">点击复制外链</span>
           </div>
         </div>
         <div class="foot">
@@ -76,6 +76,7 @@ let state = reactive({
   record:{},
   downsign:null
 })
+
 onMounted(()=>{
   let {uuid} = document.querySelector('#app').dataset;
   uuid ? useFetch().api('drive',{uuid:uuid}).then(({err,msg,data})=>{
@@ -175,6 +176,11 @@ const {uuid,title,description,ext,mime,etag,size,cost,owner,created,updated} = t
       &::after{
         border: 1px solid #333;
       }
+      .copylink{
+        cursor: pointer;
+        color: #70a3ff;
+        user-select: none;
+      }
     }
   }
   .foot{
@@ -212,6 +218,7 @@ const {uuid,title,description,ext,mime,etag,size,cost,owner,created,updated} = t
           text-align: center;
           color: #fff;
           cursor: pointer;
+          user-select: none;
           div{
             font-weight: 600;
             font-size: 18px;

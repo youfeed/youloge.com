@@ -72,7 +72,7 @@ import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
 const state = reactive({
   name:'youloge.sso',
   hash:location.hash,
-  origin:null,
+  referrer:document.referrer,
   ukey:'',
   msg:'获取验证码',
   mask:false,
@@ -87,18 +87,27 @@ const state = reactive({
 })
 
 onMounted(()=>{
-  window.self === window.top ? location.href ='/' : onSync();
+  window.self === window.top ? location.href ='/' : postMessage('ready',{msg:'youloge.sso is ready'});
   // 接收初始参数
-  window.onmessage = event=>{
-    let {origin,data} = event,{ukey,name,hash,close} = data
-    if(name === state.name && hash === state.hash){
-      let {hostname} =  new URL(origin);
-      state.host = hostname;state.ukey = ukey;state.close = close;state.origin = origin
+  const {referrer,hash,ukey} = state;
+  window.onmessage = ({origin,data})=>{
+    let {method,params} = data[hash] || {};
+    if(referrer.startsWith(origin) && method && ukey == ''){
+      let work = {
+        'init':()=>{
+          params.ukey.length < 64 && postMessage('fail',{msg:'Ukey undefined'});
+          state.host = new URL(origin).hostname;
+          state.ukey = params.ukey;
+          state.close = params.close;
+          onSync();
+        }
+      };
+      work[method] ? work[method]() : console.log('not method');
     }
   }
 })
-const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '{}');
-const setStorage = (key,val)=>localStorage.setItem(key,JSON.stringify(val));
+const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '[]');
+const setStorage = (key,val=[])=>localStorage.setItem(key,JSON.stringify(val));
 const sso = computed(()=>['sso',{'mask':state.mask}])
 const passCls = computed(()=>['field',{'stop':state.sign !== ''}])
 const codeCls = computed(()=>['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}])
@@ -142,25 +151,26 @@ const onSubmit = ()=>{
 // 快捷登录 - 授权签名
 const onQuick = (event)=>{
   let {uuid,signer} = event
-  onFetch('sign',{ukey:state.ukey,uuid:uuid,signer:signer}).then(res=>{
-    let json = Object.assign(markRaw({}),event,res.data);
+  onFetch('sign',{uuid:uuid,signer:signer}).then(res=>{
+    let json = Object.assign(markRaw({}),event,res.data);delete json.wallet;
     res.err == 0 ? postMessage('success',json) : postMessage('fail',{msg:res.msg});
   })
 }
 // 同步资料
 const onSync = ()=>{
-  state.account = getStorage('account') || [];
+  state.account = getStorage('account');
   let params = state.account.map(item=>{
     return {'signer':item.signer,'wallet':false}
   });
-  params.length > 0 && onFetch('sync',params).then(res=>{
+
+  params.length > 0 && onFetch('sync',{account:params}).then(res=>{
     res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : postMessage('fail',{msg:res.msg})
   });
 }
 // 发起请求
-const onFetch = (method,params)=>{
+const onFetch = (method,params={})=>{
   state.mask = true;
-  return fetch('https://api.youloge.com',{method:'post',body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
+  return fetch('https://api.youloge.com',{method:'post',headers:{ukey:state.ukey},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
     state.mask = false;return res
   }).catch(err=>{
     postMessage('fail',{msg:'网络网关错误',err:err})
@@ -169,9 +179,9 @@ const onFetch = (method,params)=>{
 // 关闭弹窗
 const onClose = ()=>postMessage('close',{msg:'用户主动取消登录'})
 // postMessage
-const postMessage = (emit,data)=>{
-  let {name,hash,origin} = state;
-  window.parent.postMessage({ name:name,hash:hash,emit:emit,data }, origin)
+const postMessage = (method,params={})=>{
+  let {hash,referrer} = state;
+  window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
 }
 const {msg,host,mode,pass,word,close,account} = toRefs(state)
 </script>
@@ -182,7 +192,11 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
 .sso{
   position: relative;
   height: 100vh;
-  background: #f1f1f1;
+  background: #fffffff2;
+  backdrop-filter: blur(4px);
+  user-select: none;
+  display: flex;
+  flex-direction: column;
   .stop{
     opacity: .5;
     pointer-events: none;
@@ -198,14 +212,15 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
     }
   }
   .quick{
-    max-height: 210px;
+    flex: 1;
     overflow-y: scroll;
     .profile{
       cursor: pointer;
       display: flex;
       align-items: center;
-      margin-left: 5px;
-      border-bottom: 1px solid #ddd;
+      margin: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
       &:hover{
         background: #fff;
       }
@@ -233,8 +248,8 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
     }
   }
   .body{
+    flex: 1;
     padding: 10px;
-    height: 210px;
     .next{cursor: pointer;position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
     .label::before,
     .field input:valid + label::before,
@@ -294,14 +309,13 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
   }
   .foot{
     font-size: 14px;
-    right: 10px;
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
+    position: sticky;
+    bottom: 0;
     color: #03a9f4;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 5px;
     .create{
       cursor: pointer;
       color: #03a9f4;
