@@ -1,7 +1,7 @@
 <template>
   <div>
     <y-header aria="云盘" aside="true"></y-header>
-    <main class="document">
+    <main class="drive">
       <div class="box">
         <div class="head">
           <span>{{title}}<em>.{{ext}}</em></span></div>
@@ -34,20 +34,21 @@
               <a href="javascript:;" v-login="shareing" class="share">获得推广外链</a>
             </div>
             <div class="right">
-              <div class="cost">￥ <em>{{cost}}</em> 元(24小时下载权限)</div>
+              <div class="cost"><y-rgba :value="cost"></y-rgba></div>
               <div class="load" v-login="download">
                 <div>立即下载(无限速)</div>
-                <p>有效期内重复点击下载不收费</p>
+                <p>24小时内重复点击下载不收费</p>
               </div>
             </div>
           </div>
           <div class="rule">
             <ul>
               <li>文件标识：{{ uuid }}</li>
-              <li>来源标识：{{ owner }}</li>
+              <li>来源标识：{{ author }}</li>
               <li>哈希标识：{{ etag }}</li>
               <li>·</li>
               <li>但行好事 莫问前程</li>
+              <li>& 1.00 RGB ≈ ￥ 1.00 CNY ≈ $ 0.14 USD</li>
             </ul>
           </div>
         </div>
@@ -58,8 +59,8 @@
 </template>
 
 <script setup>
-import { computed, inject,onMounted,reactive,ref,toRefs } from 'vue';
-const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useMessage = inject('useMessage');
+import { computed, inject,onMounted,reactive,watch,toRefs } from 'vue';
+const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useMessage = inject('useMessage'),usePlus = inject('usePlus');
 const usePayment = inject('usePayment');
 let state = reactive({
   uuid:'',
@@ -68,31 +69,57 @@ let state = reactive({
   ext:'',
   mime:'',
   etag:'',
-  size:'',
+  size:0,
   cost:'',
-  owner:'',
+  author:'',
   created:'',
   updated:'',
   record:{},
   downsign:null
 })
-
+// 初始info
 onMounted(()=>{
-  let {uuid} = document.querySelector('#app').dataset;
-  uuid ? useFetch().api('drive',{uuid:uuid}).then(({err,msg,data})=>{
+  state.uuid = new URL(location).searchParams.get('f');
+  console.log(state.uuid)
+  state.uuid ? useFetch().api('drive','info',{uuid:state.uuid}).then(({err,msg,data})=>{
     err == 0 ? Object.assign(state, data): useMessage().warning(msg)
-  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then()
+  }).catch(err=>{
+    useDialog({title:'网络错误',content:'请检查网络'}).alert().then()
+  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then();
 })
-const sized = computed(()=>`${(state.size / 1024 / 1024).toFixed(2)} Mb`)
+// 
+const sized = computed(()=>{
+  let size = state.size;
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let index = 0;
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024;index++;
+  }
+  return `${size.toFixed(2)} ${units[index]}`;
+})
 // 二维码
 const qrcode = computed(()=>{
-  let data = encodeURIComponent(`https://youloge.com/${state.uuid}?share=none`)
+  let data = encodeURIComponent(`https://youloge.com/drive?f=${state.uuid}`)
   return `https://qun.qq.com/qrcode/index?data=${data}`
 })
 // 复制外链
 const onCopy = ()=>{
   let {uuid,title,mime,created} = state;
-  return [`文件：${title}`,`大小：${sized.value}`,`类型：${mime}`,`时间：${created}`,`地址：youloge.com/${uuid}`].join('\r\n');
+  return [`文件：${title}`,`大小：${sized.value}`,`类型：${mime}`,`时间：${created}`,`地址：youloge.com/drive?f=${uuid}`].join('\r\n');
+}
+// 推广分享
+const shareing = ()=>{  
+  useFetch().vip('drive','buyed').then(res=>{})
+
+  useMessage().warning('推广分享内测中')
+}
+// 获取下载
+const download = ()=>{
+  let {uuid,downsign} = state;
+  console.log('233',uuid,downsign);
+  downsign == null ? useFetch({mask:true}).vip('drive','download',{uuid:uuid}).then(res=>{
+    res.err == 0 ? (state.downsign = res.data,createURL()) : (useMessage().warning(res.msg),onPayment());
+  }).catch() : createURL()
 }
 // 创建下载
 const createURL = ()=>{
@@ -109,42 +136,42 @@ const createURL = ()=>{
     useMessage().warning('关闭下载')
   })
 }
-// 推广分享
-const shareing = ()=>{  
-  useMessage().warning('推广分享内测中')
-}
-// 获取下载
-const download = ()=>{
-  let {uuid,downsign} = state;
-  downsign == null ? useFetch({mask:true}).vip('drive_within',{uuid:uuid}).then(res=>{
-    res.err == 0 ? (state.downsign = res.data,createURL()) : (useMessage().warning(res.msg),onPayment());
-  }) : createURL()
-}
 // 调起支付
 const onPayment = ()=>{
-  let {cost,uuid} = state
-  usePayment({
-    local:uuid, // 商品ID
-    money:cost, // 金额
-  }).pay().then(res=>{
-    onEnter(res)
-    console.log('res',res)
+  let {cost,uuid} = state;
+  console.log('onPayment',usePlus())
+  usePlus({height:'360px'}).payment({
+    local:'110',
+    sss:'110',
+    close:true,
+    money:cost, // 金额 单位元 （100元=1,000,000） 默认为100 （1000元
+  }).then(res=>{
+    console.log(res)
   }).catch(err=>{
-    console.log('err',err)
-    useMessage().warning(err.msg)
-  });
+    console.log(err)
+  })
 }
 // 确认支付
 const onEnter = (data)=>{
-  useFetch({mask:true}).vip('drive_payment',data).then(res=>{
+  useFetch({mask:true}).vip('drive','payment',data).then(res=>{
     res.err == 0 ? (state.downsign = res.data,createURL())  : useMessage().warning(res.msg);
   })
 }
-const {uuid,title,description,ext,mime,etag,size,cost,owner,created,updated} = toRefs(state)
+// 标题
+watch(
+  () => state.title,
+  (value, _) => {
+    document.title = `${value} - youloge.云盘`
+  }, {immediate:true}
+)
+
+
+
+const {uuid,title,description,author,ext,mime,etag,size,cost,owner,created,updated} = toRefs(state)
 </script>
 
 <style lang="scss">
-.document{
+.drive{
   max-width: 600px;
   margin: 40px auto;
   font-family: math;
@@ -204,11 +231,8 @@ const {uuid,title,description,ext,mime,etag,size,cost,owner,created,updated} = t
       .right{
         .cost{
           color: #FF5722;
-          em{
-            font-size: 24px;
-            font-style: normal;
-            color: #f00;
-          }
+          text-align: center;
+          font-size: 18px;
         }
         .load{
           background: #0080ff;

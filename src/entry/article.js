@@ -4,8 +4,8 @@ import Article from '../components/article.vue'
 
 createApp(Article).use(youloge,{
   // 配置参数 s
-  ukey:'6FGakMxMJe1mBPs9pFD-Ixyxv3j__eo5vnu36jkILEwn6LnZ5QOXfNAlJ6EburKIxSKkB1O59FHJedrefDCSvw==',
-  APIURL:'//api.youloge.com',
-  VIPURL:'//vip.youloge.com',
+  ukey:'qRjE+HMLB8WcnAvdcon5Lx2BSGid7OdQUd5ozRV8QHj4sgP91+Y6xMfhrHZbONGpLErJGMZFZ8GAcEwINSE4VjwdEvna0DwHUJ3zzQNFlQg8s8nhqo4/I3y00q31eYi4',
+  APIURL:'https://api.youloge.com',
+  VIPURL:'https://vip.youloge.com',
   fontsize:'12px'
 }).mount('#app')

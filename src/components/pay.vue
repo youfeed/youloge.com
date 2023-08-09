@@ -29,10 +29,13 @@ const state = reactive({
 })
 const onMoney = computed(()=>`￥ - ${Number(state.money).toFixed(2)}`)
 // 微信支付宝直接支付 银行卡支付不在这里
-const onQuery = ()=>{
-  let query = {};new URL(location.href).searchParams.forEach((value, key)=>{
-    query[key] = value
-  });return query
+const URLQuery = (query = {})=>{
+  new URL(location.href).searchParams.forEach((value, key)=>query[key] = value);return query
+}
+// 网络请求
+const onRequset = (path,method,params={},SLD='api')=>{
+  let body = {method:method,params:params};
+  return fetch(`https://${SLD}.youloge.com/${path}`,{method:'post',body:JSON.stringify(body)}).then(r=>r.json()).then(r=>r).catch(e=>e)
 }
 const onFetch = (method='',params={})=>{
   let body = {method:method,params:params};
@@ -40,17 +43,21 @@ const onFetch = (method='',params={})=>{
 }
 // 微信支付
 const onWeixin = ()=>{
-  state.mode = 'weixin'
+  state.mode = 'weixin';
   let {code,uuid,money} = state;
   let enURI = encodeURIComponent(location.href);
   let uri = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx87a7ba6752f6be0b&redirect_uri=${enURI}&response_type=code&scope=snsapi_base&state=weixin#wechat_redirect`
   code || (location.href = uri);
-  code && onFetch('codepay',{appid:'wx87a7ba6752f6be0b',uuid:uuid,money:money,code:code}).then(payment=>{
-    state.payment = payment;history.pushState({},null,'/');
-    WeixinJSBridge.invoke('getBrandWCPayRequest',{...payment},function({err_msg}){
-      err_msg == 'get_brand_wcpay_request:ok' && onClose()
-    })
-  });
+  code && onRequset().then(res=>{
+
+  })
+  
+  // onFetch('codepay',{appid:'wx87a7ba6752f6be0b',uuid:uuid,money:money,code:code}).then(payment=>{
+  //   state.payment = payment;history.pushState({},null,'/');
+  //   WeixinJSBridge.invoke('getBrandWCPayRequest',{...payment},function({err_msg}){
+  //     err_msg == 'get_brand_wcpay_request:ok' && onClose()
+  //   })
+  // });
 } 
 // 支付宝支付
 const onAlipay = (e)=>{
@@ -85,7 +92,7 @@ const onClose = ()=>{
 }
 // 初始监听
 onMounted(()=>{
-  let {code,auth_code,u,m} = onQuery();
+  let {code,auth_code,u,m} = URLQuery();
   state.code = code;state.auth_code = auth_code;state.uuid = u;state.money = Math.max(0.01,Number(m)).toFixed(2);
   document.addEventListener('AlipayJSBridgeReady', onAlipay, false);
   document.addEventListener('WeixinJSBridgeReady', onWeixin, false);

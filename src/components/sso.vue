@@ -1,7 +1,7 @@
 <template>
   <div :class="sso">
     <div class="head">
-      <div class="title">登录·注册</div>
+      <div class="title" v-text="lang('title')"></div>
     </div>
 
     <div class="progress"><span class="rate"></span></div>
@@ -23,8 +23,8 @@
           <img src="//img.youloge.com/FjjHFE7RwJqfjiwM9aqL4G53kPv3!80">
         </div>
         <div class="account ">
-          <div class="name" style="color:#03a9f4">使用新账户</div>
-          <div class="mail">安全邮箱登录</div>
+          <div class="name" style="color:#03a9f4" v-text="lang('newaccount')"></div>
+          <div class="mail" v-text="lang('newlogin')"></div>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
         <div class="formitem">
           <div class="field">
             <input if="email" type="email" v-model="pass" required autocomplete="off" :class="passCls">
-            <label for="email" title="邮箱" data-title="邮箱"></label>
+            <label for="email" :title="lang('email')" :data-title="lang('email')"></label>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@
         <div class="formitem">
           <div class="field">
             <input type="text" v-model="word" required autocomplete="off" :class="wordCls">
-            <label for="code" title="验证码" data-title="验证码"></label>
+            <label for="code" :title="lang('otpcode')" :data-title="lang('otpcode')"></label>
             <div :class="codeCls" @click="onCode">{{msg}}</div>
           </div>
         </div>
@@ -52,13 +52,13 @@
       
       <div>
         <div class="formitem">
-          <div @click="onSubmit" :class="submCls">确认</div>
+          <div @click="onSubmit" :class="submCls" v-text="lang('confirm')"></div>
         </div>
       </div>
     </div>
     <div class="foot">
-      <a class="create" href="//youfeed.github.io/sso" target="_blank">关于账户</a>
-      <div class="source">来源:<span>{{host}}</span></div>
+      <div class="source"><span>{{host}}</span></div>
+      <a class="create" href="//youfeed.github.io/plus" target="_blank" v-text="version"></a>
     </div>
     <div class="close" @click="onClose" v-show="close">
       <svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
@@ -71,8 +71,10 @@ import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
 
 const state = reactive({
   name:'youloge.sso',
+  version:'0.0.8',
   hash:location.hash,
   referrer:document.referrer,
+  uage:navigator.language.toLowerCase(),
   ukey:'',
   msg:'获取验证码',
   mask:false,
@@ -85,17 +87,27 @@ const state = reactive({
   sign:'',
   close:true
 })
-
+const lang = (key)=>({
+  email:['邮箱','Email'],
+  title:['登录·注册','Log In Register'],
+  newaccount:['使用新账户','Use New Account'],
+  newlogin:['安全邮箱登录','Secure Email Login'],
+  otpcode:['验证码','OTP Code'],
+  confirm:['确认','Confirm'],
+  afresh:['重新获取','Try Again']
+}[key][+!state.uage.startsWith('zh')]);
 onMounted(()=>{
-  window.self === window.top ? location.href ='/' : postMessage('ready',{msg:'youloge.sso is ready'});
+  window.self === window.top ? location.href ='/' : SendMessage('ready',{msg:'youloge.sso is ready'});
   // 接收初始参数
   const {referrer,hash,ukey} = state;
-  window.onmessage = ({origin,data})=>{
+  // window.addEventListener('message',({origin,data,source})=>{
+  window.onmessage = ({origin,data,source})=>{
+    console.log(hash,data)
     let {method,params} = data[hash] || {};
     if(referrer.startsWith(origin) && method && ukey == ''){
       let work = {
         'init':()=>{
-          params.ukey.length < 64 && postMessage('fail',{msg:'Ukey undefined'});
+          params.ukey.length < 64 && SendMessage('error',{msg:'Ukey undefined'});
           state.host = new URL(origin).hostname;
           state.ukey = params.ukey;
           state.close = params.close;
@@ -121,14 +133,14 @@ const onToggle = ()=>{
 // 获取验证码
 const onCode = ()=>{
   state.sign = true
-  onFetch('register',{mail:state.pass}).then(res=>{
-    let {random,signer} = res.data,second = 120
+  onFetch('register',{mail:state.pass}).then(({data})=>{
+    let {random,access,expire} = data,second = 120
     let timer = setInterval(()=>{
-      state.sign = signer
-      state.msg = `${random}(${--second}s)`
+      state.sign = access
+      state.msg = `${random}(-${--second})`
       if(second < 0){
         state.sign = ''
-        state.msg = '重新获取'
+        state.msg = lang('afresh')
         clearTimeout(timer)
       }
     },1000)
@@ -136,7 +148,8 @@ const onCode = ()=>{
 }
 // 获取长期Token
 const onSubmit = ()=>{
-  onFetch('login',{pass:state.sign,word:state.word}).then(res=>{
+  console.log('state',state)
+  onFetch('verify',{access:state.sign,code:state.word}).then((res)=>{
     let {err,msg,data} = res;
     if(err == 0){
       state.mode = 'quick';
@@ -150,40 +163,49 @@ const onSubmit = ()=>{
 }
 // 快捷登录 - 授权签名
 const onQuick = (event)=>{
-  let {uuid,signer} = event
-  onFetch('sign',{uuid:uuid,signer:signer}).then(res=>{
-    let json = Object.assign(markRaw({}),event,res.data);delete json.wallet;
-    res.err == 0 ? postMessage('success',json) : postMessage('fail',{msg:res.msg});
+  let {uuid,jwtoken} = event
+  onFetch('sign',{uuid:uuid,jwtoken:jwtoken}).then(res=>{
+    let json = Object.assign(markRaw({}),event,res.data);//delete json.wallet;
+    res.err == 0 ? SendMessage('success',json) : SendMessage('error',{msg:res.msg});
   })
 }
-// 同步资料
+// 同步资料 - jwtoken
 const onSync = ()=>{
   state.account = getStorage('account');
-  let params = state.account.map(item=>{
-    return {'signer':item.signer,'wallet':false}
+  let params = [], times = new Date().getTime() / 1000 >> 0;
+  state.account.map(({uuid,jwtoken,expire})=>{
+    if((expire - times) < 3600){
+      params.push({uuid:uuid,jwtoken:jwtoken})
+    }
   });
-
-  params.length > 0 && onFetch('sync',{account:params}).then(res=>{
-    res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : postMessage('fail',{msg:res.msg})
+  let [...isEmpty] = params
+  console.log('sync',params,isEmpty)
+  isEmpty && onBatch('sync',params).then(res=>{
+    console.log(res)
+    // res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : SendMessage('error',{msg:res.msg})
   });
 }
-// 发起请求
+// 发起请求 params [] 批量 {} 单条
 const onFetch = (method,params={})=>{
   state.mask = true;
-  return fetch('https://api.youloge.com',{method:'post',headers:{ukey:state.ukey},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
-    state.mask = false;return res
-  }).catch(err=>{
-    postMessage('fail',{msg:'网络网关错误',err:err})
+  return new Promise((resolve)=>{
+    fetch('https://api.youloge.com/login',{method:'post',headers:{ukey:state.ukey,lang:state.lang,"Content-Type": "application/json"},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
+      resolve(res);res.err !== 0 && SendMessage('warn',{msg:res.msg})
+    }).catch(err=>{
+      SendMessage('error',{msg:'网络网关错误',err:err});
+    }).finally(()=>{
+      state.mask = false;
+    })
   })
 }
 // 关闭弹窗
-const onClose = ()=>postMessage('close',{msg:'用户主动取消登录'})
-// postMessage
-const postMessage = (method,params={})=>{
+const onClose = ()=>SendMessage('error',{msg:'用户主动取消登录'})
+// SendMessage
+const SendMessage = (method,params={})=>{
   let {hash,referrer} = state;
   window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
 }
-const {msg,host,mode,pass,word,close,account} = toRefs(state)
+const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -229,6 +251,7 @@ const {msg,host,mode,pass,word,close,account} = toRefs(state)
         height: 70px;
         border-radius: 50%;
         overflow: hidden;
+        padding: 2px;
         img{
           max-width: 100%;
         }

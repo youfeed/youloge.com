@@ -45,7 +45,7 @@
 import { inject, onMounted, reactive, toRefs } from 'vue'
 const useFetch = inject('useFetch')
 const usePayment = inject('usePayment')
-console.log(usePayment.version)
+console.log(0,usePayment.version)
 const state = reactive({
   uuid:'',
   data:{
