@@ -9,13 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "sass": "^1.64.2",
+    "sass": "^1.65.1",
     "scss": "^0.2.4",
     "vue": "^3.3.4",
-    "youloge": "^1.4.0"
+    "youloge": "^1.4.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
     "vite": "^4.4.9"
   }
 }
+

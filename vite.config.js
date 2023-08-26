@@ -8,22 +8,11 @@ export default defineConfig({
     modulePreload:{ polyfill:false },
     rollupOptions: {
       external: ['vue','youloge'],
-      // input:'article.html',
-      // input:'drive.html',
-      // input:'index.html',
-      // input:'sso.html',
-      // input:'pay.html',
-      input:'payment.html',
-      // input:'discuss.html',
-      // input:'video.html',
-
-      // input:{
-      //   index: 'index.html',
-      //   document: 'document.html',
-      //   article: 'article.html',
-      //   sso: 'sso.html',
-      //   pay: 'pay.html',
-      // },
+      input:{
+        index: 'index.html',
+        drive: 'drive.html',
+        article: 'article.html'
+      },
       output:{
         entryFileNames:'assets/[name].js',
         chunkFileNames: 'assets/[name].chunk.js',

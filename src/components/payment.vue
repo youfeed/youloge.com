@@ -135,7 +135,7 @@ const lang = (key)=>({
   afresh:['重新获取','Try Again']
 }[key][+!state.uage.startsWith('zh')]);
 onMounted(()=>{
-  window.self === window.top ? location.href ='/' : postMessage('ready',{msg:'youloge.payment is ready'});
+  // window.self === window.top ? location.href ='/' : postMessage('ready',{msg:'youloge.payment is ready'});
   // 初始参数
   const {referrer,hash,ukey} = state;state.account = getStorage('account');
   window.onmessage = ({origin,data})=>{

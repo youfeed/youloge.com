@@ -15,7 +15,7 @@
           <div class="account">
             <div class="name">{{item.name}}</div>
             <div class="mail">{{item.mail}}</div>
-          </div>
+          </div> 
         </div>
       </template>
       <div class="profile" @click="onToggle">
@@ -30,35 +30,32 @@
     </div>
 
     <div class="body" v-show="mode=='normal'">
-
-      <div>
-        <div class="formitem">
+      <form @submit.prevent="onSubmit">
+        <div>
           <div class="field">
-            <input if="email" type="email" v-model="pass" required autocomplete="off" :class="passCls">
-            <label for="email" :title="lang('email')" :data-title="lang('email')"></label>
+            <input id="mail" type="email" v-model="toggled.mail" required autocomplete="off">
+            <label for="mail" :title="lang('email')" data-title="✔"></label>
+            <button class="getcode" @click="onCode" v-text="lang('otpcode')"></button>
           </div>
         </div>
-      </div>
-      
-      <div>
-        <div class="formitem">
+        
+        <div>
           <div class="field">
-            <input type="text" v-model="word" required autocomplete="off" :class="wordCls">
-            <label for="code" :title="lang('otpcode')" :data-title="lang('otpcode')"></label>
-            <div :class="codeCls" @click="onCode">{{msg}}</div>
+            <input id="code" type="text" v-model="toggled.code" required autocomplete="off" pattern="[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789]{5}" minlength="5" maxlength="5">
+            <label for="code" :title="lang('otpcode')+'-'+toggled?.random" data-title="✔"></label>
           </div>
         </div>
-      </div>
-      
-      <div>
-        <div class="formitem">
-          <div @click="onSubmit" :class="submCls" v-text="lang('confirm')"></div>
+        
+        <div>
+          <input class="sso-submit" type="submit" :value="lang('confirm')">
+          <input class="sso-cancel" type="reset"  :value="lang('reset')">
         </div>
-      </div>
+      </form>
     </div>
+
     <div class="foot">
       <div class="source"><span>{{host}}</span></div>
-      <a class="create" href="//youfeed.github.io/plus" target="_blank" v-text="version"></a>
+      <a class="create" href="//youfeed.github.io/ui/plus" target="_blank" v-text="version"></a>
     </div>
     <div class="close" @click="onClose" v-show="close">
       <svg width="24" height="24" viewBox="0 0 24 24" focusable="false"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"></path></svg>
@@ -67,42 +64,51 @@
 </template>
 
 <script setup>
+/**
+ * 相同Ukey 直接快捷登录
+ * 其他Ukey 免输入邮箱->验证码->登录
+ */
 import { computed, markRaw, onMounted, reactive, toRefs } from "vue";
-
 const state = reactive({
   name:'youloge.sso',
-  version:'0.0.8',
+  version:'1.1.3',
   hash:location.hash,
   referrer:document.referrer,
   uage:navigator.language.toLowerCase(),
   ukey:'',
-  msg:'获取验证码',
   mask:false,
 
+  account:[], // 本地缓存账户
+  // 选中账户
+  toggled:{
+    uuid:'',
+    random:'',
+    access:'',
+    secret:'',
+    expire:'',
+    mail:'',
+    code:'',
+    created:'',
+    updated:''
+  },
   mode:'quick',// quick normal
   host:'未知',
-  account:[],
-  pass:'',
-  word:'',
-  sign:'',
   close:true
-})
+});
 const lang = (key)=>({
   email:['邮箱','Email'],
   title:['登录·注册','Log In Register'],
   newaccount:['使用新账户','Use New Account'],
   newlogin:['安全邮箱登录','Secure Email Login'],
-  otpcode:['验证码','OTP Code'],
+  otpcode:['获取验证码','OTP Code'],
   confirm:['确认','Confirm'],
+  reset:['重置','Reset'],
   afresh:['重新获取','Try Again']
 }[key][+!state.uage.startsWith('zh')]);
 onMounted(()=>{
-  window.self === window.top ? location.href ='/' : SendMessage('ready',{msg:'youloge.sso is ready'});
   // 接收初始参数
   const {referrer,hash,ukey} = state;
-  // window.addEventListener('message',({origin,data,source})=>{
   window.onmessage = ({origin,data,source})=>{
-    console.log(hash,data)
     let {method,params} = data[hash] || {};
     if(referrer.startsWith(origin) && method && ukey == ''){
       let work = {
@@ -111,101 +117,99 @@ onMounted(()=>{
           state.host = new URL(origin).hostname;
           state.ukey = params.ukey;
           state.close = params.close;
-          onSync();
+          onRefresh();
         }
       };
       work[method] ? work[method]() : console.log('not method');
     }
   }
+  // 禁止本地
+  window.self === window.top ? location.href ='/' : SendMessage('ready',{msg:'youloge.sso is ready'});
 })
 const getStorage = (key)=>JSON.parse(localStorage.getItem(key) || '[]');
 const setStorage = (key,val=[])=>localStorage.setItem(key,JSON.stringify(val));
 const sso = computed(()=>['sso',{'mask':state.mask}])
-const passCls = computed(()=>['field',{'stop':state.sign !== ''}])
-const codeCls = computed(()=>['next',{'stop':!((/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/).exec(state.pass) && state.sign == '')}])
-const wordCls = computed(()=>['field',{'stop':state.sign == ''}])
-const submCls = computed(()=>['submit',{'stop':!(state.word.length == 6 && state.sign !== '')}])
-
 // 关联账户
 const onToggle = ()=>{
   state.mode = 'normal'
 }
 // 获取验证码
 const onCode = ()=>{
+  let {mail} = state.toggled
   state.sign = true
-  onFetch('register',{mail:state.pass}).then(({data})=>{
-    let {random,access,expire} = data,second = 120
-    let timer = setInterval(()=>{
-      state.sign = access
-      state.msg = `${random}(-${--second})`
-      if(second < 0){
-        state.sign = ''
-        state.msg = lang('afresh')
-        clearTimeout(timer)
-      }
-    },1000)
+  onFetch('code',{mail:mail}).then((data)=>{
+    state.toggled.access = data.access
+    state.toggled.random = data.random
+  }).catch((err)=>{
+    // 弹窗提示错误
+    alert(err)
   })
 }
-// 获取长期Token
+// 验证验证码
 const onSubmit = ()=>{
-  console.log('state',state)
-  onFetch('verify',{access:state.sign,code:state.word}).then((res)=>{
-    let {err,msg,data} = res;
-    if(err == 0){
-      state.mode = 'quick';
-      let index = state.account.findIndex(item=>item.uuid == data.uuid);
-      index == -1 ? state.account.unshift(data) : state.account[index] = data;
-      setStorage('account',state.account);
-    }else{
-      state.hint = msg,state.word = '';
-    }
-  })
+  let {access,code} = state.toggled;
+  onFetch('verify',{access:access,code:code}).then((data)=>{
+    let {uuid,secret,expire} = data;
+    state.toggled.secret = secret;
+    state.toggled.expire = expire;
+    // 保存账户
+    let index = state.account.findIndex(item=>item.uuid == uuid);
+    index == -1 ? state.account.unshift(data) : state.account[index] = data;
+    setStorage('account',state.account);
+    // 直接授权
+    onAuthorize();
+  }).catch((err)=>{})
 }
-// 快捷登录 - 授权签名
+// 快捷登录 - 
 const onQuick = (event)=>{
-  let {uuid,jwtoken} = event
-  onFetch('sign',{uuid:uuid,jwtoken:jwtoken}).then(res=>{
-    let json = Object.assign(markRaw({}),event,res.data);//delete json.wallet;
-    res.err == 0 ? SendMessage('success',json) : SendMessage('error',{msg:res.msg});
-  })
+  Object.assign(state.toggled,event);
+  // 尝试授权签名
+  onAuthorize();
 }
-// 同步资料 - jwtoken
-const onSync = ()=>{
+// 刷新登录 - refresh
+const onRefresh = ()=>{
   state.account = getStorage('account');
-  let params = [], times = new Date().getTime() / 1000 >> 0;
-  state.account.map(({uuid,jwtoken,expire})=>{
-    if((expire - times) < 3600){
-      params.push({uuid:uuid,jwtoken:jwtoken})
-    }
+  let params = state.account.map(({secret})=>({secret:secret}));
+  params.length && onFetch('refresh',params).then(data=>{
+    state.account = data.filter(item=>item.uuid);
+    setStorage('account',state.account);
   });
-  let [...isEmpty] = params
-  console.log('sync',params,isEmpty)
-  isEmpty && onBatch('sync',params).then(res=>{
-    console.log(res)
-    // res.err == 0 ? (setStorage('account',res.data),state.account=res.data) : SendMessage('error',{msg:res.msg})
-  });
+}
+// 授权签名
+const onAuthorize = ()=>{
+  let {uuid,secret} = state.toggled;
+  onFetch('authorize',{secret:secret}).then(({signature,expire})=>{
+    let account = state.account.find(item=>item.uuid == uuid);
+    account.expire = expire;
+    account.signature = signature;
+    SendMessage('success',Object.assign(markRaw({}),account));
+  }).catch((err)=>{
+    // 失败请求验证码
+    onToggle();
+  })
 }
 // 发起请求 params [] 批量 {} 单条
-const onFetch = (method,params={})=>{
-  state.mask = true;
-  return new Promise((resolve)=>{
-    fetch('https://api.youloge.com/login',{method:'post',headers:{ukey:state.ukey,lang:state.lang,"Content-Type": "application/json"},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
-      resolve(res);res.err !== 0 && SendMessage('warn',{msg:res.msg})
-    }).catch(err=>{
-      SendMessage('error',{msg:'网络网关错误',err:err});
-    }).finally(()=>{
-      state.mask = false;
-    })
+const onFetch = (method,params={})=>(state.mask = true,new Promise((resolve,reject)=>{
+  fetch('https://api.youloge.com/login',{
+    method:'post',
+    headers:{ukey:state.ukey,lang:state.lang,"Content-Type": "application/json"},
+    body:JSON.stringify({method:method,params:params})
+  }).then(r=>r.json()).then(({err,msg,data})=>{
+    err == 200 ? resolve(data) : reject(msg);
+  }).catch(err=>{
+    reject(err);
+  }).finally(()=>{
+    state.mask = false;
   })
-}
+}))
 // 关闭弹窗
 const onClose = ()=>SendMessage('error',{msg:'用户主动取消登录'})
 // SendMessage
 const SendMessage = (method,params={})=>{
   let {hash,referrer} = state;
-  window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
+  window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer);
 }
-const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
+const {msg,host,mode,close,account,version,toggled} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -273,7 +277,7 @@ const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
   .body{
     flex: 1;
     padding: 10px;
-    .next{cursor: pointer;position: absolute;top: 10px;right: 10px;color: #2E77E5;font-size: 12px; padding: 5px;}
+
     .label::before,
     .field input:valid + label::before,
     .field input:focus + label::before {
@@ -308,6 +312,7 @@ const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
       color: #222;
       border: 1px solid #ccc;
       border-radius: 3px;
+      text-align: center;
     }
     .field input:focus {
       outline: 0;
@@ -318,6 +323,51 @@ const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
     }
     .field input:focus + label::before {
       color: blue;
+    }
+    input#mail:valid ~ .getcode{
+      display: block;
+      color: blue;
+    }
+    input#mail{
+      letter-spacing: .1em;
+      font-size: 14px;
+      text-transform: lowercase;
+    }
+    input#code{
+      letter-spacing: 2em;
+      font-weight: 800;
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+    .getcode{
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #2196F3;
+      border: 0;
+      padding: 5px;
+      background: transparent;
+      cursor: pointer;
+      display: none;
+      height: 100%;
+    }
+    input[type='submit'],input[type='reset']{
+      width: 100%;
+      height: 40px;
+      background: #09F;
+      color: #fff;
+      border: 1px solid #03A9F4;
+      border-radius: 3px;
+      margin-top: 20px;
+      cursor: pointer;
+      &:hover{
+        opacity: .7;
+      }
+    }
+    input[type='reset']{
+      background: #eee;
+      color: #333;
+      border: 1px solid #03A9F4;
     }
     .submit{
       margin: 20px;
@@ -386,7 +436,6 @@ const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
   }
 }
 @keyframes keymask {
-
   0%{
     background: #00f;
     transform: scaleX(0%);
@@ -408,7 +457,6 @@ const {msg,host,mode,pass,word,close,account,version} = toRefs(state)
   width: 5px;
   background-color: #f5f5f5;
 }
-
 ::-webkit-scrollbar-thumb {
   background-color: #888;
   border-radius: 5px;

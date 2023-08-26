@@ -4,7 +4,12 @@
     <main class="drive">
       <div class="box">
         <div class="head">
-          <span>{{title}}<em>.{{ext}}</em></span></div>
+          <details>
+            <summary>{{title}}<em>.{{format}}</em></summary>
+            <p class="intro">{{intro}}</p>
+          </details>
+        </div>
+        
         <div class="body">
           <div class="item">
             <span>类型</span>
@@ -61,12 +66,12 @@
 <script setup>
 import { computed, inject,onMounted,reactive,watch,toRefs } from 'vue';
 const useFetch = inject('useFetch'), useDialog = inject('useDialog'),useMessage = inject('useMessage'),usePlus = inject('usePlus');
-const usePayment = inject('usePayment');
+
 let state = reactive({
   uuid:'',
   title:'',
-  description:'',
-  ext:'',
+  intro:'',
+  format:'',
   mime:'',
   etag:'',
   size:0,
@@ -75,17 +80,17 @@ let state = reactive({
   created:'',
   updated:'',
   record:{},
-  downsign:null
+  downlink:null
 })
 // 初始info
 onMounted(()=>{
   state.uuid = new URL(location).searchParams.get('f');
   console.log(state.uuid)
   state.uuid ? useFetch().api('drive','info',{uuid:state.uuid}).then(({err,msg,data})=>{
-    err == 0 ? Object.assign(state, data): useMessage().warning(msg)
+    err == 200 ? Object.assign(state, data): useMessage('warning',msg);
   }).catch(err=>{
-    useDialog({title:'网络错误',content:'请检查网络'}).alert().then()
-  }) : useDialog({title:'云文件过期或失效',content:'当前文件无法提供'}).alert().then();
+    useDialog('alert',{title:'网络错误',content:'请检查网络'})
+  }) : useDialog('alert',{title:'云文件过期或失效',content:'当前文件无法提供'})
 })
 // 
 const sized = computed(()=>{
@@ -109,26 +114,31 @@ const onCopy = ()=>{
 }
 // 推广分享
 const shareing = ()=>{  
-  useFetch().vip('drive','buyed').then(res=>{})
-
-  useMessage().warning('推广分享内测中')
+  useMessage('warning','推广分享内测中')
 }
 // 获取下载
 const download = ()=>{
-  let {uuid,downsign} = state;
-  console.log('233',uuid,downsign);
-  downsign == null ? useFetch({mask:true}).vip('drive','download',{uuid:uuid}).then(res=>{
-    res.err == 0 ? (state.downsign = res.data,createURL()) : (useMessage().warning(res.msg),onPayment());
+  let {uuid,downlink,cost} = state;
+  console.log('233',uuid,downlink);
+  downlink == null ? useFetch({mask:true}).vip('drive','download',{uuid:uuid}).then(res=>{
+    res.err == 200 ? (state.downlink = res.data.link,createURL()) : useDialog('confirm',{
+      title:`${res.msg}`,
+      content:`是否购买下载权限<span style='color: #f00;'><small>&</small>${Number(cost).toFixed(2)}<small>RGB</small></span>`,
+      cancel:'取消',
+      confirm:'购买'
+    }).then(()=>{onPayment();}).catch(e=>{
+      useMessage('warning',`购买失败，${e}`)
+    })
   }).catch() : createURL()
 }
 // 创建下载
 const createURL = ()=>{
-  let {downsign,title,ext} = state,attname = `${title}.${ext}`;
-  useDialog({title:'下载文件',content:`大小：${sized.value} - 24小时无限制下载`}).alert().then(res=>{
+  let {downlink,title,ext} = state,attname = `${title}.${ext}`;
+  useDialog('alert',{title:'下载文件',content:`大小：${sized.value} - 24小时无限制下载`,'confirm':'下载'}).then(res=>{
     var ele = document.createElement('a');
     ele.download = attname;
     ele.style.display = 'none';
-    ele.href = `${downsign}&attname=${attname}`;
+    ele.href = downlink;
     document.body.appendChild(ele);
     ele.click();
     document.body.removeChild(ele);
@@ -138,23 +148,35 @@ const createURL = ()=>{
 }
 // 调起支付
 const onPayment = ()=>{
-  let {cost,uuid} = state;
-  console.log('onPayment',usePlus())
-  usePlus({height:'360px'}).payment({
-    local:'110',
-    sss:'110',
-    close:true,
-    money:cost, // 金额 单位元 （100元=1,000,000） 默认为100 （1000元
-  }).then(res=>{
-    console.log(res)
-  }).catch(err=>{
-    console.log(err)
+  let {uuid} = state;
+  let local = Math.random().toString(32);
+  useFetch({mask:true}).vip('drive','payment',{uuid:uuid,local:local}).then(res=>{
+    let action = {
+      200:()=>{
+        let {random,access,expire} = res.data;
+        // 缓存
+        useDialog('password',{
+          title:'请查收邮箱',
+          random:random,
+          submit:'支付'
+        },false).then(data=>{
+          onVerify({access:access,code:data.value})
+        }).catch()
+      },
+      300201:()=>{
+        useMessage('warning','余额不足!请充值或请求好友赠送')
+      }
+    };
+    action[res.err] ?  action[res.err]() : useMessage('warning',res.msg);
+  }).catch(e=>{
+    useMessage('warning',`调起支付失败 ${e}`)
   })
 }
-// 确认支付
-const onEnter = (data)=>{
-  useFetch({mask:true}).vip('drive','payment',data).then(res=>{
-    res.err == 0 ? (state.downsign = res.data,createURL())  : useMessage().warning(res.msg);
+// 验证支付
+const onVerify = (data)=>{
+  console.log('onVerify',data)
+  useFetch({mask:true}).vip('drive','verify',data).then(res=>{
+    res.err == 200 ? (download())  : useMessage('warning',res.msg);
   })
 }
 // 标题
@@ -165,9 +187,7 @@ watch(
   }, {immediate:true}
 )
 
-
-
-const {uuid,title,description,author,ext,mime,etag,size,cost,owner,created,updated} = toRefs(state)
+const {uuid,title,intro,author,format,mime,etag,size,cost,owner,created,updated} = toRefs(state)
 </script>
 
 <style lang="scss">
@@ -182,14 +202,20 @@ const {uuid,title,description,author,ext,mime,etag,size,cost,owner,created,updat
     border-radius: 5px;
   }
   .head{
-    text-align: center;
-    font-size: 24px;
-    height: 50px;
-    border-bottom: 1px solid #999;
-    em{
-      color: #4caf50;
-      text-transform: uppercase;
-      font-style: normal;
+    // border-bottom: 1px solid #999;
+    summary{
+      cursor: pointer;
+      font-size: 24px;
+      text-align: center;
+      em{
+        color: #4caf50;
+        text-transform: uppercase;
+        font-style: normal;
+      }
+    }
+    .intro{
+      background: #eee;
+      padding: 5px;
     }
   }
   .body{
