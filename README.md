@@ -1,8 +1,8 @@
-# Youloge.OPEN
+# Youloge.Pages
 
 这是站点`https://youloge.com`的源码，如果你喜欢这个项目，欢迎star和fork。
 
-- youloge.com/drive 云盘文件服务
+- youloge.com/drive 云盘文件服务单页
 
 > 由于`Github Pages` 站点在国内访问速度慢且会有一些并发限制
 
