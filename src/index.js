@@ -1,8 +1,13 @@
-import { createApp } from "vue"
-import youloge from 'youloge'
-import Drive from '../components/drive.vue'
-createApp(Drive).use(youloge,{
-  // 配置参数
+import 'virtual:uno.css'
+import { createApp } from 'vue'
+import App from './index.vue'
+import youloge from "youloge"
+import { setupRouter } from './router'
+
+const app = createApp(App)
+setupRouter(app)
+
+app.use(youloge,{
   ukey:'qRjE+HMLB8WcnAvdcon5Lx2BSGid7OdQUd5ozRV8QHj4sgP91+Y6xMfhrHZbONGpLErJGMZFZ8GAcEwINSE4VjwdEvna0DwHUJ3zzQNFlQg8s8nhqo4/I3y00q31eYi4',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://www.youloge.com',

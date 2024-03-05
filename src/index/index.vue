@@ -46,7 +46,7 @@ import { inject, onMounted, reactive, toRefs } from 'vue'
 const useFetch = inject('useFetch')
 const usePayment = inject('usePayment')
 const usePlus = inject('usePlus')
-console.log(0,usePayment.version)
+console.log('index')
 const state = reactive({
   uuid:'',
   data:{
@@ -60,9 +60,9 @@ const state = reactive({
 onMounted(()=>{
   let uuid = location.pathname.substr(1)
   state.uuid = uuid
-  usePlus().sso({close:true}).then(res=>{
-    console.log(111,res)
-  }).catch(e=>{})
+  // usePlus().sso({close:true}).then(res=>{
+  //   console.log(111,res)
+  // }).catch(e=>{})
   // usePayment().pay({local:'5',money:'0.01'}).then(res=>{
   //   console.log(111,res)
   // }).catch(e=>{

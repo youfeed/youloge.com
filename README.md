@@ -1,11 +1,12 @@
-# Youloge.Pages
+# Youloge.com @user
 
-这是站点`https://youloge.com`的源码，如果你喜欢这个项目，欢迎star和fork。
+这是站点`https://youloge.com/:user`的源码，如果你喜欢这个项目，欢迎star和fork。
 
-- youloge.com/drive 云盘文件服务单页
+- youloge.com/:user 个人主页
+- youloge.com/:user/blog 博客
 
-> 由于`Github Pages` 站点在国内访问速度慢且会有一些并发限制
+##### 以下是部署参考：`可以提交你的站点通过issue`
 
-更推荐使用`webhook`的方式将`Github Pages`的编译`dist`部署到自己服务器去。
+
 
 
