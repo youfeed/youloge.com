@@ -7,7 +7,8 @@ import UserIndex from '@/views/UserIndex.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import Article from '@/views/Article.vue'
 import ArticlePreview from '@/views/ArticlePreview.vue'
-
+import Drive from '@/views/Drive.vue'
+import DrivePreview from '@/views/DrivePreview.vue'
 const routes = [
   {
     path: '/',
@@ -19,6 +20,15 @@ const routes = [
       {
         path: ':uuid',
         component: ArticlePreview,
+      }
+    ]
+  },{
+    path: '/drive',
+    component: Drive,
+    children:[
+      {
+        path: ':uuid',
+        component: DrivePreview,
       }
     ]
   },{
