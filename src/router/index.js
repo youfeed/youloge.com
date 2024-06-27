@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Index from '@/views/Index.vue'
 import NotFound from '@/views/NotFound.vue'
+import Index from '@/views/Index.vue'
 import User from '@/views/User.vue'
 import UserIndex from '@/views/UserIndex.vue'
 import UserProfile from '@/views/UserProfile.vue'
