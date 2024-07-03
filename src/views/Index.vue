@@ -1,29 +1,12 @@
 <template>
-  <header>
-    <div>
-      <div>Youloga</div>
-      <form action="search" >
-        <input type="search" name="q" v-model="q" placeholder="搜索一下">
-        <input type="submit" value="搜索">
-        <input type="radio" name="type" value="video" v-model="type">视频
-        <input type="radio" name="type" value="article" v-model="type">文章
-        <input type="radio" name="type" value="music" v-model="type">音乐
-      </form>
-    </div>
-  </header>
-  <main b b-gray w-30 h-10>
-    <div class="left">
-      <div v-for="(item,index) in list" :key="index">
-
-      </div>
-    </div>
-    <div class="right"></div>
-    indexss
+  <main h-100vh flex flex-col justify-center flex-items-center>
+    <h1>杰克布达</h1>
+    <a href="https://beian.miit.gov.cn/">
+      <p>ICP备案主体信息 ICP备案/许可证号：皖ICP备19004549号</p>
+      <p>ICP备案服务信息 ICP备案/许可证号：皖ICP备19004549号-2</p>
+    </a>
+    <p>皖公安备 34112402000344</p>
   </main>
-  <footer ref="ref">
-    <div>@2024</div>
-    <div>开发接口</div>
-  </footer>
 </template>
 <script setup>
 import { onMounted,inject, reactive,toRefs } from "vue"
