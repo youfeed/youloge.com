@@ -5,6 +5,8 @@ import Index from '@/views/Index.vue'
 import User from '@/views/User.vue'
 import UserIndex from '@/views/UserIndex.vue'
 import UserProfile from '@/views/UserProfile.vue'
+import UserArticle from '@/views/UserArticle.vue'
+
 import Article from '@/views/Article.vue'
 import ArticlePreview from '@/views/ArticlePreview.vue'
 import Drive from '@/views/Drive.vue'
@@ -14,12 +16,19 @@ import VideoWatch from '@/views/VideoWatch.vue'
 const routes = [
   {
     path: '/',
-    component: Index
+    component: Index,
+    beforeEnter: (to, from) => {
+      console.log('/',to, from)
+
+    }
   },{
     path: '/article',
     component: Article,
     children:[
       {
+        path: '',
+        component: ArticlePreview,
+      },{
         path: ':uuid',
         component: ArticlePreview,
       }
@@ -29,6 +38,9 @@ const routes = [
     component: Video,
     children:[
       {
+        path: '',
+        component: VideoWatch,
+      },{
         path: ':uuid',
         component: VideoWatch,
       }
@@ -38,6 +50,9 @@ const routes = [
     component: Drive,
     children:[
       {
+        path: '',
+        component: DrivePreview,
+      },{
         path: ':uuid',
         component: DrivePreview,
       }
@@ -47,12 +62,15 @@ const routes = [
     component: User,
     children:[
       {
-        path: 'index',
+        path: '',
         component: UserIndex,
+      },{
+        path: 'article',
+        component: UserArticle,
       },{
         path: 'profile',
         component: UserProfile,
-      }
+      },
     ]
   },{
     path: '/:pathMatch(.*)',
@@ -74,6 +92,7 @@ export const resetRouter = (app) => {
   })
 }
 export const setupRouter = (app) => {
+  // 未登录 加载不同的路由
   router.beforeEach((to, from, next) => {
     // console.log(to, from)
     // whitelist.includes(to.name) || useAuth() ? next() : next({ name: 'login' });

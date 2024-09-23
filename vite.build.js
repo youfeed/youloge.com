@@ -9,11 +9,9 @@ export const copyFile = (options)=>{
     apply: 'build',
     closeBundle:()=>{
       options.targets.forEach(({src,dest})=>{
-          const oldPath = path.resolve(process.cwd(), src);
-            const newPath = path.resolve(process.cwd(), dest);
-          console.log(options,src,dest,oldPath)
-        const cp = fs.promises.cp(oldPath, newPath);
-        console.log(`${cp}`);
+        const oldPath = path.resolve(process.cwd(), src);
+        const newPath = path.resolve(process.cwd(), dest);
+        fs.promises.cp(oldPath, newPath);
       })
 
     }
@@ -22,7 +20,7 @@ export const copyFile = (options)=>{
 /**
  * 构建后重命名html
 **/
-export const renameHTML = ()=>{
+export const renameHTML = (options)=>{
     return {
       name: 'vite-plugin-rename-html', 
       apply: 'build',

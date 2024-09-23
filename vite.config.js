@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import {resolve} from 'path'
 import UnoCSS from 'unocss/vite'
 import vue from '@vitejs/plugin-vue'
-import { viteExternalsPlugin } from 'vite-plugin-externals'
+import { resolve } from 'path'
+import { defineConfig } from 'vite'
 import { copyFile } from './vite.build.js'
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 export default defineConfig({
   plugins: [
     vue(),

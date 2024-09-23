@@ -4,12 +4,14 @@ import App from './index.vue'
 import youloge from "youloge"
 import { setupRouter } from './router'
 
-const app = createApp(App)
-setupRouter(app)
-
-app.use(youloge,{
-  ukey:'qRjE+HMLB8WcnAvdcon5Lx2BSGid7OdQUd5ozRV8QHj4sgP91+Y6xMfhrHZbONGpLErJGMZFZ8GAcEwINSE4VjwdEvna0DwHUJ3zzQNFlQg8s8nhqo4/I3y00q31eYi4',
+const storage = {
+  APIKEY:'it-lk1ER3z-iVEDdHRtIxh-jwymtE65cfZwjh2OUOYbBg3E6Z54DILcVgfbi5KYyn5J0OVyCTReXCIaFtgGxdw',
+  NOTIFY:'https://www.youloge.com',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://www.youloge.com',
   fontsize:'12px'
-}).mount('#app')
+}
+sessionStorage.setItem('youloge',JSON.stringify(storage))
+const app = createApp(App)
+setupRouter(app)
+app.mount('#app')
