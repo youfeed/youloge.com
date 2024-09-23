@@ -15,7 +15,7 @@ export default defineConfig({
       targets:[
         {
           src:'dist/index.html',
-          dest:'dist/401.html'
+          dest:'dist/404.html'
         }
       ]
     })
