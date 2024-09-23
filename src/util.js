@@ -66,6 +66,60 @@ export const vipFetch = (pathname,body)=>{
   })
 }
 
+export const useImage = (uuid,size='0')=>{
+  return `https://img.youloge.com/${uuid}!${size}`
+}
+export const useViews = (num,suffix='views')=>{
+  let nums = Number(num);
+  let [base] = [
+    [1,0,''],
+    [1000,1,'K'],
+    [1000000,2,'M'],
+    [1000000000,2,'B'],
+  ].map(([cur,spl,unit])=>{
+    let curs = nums / cur;
+    if(curs < 1000){
+      return curs.toFixed(spl)+unit
+    }
+  }).filter(Boolean);
+  return `${base} ${suffix}`;
+}
+export const useDuration = (second)=>{
+  let min = String(second / 60 >> 0).padStart(2,'0');
+  let sec = String(second % 60 >> 0).padStart(2,'0');
+  return  `${min}:${sec}`;
+}
+export const useTimeago = (date,i='zh')=>{
+  let diff = (new Date() - new Date(date.replace(/-/gi,"/"))) / 1000 >> 0;
+  let [key,sep,...lang] = {
+    'zh':[0,'','前','后'],
+    'en':[1,' ','ago','later'],
+  }[i] || [0,'前','后'];
+  let base = [
+    [31536000,'年','Years'],
+    [2592000,'个月','Month'],
+    [604800,'周','Week'],
+    [86400,'天','Day'],
+    [3600,'小时','Hour'],
+    [60,'分钟','Minute'],
+    [1,'秒','Second'],
+    [-1,'秒','Second'],
+    [-60,'分钟','Minute'],
+    [-3600,'小时','Hour'],
+    [-86400,'天','Day'],
+    [-604800,'周','Week'],
+    [-2592000,'个月','Month'],
+    [-31536000,'年','Years']
+  ].map(([sec,...unit])=>{
+    let cur = diff / sec >> 0;
+    if(cur > 0){
+      return [cur,unit[key]]
+    }
+  }).filter(Boolean);
+  return (diff > 0 ? [...base.shift(),lang.shift()] : [...base.pop(),lang.pop()]).join(sep);
+}
+
+
 export const useConfig = (key,val=false)=>{
   let Storage = JSON.parse(sessionStorage.getItem(key) || {})
   return val ? sessionStorage.setItem(key,JSON.stringify({...Storage,...val}))  : Storage; 

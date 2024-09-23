@@ -9,9 +9,12 @@ import UserArticle from '@/views/UserArticle.vue'
 
 import Article from '@/views/Article.vue'
 import ArticlePreview from '@/views/ArticlePreview.vue'
+
 import Drive from '@/views/Drive.vue'
 import DrivePreview from '@/views/DrivePreview.vue'
+
 import Video from '@/views/Video.vue'
+import VideoIndex from '@/views/VideoIndex.vue'
 import VideoWatch from '@/views/VideoWatch.vue'
 const routes = [
   {
@@ -39,7 +42,7 @@ const routes = [
     children:[
       {
         path: '',
-        component: VideoWatch,
+        component: VideoIndex,
       },{
         path: ':uuid',
         component: VideoWatch,

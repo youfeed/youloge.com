@@ -1,16 +1,20 @@
 <template>
-  <header >
-    <div>Tab</div>
-    <div>img</div>
-    <div>Name</div>
-    <div>Search</div>
-    <div>Profile</div>
+  <header class="flex justify-between items-center h-10 px-2">
+    <div>
+      <span>/// Youloge.User </span>
+    </div>
+    <div>
+      <form action="">
+        <input type="text" name="q" placeholder="搜索用户" />
+      </form>
+    </div>
+    <div>
+      User
+    </div>
   </header>
-  <div>/useruseruser</div>
-  <main>
+  <main class="columns">
     <router-view></router-view>
   </main>
-  <footer>Footer</footer>
 </template>
 
 <script setup>
