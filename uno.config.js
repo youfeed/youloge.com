@@ -1,14 +1,14 @@
-import { defineConfig,presetUno,presetMini,presetAttributify,presetIcons } from 'unocss'
+import { defineConfig,presetUno,presetMini,presetTypography,presetAttributify,presetIcons } from 'unocss'
 
 export default defineConfig({
   presets:[
-    presetMini(),
+    // presetMini(),
     presetUno(),
     presetAttributify(),
-    // presetIcons(),
+    presetTypography(),
     presetIcons({
-    //   autoInstall: false,
-      // cdn: 'https://esm.sh/',
+      autoInstall: false,
+      cdn: 'https://esm.sh/',
     //   collections:{
     //     mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
     //   }

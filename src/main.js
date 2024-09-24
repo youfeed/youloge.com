@@ -1,9 +1,8 @@
 import 'virtual:uno.css'
 import 'virtual:unocss-devtools'
-// import 'virtual:windi.css'
 
-import { createApp } from 'vue'
 import App from './App.vue'
+import { createApp } from 'vue'
 // import youloge from "youloge"
 import { setupRouter } from './router'
 
@@ -12,7 +11,7 @@ const storage = {
   NOTIFY:'https://www.youloge.com',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://www.youloge.com',
-  fontsize:'12px'
+  // fontsize:'12px'
 }
 sessionStorage.setItem('youloge',JSON.stringify(storage))
 const app = createApp(App)

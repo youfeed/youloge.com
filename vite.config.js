@@ -7,8 +7,8 @@ import { viteExternalsPlugin } from 'vite-plugin-externals'
 
 export default defineConfig({
   plugins: [
-    vue(),
     UnoCSS(),
+    vue(),
     viteExternalsPlugin({
       vue: 'Vue'
     }),
@@ -22,10 +22,10 @@ export default defineConfig({
     })
   ],
   build:{
+    sourcemap: false,
     cssCodeSplit:false,
     modulePreload:{ polyfill:false },
     rollupOptions: {
-      sourcemap: false,
       // external: ['vue','youloge'],
       // input:{
       //   index: 'index.html',
