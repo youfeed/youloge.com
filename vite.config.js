@@ -4,6 +4,7 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { copyFile } from './vite.build.js'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
+// const UnoCSS = (await import('unocss/vite')).default;
 export default defineConfig({
   plugins: [
     vue(),
