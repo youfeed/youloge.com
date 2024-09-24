@@ -6,12 +6,12 @@ export default defineConfig({
     presetUno(),
     presetAttributify(),
     // presetIcons(),
-    // presetIcons({
+    presetIcons({
     //   autoInstall: false,
-    //   cdn: 'https://esm.sh/',
+      // cdn: 'https://esm.sh/',
     //   collections:{
     //     mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
     //   }
-    // })
+    })
   ]
 })

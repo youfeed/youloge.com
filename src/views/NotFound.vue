@@ -5,15 +5,14 @@
         <router-link to="/" class="text-white no-underline">
           返回首页 
         </router-link>
-      </button>
-      <div class="i-mdi:abjad-hebrew w-96px h-96px" style="color: #620e0e;"></div>
-      <div class="w-full flex items-center justify-center gap-x-4 text-4xl p-2 mt-4">
+    </button>
+    <div class="i-mdi:abjad-hebrew w-96px h-96px" style="color: #620e0e;"></div>
+
         <div class="i-logos-vue text-3xl" />
         <div class="i-material-symbols:10k-outline-rounded w-96px h-96px" style="color: #620e0e;"></div>
-  <div class="i-vscode-icons:file-type-light-pnpm" />
-  <div class="i-vscode-icons:file-type-light-pnpm?mask text-red-300" />
-  sss
-</div>
+    
+  
+
 
   </div>
 </template>

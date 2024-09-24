@@ -4,7 +4,7 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import { copyFile } from './vite.build.js'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
-// const UnoCSS = (await import('unocss/vite')).default;
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -25,6 +25,7 @@ export default defineConfig({
     cssCodeSplit:false,
     modulePreload:{ polyfill:false },
     rollupOptions: {
+      sourcemap: false,
       // external: ['vue','youloge'],
       // input:{
       //   index: 'index.html',

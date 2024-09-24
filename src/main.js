@@ -1,8 +1,9 @@
 import 'virtual:uno.css'
 import 'virtual:unocss-devtools'
-import { presetIcons } from 'unocss'
+// import 'virtual:windi.css'
+
 import { createApp } from 'vue'
-import App from './index.vue'
+import App from './App.vue'
 // import youloge from "youloge"
 import { setupRouter } from './router'
 
