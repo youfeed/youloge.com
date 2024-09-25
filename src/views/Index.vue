@@ -15,8 +15,10 @@ const currentComponent = computed(() => {
 });
 // 
 onMounted(()=>{
-  vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{})
-  // console.log('useAuth',useAuth())
+  vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
+    console.log('onMounted',err,msg,data)
+    
+  })
   // observer.observe(state.ref) 
 });
 </script>
