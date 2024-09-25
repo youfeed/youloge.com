@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>233</div>
     <component :is="currentComponent"></component>
   </div>
 </template>
