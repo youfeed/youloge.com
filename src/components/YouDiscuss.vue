@@ -63,6 +63,8 @@
 </template>
 <script setup>
 import { computed, onMounted, reactive, toRefs } from "vue"
+const props = defineProps(['mode','uuid'])
+
 const state = reactive({
   mask:false,
   next:'',
@@ -90,27 +92,14 @@ const state = reactive({
     avatar:'',
     signer:'',
   }
-})
+}),{discuss} = toRefs(state)
 // 
 const cls = computed(()=>['discuss',{'mask':state.mask}])
 onMounted(()=>{
-  // window.self === window.top ? location.href ='/' : onSync();
+  state.mode = props.mode
+  state.uuid = props.uuid
+  //
   onInit()
-  // postMessage('ready',{msg:'youloge.discuss is ready'})
-  const {referrer,hash,ukey} = state;
-  window.onmessage = ({origin,data})=>{
-    let {method,params} = data[hash] || {};
-    if(referrer.startsWith(origin) && method && ukey == ''){
-      let work = {
-        'init':()=>{
-          params.ukey.length < 64 && postMessage('fail',{msg:'Ukey undefined'})
-          state.host = new URL(origin).hostname;state.ukey = params.ukey;state.close = params.close;
-          onInit();
-        }
-      };
-      work[method] ? work[method]() : console.log('not method');
-    }
-  }
 })
 // 发起请求
 const onFetch = (method,params)=>{
@@ -156,160 +145,9 @@ const postMessage = (method,params={})=>{
   let {hash,referrer} = state;
   window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
 }
-const {discuss} = toRefs(state)
+
 </script>
 
 <style lang="scss">
-*{margin: 0;padding: 0;box-sizing: border-box;}
-.grecaptcha-badge{visibility: hidden;}
-.discuss{
-  position: relative;
-  height: 100vh;
-  background: #fffffff2;
-  backdrop-filter: blur(4px);
-  user-select: none;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  .avatar{
-    width: 2rem;
-    height: 2rem;
-  }
-  .head{
-    color: #6190e8;
-    padding: 1em 5px;
-    border-bottom: 1px solid #e9e9e9;
-    font-size: 1em;
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .review,.reply{
-    display: flex;
-    margin-top: 0.5rem;
-    .avatar{
-      width: 2rem;
-      height: 2rem;
-      cursor: pointer;
-      img{
-        width: 100%;
-      }
-    }
-    .content{
-      flex: 1;
-      margin-left: 1rem;
-    }
-    .named{
-      font-size: 16px;
-      color: #222;
-    }
-    .timed{
-      margin-left: 0.5em;
-      font-size: 12px;
-      color: #666;
-    }
-    .loadreply{
-      margin-top: 0.5rem;
-      color: #2196F3;
-      cursor: pointer;
-    }
-  }
-  .body{
-    flex:1;
-    padding: 5px;
-  }
-  .foot{
-    padding: 5px;
-  }
-  .collapse{
-    display: flex;
-    .avatar{
-      width: 2rem;
-      height: 2rem;
-      cursor: pointer;
-      img{
-        width: 100%;
-      }
-    }
-    .content{
-      flex: 1;
-      margin-left: 1rem;
-      .textarea{
-        background: #f2f2f2;
-        min-height: 5rem;
-        padding: 10px;
-        border-radius: 5px;
-        position: relative;
-        .rich{
-          overflow-y: scroll;
-          min-height: 5rem;
-          outline: 0;
-          max-height: 8rem;
-        }
-        .counter{
-          position: absolute;
-          right: 5px;
-          bottom: 5px;
-          color: #888;
-          font-size: 12px;
-          pointer-events: none;
-        }
-        &:hover{
-          border: 1px solid #2196F3;
-        }
-      }
-    }
-    .navbar{
-      margin-top: .5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      .emoji{
-        flex: 1;
-        ul{
-          list-style: none;
-          display: flex;
-          flex-wrap: nowrap;
-          gap: 5px;
-          li{
-            cursor: pointer;
-            width: 1rem;
-            height: 1rem;
-            img{
-              width: 100%;
-            }
-          }
-        }
-      }
-      .button{
-        display: flex;
-        align-items: center;
-        height: 2rem;
-        gap: 10px;
-        .submit{
-          color: #eee;
-          background-color: #6190e8;
-        }
-        .cancel{
-          background-color: #fff;
-          color: #6190e8;
-        }
-        div{
-          padding: 4px 10px;
-          box-shadow: 0 0 2px #000;
-          font-size: 16px;
-          border-radius: 5px;
-          text-decoration: none;
-          white-space: nowrap;
-          cursor: pointer;
-          &:hover{
-            opacity: .7;
-          }
-        }
-      }
-    }
-  }
-}
+
 </style>

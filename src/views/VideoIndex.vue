@@ -7,22 +7,27 @@
             <router-link :to="{path:`/video/${item.uuid}`}" class="no-underline">
               <div class="relative">
                 <img :src="item.poster" class="aspect-video w-full" alt="">
-                <span class="absolute text-white rounded bottom-2 right-2 bg-black/20 px-1 py-1">{{ useDuration(item.duration) }}</span>
-                <span class="absolute text-white rounded bottom-2 left-2 bg-black/20 px-1 py-1">{{ useViews(item.views) }}</span>
-                
+                <div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+                  <div class=" text-white rounded bg-black/20 flex justify-between items-center gap-1">
+                    <i class="i-tdesign-browse"></i>{{ useViews(item.views,'') }}
+                  </div>
+                  <div class=" text-white rounded bg-black/20 flex justify-between items-center gap-1">
+                    <i class="i-tdesign:time text-sm" /> {{ useDuration(item.duration) }}
+                  </div>
+                </div>
               </div>
               
               <div class="flex">
                 <div class="size-10">
                   <router-link :to="{path:`/${item.account.user}`}" class="no-underline size-10">
-                    <img :src="useImage(item.account.avatar,80)" class="w-full " alt="">
+                    <img :src="useImage(item.account.avatar,80)" class="w-full" alt="">
                   </router-link>
                 </div>
-                <div class="pl-2">
+                <div class="pl-2 w-full">
                   <router-link :to="{path:`/${item.account.user}`}" class="no-underline">
                     <div class="flex items-center justify-between">
                       <div class="text-slate-800">{{ item.account.name }}@{{ item.account.user }}</div>
-                      <div>{{ useTimeago(item.created) }}</div>
+                      <div class="text-slate-700">{{ useTimeago(item.created) }}</div>
                     </div>
                   </router-link>
                   <div class="text-slate-900 no-underline text-base">
@@ -45,8 +50,7 @@
  * 主页推荐视频渲染
  */
 import { computed, onMounted, reactive, toRefs } from "vue";
-import { useRoute } from "vue-router";
-import { apiFetch,useImage,useViews,useDuration,useTimeago } from "@/util"
+
 const state = reactive({
   limit:20,
   offset:0,

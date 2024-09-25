@@ -9,9 +9,15 @@ export default defineConfig({
     presetIcons({
       autoInstall: false,
       cdn: 'https://esm.sh/',
-    //   collections:{
-    //     mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
-    //   }
-    })
-  ]
+      extraProperties:{
+        'display': 'inline-block',
+        'vertical-align':'middle',
+      },
+    }),
+  ],
+  preflights:[{
+    getCSS:()=>{
+      `a{text-decoration:none}`
+    }
+  }]
 })

@@ -16,6 +16,8 @@ import DrivePreview from '@/views/DrivePreview.vue'
 import Video from '@/views/Video.vue'
 import VideoIndex from '@/views/VideoIndex.vue'
 import VideoWatch from '@/views/VideoWatch.vue'
+import VideoSearch from '@/views/VideoSearch.vue'
+
 const routes = [
   {
     path: '/',
@@ -44,9 +46,13 @@ const routes = [
         path: '',
         component: VideoIndex,
       },{
+        path: 'search',
+        component: VideoSearch,
+      },{
         path: ':uuid',
         component: VideoWatch,
       }
+      
     ]
   },{
     path: '/drive',

@@ -4,7 +4,6 @@
 
 <script setup>
 import { reactive,onMounted } from 'vue'
-import { useAuth,usePlus } from '@/util'
 
 const state = reactive({});
 
