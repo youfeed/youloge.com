@@ -57,6 +57,12 @@ onMounted(()=>{
   const {uuid} = useAuth();
   state.user = 'Youloge'
   console.log(uuid,125215)
+
+  console.log('onMounted','vipFetch')
+  vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
+    console.log('onMounted',err,msg,data)
+    
+  })
 })
 </script>
 

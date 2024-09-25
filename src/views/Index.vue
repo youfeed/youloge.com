@@ -16,11 +16,7 @@ const currentComponent = computed(() => {
 // 
 onMounted(()=>{
 
-  console.log('onMounted','vipFetch')
-  vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
-    console.log('onMounted',err,msg,data)
-    
-  })
+  
   // observer.observe(state.ref) 
 });
 </script>
