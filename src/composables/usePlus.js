@@ -3,6 +3,8 @@ export default (traget,options={})=>{
     options.apikey = APIKEY;options.notify = NOTIFY;
     const URL = `https://open.youloge.com/${traget}${HASH}`;
     const EVENTS = {[HASH]:{resolve:null,reject:null,iframe:null,fragme:null}};
+    const PROMISE = new Promise((resolve, reject) => (EVENTS[HASH].resolve = resolve,EVENTS[HASH].reject = reject));
+    PROMISE.emit = event => (EVENTS[HASH].event = event,PROMISE);
     const onCreate = ({selector,istyle,fstyle})=>{
       const fragme = document.createElement('div');
       fragme.title = 'Youloge.dialog';
@@ -17,7 +19,12 @@ export default (traget,options={})=>{
     const onDestroy = ()=>{
       EVENTS['fragme'].remove();EVENTS[HASH] = null;
       window.removeEventListener('message',onMessage);
-    }
+    };
+    const preCheck = ()=>{
+      fetch(URL,{method:'HEAD'}).then(({status})=>{
+        status === 200 || (EVENTS[HASH].reject('Youloge.Plus.URL is not available'),onDestroy())
+      })
+    };preCheck();
     const onMessage = ({origin,data,source})=>{
       const [keys] = Object.keys(data),{method,params} = data[keys] || {};
       const {resolve,reject,event,modal,iframe} = EVENTS[keys];
@@ -31,11 +38,8 @@ export default (traget,options={})=>{
         work[method] ? work[method]() : (event && event.call(this,params));
       }
     };window.addEventListener('message',onMessage,{capture:true});
-    const promise = new Promise((resolve, reject) => (EVENTS[HASH].resolve = resolve,EVENTS[HASH].reject = reject));
-    promise.emit = event => {
-      EVENTS[HASH].event = event
-      return promise; 
-    };
-    return promise;
+    
+    
+    return PROMISE;
   }
   

@@ -11,6 +11,7 @@ import Article from '@/views/Article.vue'
 import ArticlePreview from '@/views/ArticlePreview.vue'
 
 import Drive from '@/views/Drive.vue'
+import DriveIndex from '@/views/DriveIndex.vue'
 import DrivePreview from '@/views/DrivePreview.vue'
 
 import Video from '@/views/Video.vue'
@@ -60,7 +61,7 @@ const routes = [
     children:[
       {
         path: '',
-        component: DrivePreview,
+        component: DriveIndex,
       },{
         path: ':uuid',
         component: DrivePreview,

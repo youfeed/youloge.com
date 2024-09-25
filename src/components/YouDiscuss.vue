@@ -94,26 +94,17 @@ const state = reactive({
   }
 }),{discuss} = toRefs(state)
 // 
-const cls = computed(()=>['discuss',{'mask':state.mask}])
+// const cls = computed(()=>['discuss',{'mask':state.mask}])
 onMounted(()=>{
   state.mode = props.mode
   state.uuid = props.uuid
   //
   onInit()
 })
-// 发起请求
-const onFetch = (method,params)=>{
-  state.mask = true;
-  return fetch('https://api.youloge.com',{method:'post',headers:{ukey:state.ukey},body:JSON.stringify({method:method,params:params})}).then(r=>r.json()).then(res=>{
-    state.mask = false;return res
-  }).catch(err=>{
-    postMessage('fail',{msg:'网络网关错误',err:err})
-  })
-}
 // 开始提取数据
 const onInit = ()=>{
-  onFetch('discuss',{uuid:state.uuid}).then(res=>{
-    state.discuss = res.data
+  apiFetch('discuss/init',{mode:'drive',uuid:1005}).then(r=>r.json()).then(res=>{
+    // state.discuss = res.data
     // Object.assign(state,res.data)
     console.log(state)
   })
@@ -134,16 +125,6 @@ const onReply = ()=>{
     state.review[index].reply.push(res.data)
     console.log(res)
   })
-}
-// 展开评论
-const onExpand = ()=>{
-  onReview()
-  postMessage('expand',{msg:'Expand discuss'})
-}
-// postMessage
-const postMessage = (method,params={})=>{
-  let {hash,referrer} = state;
-  window.parent.postMessage({ [hash]:{method:method,params:params} }, referrer)
 }
 
 </script>
