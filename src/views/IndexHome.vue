@@ -15,7 +15,7 @@
       <div class="col-span-full">
         <h1 class="color-blue font-size-36px ">杰克布达</h1>
         <p class="font-size-24px font-bold text-gray-800">快速、零权限、零成本</p>
-        <p class="font-size-18px font-bold text-gray-500">开源开放接口服务平台</p>
+        <p class="font-size-18px font-bold text-gray-500">开源开放接口服务平台.</p>
       </div>
       <!-- <div class="bg-gray-400 p-10 rounded-lg shadow-lg">
         <div class="icon" >🌟</div>
