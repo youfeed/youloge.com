@@ -86,7 +86,7 @@ const onDownload = async ()=>{
   //
    
   usePlus('payment',{
-    account:uuid,
+    profile:uuid,
     money:200
   }).then(res=>{
     console.log(res)
@@ -95,6 +95,7 @@ const onDownload = async ()=>{
   })
 }
 onMounted(()=>{
+  usePlus('captcha')
   state.uuid =  useRouted.params.uuid
   loadMetadata();
 })

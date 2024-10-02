@@ -27,8 +27,8 @@ export default (traget,options={})=>{
     };preCheck();
     const onMessage = ({origin,data,source})=>{
       const [keys] = Object.keys(data),{method,params} = data[keys] || {};
-      const {resolve,reject,event,modal,iframe} = EVENTS[keys];
       if(method && URL.startsWith(origin) && keys === HASH){
+        const {resolve,reject,event} = EVENTS[HASH];
         const work = {
           'oninit':()=>source.postMessage({[keys]:{method:'onload',params:options}},origin),
           'success':()=>{onDestroy();resolve && resolve.call(this,params)},
