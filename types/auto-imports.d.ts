@@ -72,6 +72,7 @@ declare global {
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTimeago: typeof import('../src/composables/useTimeago.js')['default']
   const useViews: typeof import('../src/composables/useViews.js')['default']
+  const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -155,6 +156,7 @@ declare module 'vue' {
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTimeago: UnwrapRef<typeof import('../src/composables/useTimeago.js')['default']>
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
+    readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

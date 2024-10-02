@@ -24,7 +24,6 @@ const routes = [
     path: '/',
     component: Index,
     beforeEnter: (to, from) => {
-      console.log('/',to, from)
 
     }
   },{

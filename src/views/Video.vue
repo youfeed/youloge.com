@@ -19,11 +19,12 @@
         </div>
       </div>
       <div class="search">
-        <div>
+        <YouSearch v-model="search" @change="searchChange" @submit="searchSubmit" @click="searchClick"></YouSearch>
+        <!-- <div>
           <form action="/video/search" method="get">
             <input type="search" name="q" placeholder="请输入视频ID" class="border rounded px-2 py-1"/>
           </form>
-        </div>
+        </div> -->
       </div>
       <div>
         <div class="w-4 h-4">
@@ -49,20 +50,40 @@ const state = reactive({
   user:'',
   name:'',
   mail:'',
-}),{uuid,user,name} = toRefs(state)
+  search:{
+    keyword:'',
+    placeholder:'请输入视频ID',
+    selectd:'video',
+    options:[
+      {label:'视频',value:'video'},
+      {label:'文章',value:'article'},
+      {label:'用户',value:'user'},
+    ]
+  }
+}),{uuid,user,name,search} = toRefs(state)
 /**
  * 做页头侧栏登录渲染
  */
-onMounted(()=>{
-  const {uuid} = useAuth();
-  state.user = 'Youloge'
-  console.log(uuid,125215)
+const searchChange = (value)=>{
+  console.log('searchChange',value)
+}
+const searchSubmit = (value)=>{
+  console.log('searchSubmit',value)
+}
+const searchClick = (value)=>{
+  console.log('searchClick',value)
+}
 
-  console.log('onMounted','vipFetch')
-  vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
-    console.log('onMounted',err,msg,data)
+onMounted(()=>{
+  // const {uuid} = useAuth();
+  // state.user = 'Youloge'
+  // console.log(uuid,125215)
+
+  // console.log('onMounted','vipFetch')
+  // vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
+  //   console.log('onMounted',err,msg,data)
     
-  })
+  // })
 })
 </script>
 

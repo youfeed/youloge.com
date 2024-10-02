@@ -13,7 +13,7 @@ export const copyFile = (options)=>{
         const newPath = path.resolve(process.cwd(), dest);
         fs.promises.cp(oldPath, newPath);
       })
-
+      console.log(`================ copy file ================`);
     }
   }
 }

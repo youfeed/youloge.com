@@ -1,27 +1,31 @@
 <template>
-  <div>
-    <y-header aria="搜索" aside="true"></y-header>
-    <main class="search">
-      <article>
-        <section></section>
-      </article>
-      <div class="container">描述：这是一个用于展示组件内部的变量652动态分配的示例</div>
-    </main>
-    <y-footer></y-footer>
+  <div class="yousearch ">
+    <form :action="`/${model.selectd}/search`" class="flex">
+      <div class="left">
+        <select name="source" v-model="model.selectd">
+          <template v-for="item in model.options" :key="item.value">
+            <option :value="item.value">{{ item.label }}</option>
+          </template>
+        </select>
+      </div>
+      <div>
+        <input name="q" v-model="model.keyword" :placeholder="model.placeholder"/>
+      </div>
+      <div class="">
+        <button >搜素</button>
+      </div>
+    </form>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, toRefs } from "vue";
-
-const state = reactive({
-  uuid:''
-});
-onMounted(()=>{
-  let q = new URL(location.href).searchParams.get('q')
-
+const props = defineProps({
+  'modelValue':{type:Object,required:true}
 })
-const {uuid} = toRefs(state)
+const emit = defineEmits(['update:modelValue'])
+const model =  useVmodel(props,'modelValue',emit)
+
+
 </script>
 
 <style style lang="scss">

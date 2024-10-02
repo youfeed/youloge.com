@@ -38,8 +38,6 @@ export default (traget,options={})=>{
         work[method] ? work[method]() : (event && event.call(this,params));
       }
     };window.addEventListener('message',onMessage,{capture:true});
-    
-    
     return PROMISE;
   }
   

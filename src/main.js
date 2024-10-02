@@ -3,7 +3,6 @@ import 'virtual:unocss-devtools'
 
 import App from './App.vue'
 import { createApp } from 'vue'
-// import youloge from "youloge"
 import { setupRouter } from './router'
 
 const storage = {
@@ -11,7 +10,6 @@ const storage = {
   NOTIFY:'https://www.youloge.com',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://www.youloge.com',
-  // fontsize:'12px'
 }
 sessionStorage.setItem('youloge',JSON.stringify(storage))
 const app = createApp(App)
