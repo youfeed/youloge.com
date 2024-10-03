@@ -13,5 +13,6 @@ const storage = {
 }
 sessionStorage.setItem('youloge',JSON.stringify(storage))
 const app = createApp(App)
+app.directive('copy', copy);
 setupRouter(app)
 app.mount('#app')

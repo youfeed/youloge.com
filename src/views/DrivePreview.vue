@@ -33,8 +33,10 @@
         
         <div class="do flex justify-between items-center text-center w-full mx-auto mt-4">
           <div>
-            <div></div>
-            <div>分享链接</div>
+            <div>
+              <img :src="qrcode" alt="分享二维码" class="w-25 h-25 rounded-sm">
+            </div>
+            <div href="javescript:;" class="text-blue-500 underline" @click="onShare">分享链接</div>
           </div>
           <button @click="onDownload" class="border-0 px-1 py-2 bg-blue-500 text-white rounded-md hover:opacity-80 cursor-pointer">
             <div>立即下载(#{{ data.cost }}RGB)</div>
@@ -50,7 +52,7 @@
     </div>
 
     <div class="discuss mx-auto mt-6 max-w-lg border-solid border-1 p-2">
-      <you-discuss type="drive" mode="1000"></you-discuss>
+      <you-discuss type="drive" :mode="uuid"></you-discuss>
     </div>
     
   </template>
@@ -80,25 +82,58 @@ const loadMetadata = ()=>{
 //
 const onDownload = async ()=>{
   let {uuid} = useAuth()
-  // vipFetch('drive/download',{uuid:state.uuid}).then(r=>r.json()).then(r=>{
-  //   console.log(r)
-  // })
+  vipFetch('drive/download',{uuid:state.uuid}).then(r=>r.json()).then(r=>{
+    console.log(r)
+  })
   //
    
-  usePlus('payment',{
-    profile:uuid,
-    money:200
-  }).then(res=>{
-    console.log(res)
-  }).catch(err=>{
+  // usePlus('payment',{
+  //   profile:uuid,
+  //   money:200
+  // }).then(res=>{
+  //   console.log(res)
+  // }).catch(err=>{
 
-  })
+  // })
 }
 onMounted(()=>{
-  usePlus('captcha')
+  // usePlus('captcha')
   state.uuid =  useRouted.params.uuid
   loadMetadata();
 })
+// 计算二维码
+const qrcode = computed(()=>{
+  let {uuid} = state;
+  let data = encodeURIComponent(`https://youloge.com/drive/${uuid}?u=qr`);
+  return `https://qun.qq.com/qrcode/index?data=${data}`
+})
+// 复制分享文本
+const onShare = (e)=>{
+  let {clientX,clientY} = e;
+  const addend = (txt,color)=>{
+    let Fragment = document.createElement('div');
+    Fragment.textContent = txt
+    Fragment.setAttribute('style',`color: ${color};position: fixed;left:${clientX}px;top:${clientY}px;transform:translate(-50%,-50%);user-select: none;`);
+    Fragment.animate([
+      { transform: "translateY(0px)" },
+      { transform: "translateY(-100px)" },
+    ],{
+      duration: 1000,
+      iterations: 1,
+    })
+    document.body.appendChild(Fragment)
+    setTimeout(()=>{Fragment.remove()},1000)
+  };
+  let {uuid,title,ext,size,mime,updated} = state.data;
+  let text = [
+    `文件：${title}${ext}`,
+    `大小：${size}`,
+    `类型：${mime}`,
+    `时间：${updated}`,
+    `地址：youloge.com/drive/${uuid}`
+  ].join('\r\n');
+  navigator.clipboard ? navigator.clipboard.writeText(text).then(res=>addend('复制成功','#4caf50')).catch(e=>addend('复制失败','#ffc107')) : addend('不支持复制','#ff9800');
+}
 // console.log(useRouted)
 </script>
 

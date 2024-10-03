@@ -2,17 +2,20 @@
   <div :class="cls">
     
     <div class="head flex items-center justify-between h-10" @click="onExpand">
-      <div class="text-lg"> {{count}} 条评论</div>
+      <div class="text-lg"> {{count}} 条点评</div>
       <div> <div class="i-tdesign:format-horizontal-align-center"></div> </div>
     </div>
     
-    <div class="body">
+    <div class="body max-h-screen-sm overflow-y-auto">
       
       <template v-for="item in data" :key="item.uuid">
         <div class="review flex gap-2  my-4">
           <div class="avatar"><img :src="useImage(item.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
           <div class="content w-full">
-            <div class="user"><span class="named">{{item.account.name}}@({{ item.account.user }})</span><span class="timed">{{useTimeago(item.created)}}</span></div>
+            <div class="user">
+              <span class="named">{{item.account.name}}@({{ item.account.user }})</span>
+              <span class="timed">{{useTimeago(item.created)}} - {{useTimeago(item.updated)}}</span>
+            </div>
             <div class="rich">{{item.content}}</div>
             <div class="feedback flex gap-2 items-center">
               <div>
@@ -21,7 +24,7 @@
               <div>
                 <div class="i-tdesign:chat-bubble-1"></div> <span>{{ item.reply }} </span>
               </div>
-              <div>
+              <div @click="atReview(item)">
                 回复
               </div>
             </div>
@@ -31,21 +34,27 @@
                 <div class="reply flex gap-2 my-2">
                   <div class="avatar"><img :src="useImage(items.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
                   <div class="content">
-                    <div class="user"><span class="named">{{items.account.name}}@({{ items.account.user }})</span><span class="timed">{{useTimeago(items.created)}}</span></div>
+                    <div class="user">
+                      <span class="named">{{items.account.name}}@({{ items.account.user }})</span>
+                      <span class="timed">{{useTimeago(items.created)}} - {{useTimeago(items.updated)}}</span>
+                    </div>
                     <div class="rich">{{items.content}}</div>
                     <div class="feedback flex gap-2 items-center">
                       <div>
                         <div class="i-tdesign:thumb-up-2"></div> <span>{{ items.liked }}</span>
                       </div>
                       <div>
-                        <div class="i-tdesign:chat-bubble-1"></div> <span> 回复 </span>
+                        <div class="i-tdesign:chat-bubble-1"></div> 
+                      </div>
+                      <div @click="atQuote(items)">
+                        <span> 回复 </span>
                       </div>
                     </div>
                   </div>
                 </div>
               </template>
               
-              <div class="loadreply" @click="onReply(item)" v-if="(item.count || item.reply) - (item?.data?.length || 0) > 0">加载 余下{{(item.count || item.reply) - (item?.data?.length || 0)}} 条回复 </div>
+              <div class="loadreply" @click="loadReply(item)" v-if="(item.count || item.reply) - (item?.data?.length || 0) > 0">加载 余下{{(item.count || item.reply) - (item?.data?.length || 0)}} 条回复 </div>
               
             </div>
             
@@ -62,12 +71,18 @@
       </div>
       <div class="collapse flex gap-2">
         <div class="avatar"><img :src="useImage(profile?.avatar,'80')" class="w-8 h-8 rounded-full"></div>
-        <div class="content b-1 b-gray-200 rounded-lg border-solid w-full relative">
+        <div class="content b-1 b-gray-200 w-full relative">
+          <div class="">
+            <div v-if="method=='dianping'">发表点评：每个作品仅能发表一个点评 48小时内可编辑</div>
+            <div v-if="method=='edit'">编辑点评：每个作品仅能发表一个点评 48小时内可编辑</div>
+            <div v-if="method=='review'">回复<span class="color-blue-500">@{{toggled.account.user}}</span>：<span class="">{{toggled.content}}</span></div>
+            <div v-if="method=='quote'">引用<span class="color-blue-500">@{{toggled.account.user}}</span>：<span>{{toggled.content}}</span></div>
+          </div>
           <form action="" @submit.prevent="onSubmit" @reset.prevent="onReset">
             <div class="textarea">
-              <textarea class="w-full h-full p-2 min-h-12 rounded-md" name="content" v-model="modelValue" cols="40" rows="4" placeholder="每个作品仅能发表一个点评 48小时内可编辑"></textarea>
+              <textarea class="w-full h-full p-2 min-h-12 rounded-md " name="content" v-model="content" cols="40" rows="4" placeholder="每个作品仅能发表一个点评 48小时内可编辑"></textarea>
               <!-- <div class="rich w-full h-full p-2 min-h-12 focus:min-h-30" contenteditable ></div> -->
-              <div class="counter absolute left-2 bottom-2 text-gray-400 pointer-events-none">0/140</div>
+              <div class="counter absolute left-2 bottom-2 text-gray-400 pointer-events-none">点评 编辑 回复</div>
             </div>
             <div class="navbar absolute right-0 bottom-0 flex gap-2 items-center p-2">
               <div class="emoji">
@@ -107,11 +122,9 @@ const state = reactive({
   mask:false,
   next:'',
   reply:'',
-  uuid:'1234567',
-  ukey:'TKoLtLJatVyqbbNWQFb_yMdoFzoWx40b9I7JzUYwRORqiHB7MxNdfqpN8hnSsx3hdbThUbauq0M60DNkZQZDrQ==',
-  name:'youloge.discuss',
-  hash:location.hash,
-  referrer:document.referrer,
+  content:'',
+  method:'dianping',
+  toggled:{},
   review:[],
   sticker:[],
   discuss:{
@@ -130,50 +143,80 @@ const state = reactive({
     avatar:'',
     signer:'',
   }
-}),{err,msg,data,count,profile,discuss} = toRefs(state);
+}),{err,msg,data,count,profile,content,method,toggled} = toRefs(state);
 // 
 // const cls = computed(()=>['discuss',{'mask':state.mask}])
 // 开始提取数据
-const onInit = ()=>{
-  let {mode,uuid} = state;
-  apiFetch('discuss/info',{mode:'drive',uuid:1005}).then(r=>r.json()).then(res=>{
-    // state.discuss = res.data
-    // Object.assign(state,res.data)
-    console.log(res)
-  });
+const loadInit = ()=>{
+  let {type,mode} = state;
+  let {signature} = useAuth();
+  console.log(type,mode,100,signature)
+
+  if(signature){
+    apiFetch('discuss/info',{type:type,mode:mode,signature:signature}).then(r=>r.json()).then(({err,msg,data})=>{
+      if(err == 200){
+        state.method = 'edit'
+        state.content = data.content
+      }else{
+        state.method = 'dianping'
+      }
+    });
+  };
 }
 onMounted(()=>{
   state.type = props.type;
   state.mode = props.mode;
   state.profile = useAuth();
-  console.log(state.profile)
+  console.log(state.profile,useAuth())
   //
-  onReview(true);
+  loadInit();
+  loadReview(true);
 });
-// 获取评论 - 分页
-const onReview = (isfirst=false)=>{
+// 获取评论 - 分页 
+const loadReview = (isfirst=false)=>{
   let {type,mode,cursor,limit} = state;
-  console.log(type,mode,cursor,limit)
-  // let {uuid} = state.discuss;
   apiFetch('discuss/review',{type:type,mode:mode,cursor:cursor,limit:limit}).then(r=>r.json()).then(res=>{
     isfirst ? Object.assign(state,res) : state.data.push(...res.data);
-
-    console.log(res)
-    // state.review = res.data
   })
 }
 // 获取回复 - 分页
-const onReply = (item,isfirst=false)=>{
+const loadReply = (item,isfirst=false)=>{
   let {err,uuid,cursor,limit} = item;
-  console.log(item)
   apiFetch('discuss/reply',{review:uuid,cursor:cursor || false}).then(r=>r.json()).then(res=>{
     err ? item.data.push(...res.data) : Object.assign(item,res);
   })
 }
-// 发表评论
+// 处理点评模式
+const onMode = (item,mode)=>{
+  
+}
+/**
+ * 发表评论
+ * atReview: type mode content signatrue 
+ * atReply: review:uuid content signature
+ * atQuote: review:uuid quote content signature
+ */
+const atReview = (item)=>{
+  state.method ='review'
+  state.toggled = item;
+  state.content = '';
+  console.log(item)
+
+}
+const atQuote = (item)=>{
+  state.method ='quote';
+  state.toggled = item;
+  state.content = '';
+}
+// 发表评论 mode atReview atReply atQuote
 const onSubmit = ()=>{
-  let {content} = state;
-  console.log(content)
+  let {type,mode,content} = state;
+  let {signature} = useAuth();
+  
+  apiFetch('discuss/onreview',{type,mode,content,signature}).then(r=>r.json()).then(res=>{
+    console.log(res)
+    // err ? item.data.push(...res.data) : Object.assign(item,res);
+  })
 }
 </script>
 

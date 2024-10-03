@@ -9,6 +9,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const apiFetch: typeof import('../src/composables/apiFetch.js')['default']
   const computed: typeof import('vue')['computed']
+  const copy: typeof import('../src/directives/copy.js')['default']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
@@ -93,6 +94,7 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly apiFetch: UnwrapRef<typeof import('../src/composables/apiFetch.js')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
+    readonly copy: UnwrapRef<typeof import('../src/directives/copy.js')['default']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
