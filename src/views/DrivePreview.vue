@@ -66,7 +66,7 @@
 const useRouted = useRoute();
 const state = reactive({
   uuid:0,
-  err:0,
+  err:1,
   msg:'',
   data:{},
   metadata:{}
@@ -95,6 +95,7 @@ const onDownload = async ()=>{
   // })
 }
 onMounted(()=>{
+  console.log(20000)
   state.uuid =  useRouted.params.uuid
   const useImages = useImage("image/x-icon",360);
   console.log(useImages,state.uuid)
