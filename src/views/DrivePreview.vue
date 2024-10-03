@@ -70,7 +70,7 @@ const state = reactive({
   msg:'',
   data:{},
   metadata:{}
-}),{err,msg,data,metadata,uuid} = toRefs(state);
+});
 
 //
 const loadMetadata = ()=>{
@@ -135,6 +135,7 @@ const onShare = (e)=>{
   navigator.clipboard ? navigator.clipboard.writeText(text).then(res=>addend('复制成功','#4caf50')).catch(e=>addend('复制失败','#ffc107')) : addend('不支持复制','#ff9800');
 }
 // console.log(useRouted)
+const {err,msg,data,metadata,uuid} = toRefs(state);
 </script>
 
 <style>
