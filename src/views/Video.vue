@@ -20,11 +20,6 @@
       </div>
       <div class="search">
         <YouSearch v-model="search" @change="searchChange" @submit="searchSubmit" @click="searchClick"></YouSearch>
-        <!-- <div>
-          <form action="/video/search" method="get">
-            <input type="search" name="q" placeholder="请输入视频ID" class="border rounded px-2 py-1"/>
-          </form>
-        </div> -->
       </div>
       <div>
         <div class="w-4 h-4">

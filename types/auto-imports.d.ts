@@ -38,6 +38,7 @@ declare global {
   const onRenderTriggered: typeof import('vue')['onRenderTriggered']
   const onScopeDispose: typeof import('vue')['onScopeDispose']
   const onServerPrefetch: typeof import('vue')['onServerPrefetch']
+  const onStorage: typeof import('../src/composables/onStorage.js')['default']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
@@ -94,7 +95,6 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly apiFetch: UnwrapRef<typeof import('../src/composables/apiFetch.js')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
-    readonly copy: UnwrapRef<typeof import('../src/directives/copy.js')['default']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
@@ -123,6 +123,7 @@ declare module 'vue' {
     readonly onRenderTriggered: UnwrapRef<typeof import('vue')['onRenderTriggered']>
     readonly onScopeDispose: UnwrapRef<typeof import('vue')['onScopeDispose']>
     readonly onServerPrefetch: UnwrapRef<typeof import('vue')['onServerPrefetch']>
+    readonly onStorage: UnwrapRef<typeof import('../src/composables/onStorage.js')['default']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
