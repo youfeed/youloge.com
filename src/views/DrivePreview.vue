@@ -63,6 +63,7 @@
   </template>
 </template>
 <script setup>
+import { onMounted, reactive,toRefs } from "vue";
 const useRouted = useRoute();
 const state = reactive({
   uuid:0,
@@ -135,7 +136,7 @@ const onShare = (e)=>{
   ].join('\r\n');
   navigator.clipboard ? navigator.clipboard.writeText(text).then(res=>addend('复制成功','#4caf50')).catch(e=>addend('复制失败','#ffc107')) : addend('不支持复制','#ff9800');
 }
-// console.log(useRouted)
+console.log(useRouted)
 const {err,msg,data,metadata,uuid} = toRefs(state);
 </script>
 
