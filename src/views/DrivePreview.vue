@@ -72,8 +72,6 @@ const state = reactive({
   metadata:{}
 }),{err,msg,data,metadata,uuid} = toRefs(state);
 
-const useImages = useImage("image/x-icon",360);
-console.log(useImages)
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
@@ -97,8 +95,10 @@ const onDownload = async ()=>{
   // })
 }
 onMounted(()=>{
-  // usePlus('captcha')
   state.uuid =  useRouted.params.uuid
+  const useImages = useImage("image/x-icon",360);
+  console.log(useImages,state.uuid)
+  // usePlus('captcha')
   loadMetadata();
 })
 // 计算二维码
