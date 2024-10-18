@@ -9,7 +9,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    YouDialog: typeof import('./../src/components/YouDialog.vue')['default']
     YouDiscuss: typeof import('./../src/components/YouDiscuss.vue')['default']
+    YouLoading: typeof import('./../src/components/YouLoading.vue')['default']
+    YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
     YouPayment: typeof import('./../src/components/YouPayment.vue')['default']
     YouSearch: typeof import('./../src/components/YouSearch.vue')['default']
     YouWatch: typeof import('./../src/components/YouWatch.vue')['default']

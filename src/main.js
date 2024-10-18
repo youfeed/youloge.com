@@ -13,5 +13,7 @@ const storage = {
 }
 sessionStorage.setItem('youloge',JSON.stringify(storage))
 const app = createApp(App)
+app.directive('copy', vCopy);
+app.directive('ripple', vRipple);
 setupRouter(app)
 app.mount('#app')

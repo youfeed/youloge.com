@@ -9,7 +9,6 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const apiFetch: typeof import('../src/composables/apiFetch.js')['default']
   const computed: typeof import('vue')['computed']
-  const copy: typeof import('../src/directives/copy.js')['default']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
@@ -61,10 +60,13 @@ declare global {
   const useConfig: typeof import('../src/composables/useConfig.js')['default']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useDialog: typeof import('../src/composables/useDialog.js')['useDialog']
   const useDuration: typeof import('../src/composables/useDuration.js')['default']
   const useId: typeof import('vue')['useId']
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useLink: typeof import('vue-router')['useLink']
+  const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
+  const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
   const usePlus: typeof import('../src/composables/usePlus.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
@@ -75,6 +77,8 @@ declare global {
   const useTimeago: typeof import('../src/composables/useTimeago.js')['default']
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
+  const vCopy: typeof import('../src/directives/vCopy.js')['default']
+  const vRipple: typeof import('../src/directives/vRipple.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -146,10 +150,13 @@ declare module 'vue' {
     readonly useConfig: UnwrapRef<typeof import('../src/composables/useConfig.js')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
+    readonly useDialog: UnwrapRef<typeof import('../src/composables/useDialog.js')['useDialog']>
     readonly useDuration: UnwrapRef<typeof import('../src/composables/useDuration.js')['default']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
+    readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePlus: UnwrapRef<typeof import('../src/composables/usePlus.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
@@ -160,6 +167,8 @@ declare module 'vue' {
     readonly useTimeago: UnwrapRef<typeof import('../src/composables/useTimeago.js')['default']>
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
+    readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
+    readonly vRipple: UnwrapRef<typeof import('../src/directives/vRipple.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

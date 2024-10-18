@@ -13,18 +13,25 @@ export default defineConfig({
     viteExternalsPlugin({
       vue: 'Vue'
     }),
-    AutoImport({
-      imports:['vue','vue-router'],
-      dirs:['src/composables'],
-      extensions:['vue'],
-      dts:'types/auto-imports.d.ts',
-      vueTemplate:true
-    }),
     Components({
       dts:'types/auto-components.d.ts',
+      dirs:['src/components'],
       directives: true,
-      dirs:['src/directives'],
       extensions:['vue'],
+    }),
+    AutoImport({
+      imports:['vue','vue-router'],
+      dirs:['src/composables','src/directives'],
+      extensions:['vue'],
+      dts:'types/auto-imports.d.ts',
+      vueTemplate:true,
+      eslintrc:{
+        enabled:true,
+        files:'src/**/*.vue',
+        // injectAutoImports:true,
+        globalsPropValue:true,
+        filepath: 'types/.eslintrc-auto-import.json',
+      }
     }),
     copyFile({
       targets:[
@@ -40,23 +47,13 @@ export default defineConfig({
     cssCodeSplit:false,
     modulePreload:{ polyfill:false },
     rollupOptions: {
-      // external: ['vue','youloge'],
-      // input:{
-      //   index: 'index.html',
-      //   drive: 'drive.html',
-      //   article: 'article.html'
-      // },
-      // output:{
-      //   globals: {
-      //     vue: 'Vue',
-      //     'youloge':'youloge'
-      //   },
-      // }
+
     }
   },
   resolve:{
     alias:{
-      '@':resolve(__dirname, './src')
+      '@':resolve(__dirname, './src/'),
+      '@components':resolve(__dirname, './src/components'),
     }
   }
 })
