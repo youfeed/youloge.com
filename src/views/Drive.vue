@@ -21,7 +21,7 @@
       <div class="search">
         <div class="max-w-40">
           <form action="/drive/search" method="get">
-            <input type="search" name="q" placeholder="请输入视频ID" class="border rounded px-2 py-1 w-full"/>
+            <input type="search" name="q" placeholder="搜索云盘资源" class="border rounded px-2 py-1 w-full"/>
           </form>
         </div>
       </div>

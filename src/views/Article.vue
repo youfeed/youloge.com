@@ -21,7 +21,7 @@
       <div class="search" >
         <div class="w-80 h-8 border-1 border-gray-500 border-solid rounded px-2 py-1 hover:border-blue-700">
           <form action="/article/search" method="get">
-            <input type="search" name="q" placeholder="" v-model="query.q" autocomplete="off" class="border-0 outline-0 w-full h-full"/>
+            <input type="search" name="q" placeholder="搜索文章" v-model="query.q" autocomplete="off" class="border-0 outline-0 w-full h-full"/>
           </form>
         </div>
       </div>
