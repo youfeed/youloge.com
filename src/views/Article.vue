@@ -18,10 +18,10 @@
           </router-link>
         </div>
       </div>
-      <div class="search">
-        <div class="max-w-40">
+      <div class="search" >
+        <div class="w-80 h-8 border-1 border-gray-500 border-solid rounded px-2 py-1 hover:border-blue-700">
           <form action="/article/search" method="get">
-            <input type="search" name="q" placeholder="" class="border rounded px-2 py-1 w-full"/>
+            <input type="search" name="q" placeholder="" v-model="query.q" autocomplete="off" class="border-0 outline-0 w-full h-full"/>
           </form>
         </div>
       </div>
@@ -44,11 +44,12 @@ const state = reactive({
   msg:'',
   data:[],
   user:'',
-  profile:{}
-}),{user,profile} = toRefs(state)
+  query:{},
+  profile:{},
+}),{user,query,profile} = toRefs(state)
 // 
-
 onMounted(()=>{
+  state.query = route.query;
   state.user = route.params.user
   state.profile = useStorage('profile');
   onStorage('profile',(res)=>{

@@ -6,6 +6,7 @@ import User from '@/views/User.vue'
 import UserIndex from '@/views/UserIndex.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import UserArticle from '@/views/UserArticle.vue'
+import ArticleSearch from '@/views/ArticleSearch.vue'
 
 import Article from '@/views/Article.vue'
 import ArticleIndex from '@/views/ArticleIndex.vue'
@@ -34,6 +35,10 @@ const routes = [
       {
         path: '',
         component: ArticleIndex,
+      },
+      {
+        path: 'search',
+        component: ArticleSearch,
       },{
         path: ':uuid',
         component: ArticlePreview,

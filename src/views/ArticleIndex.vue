@@ -22,7 +22,7 @@ const state = reactive({
   err:0,
   msg:'',
   count:0,
-  cursor:Number.MAX_SAFE_INTEGER,
+  cursor:0,
   data:{},
 }),{err,msg,data} = toRefs(state);
 // 
