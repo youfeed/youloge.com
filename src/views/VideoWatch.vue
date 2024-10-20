@@ -1,5 +1,5 @@
 <template>
-    <template v-if="err == 0">
+  <template v-if="err == 0">
     <div class="flex items-center justify-center h-screen-sm">
       <div class="i-line-md:loading-twotone-loop font-size-2xl  w-20 h-20 color-gray-400"></div>
     </div>
@@ -8,20 +8,22 @@
   <div id="container" class="flex flex-row flex-wrap p-2 md:p-8">
     <div class="primary basis-full md:basis-3/4 lg:basis-4/5 xl:basis-4/6">
       <div id="player" class="aspect-video bg-slate-800 rounded">
-        <video :src="data.href" :poster="useImage(data.poster,80)" class="w-full h-full" controls autoplay preload="auto" controlslist="nodownload"></video>
+        <video :src="data.href" :poster="useImage(data.poster,80)" class="w-full h-full" controls autoplay muted preload="auto" controlslist="nodownload"></video>
       </div>
 
       <h1 class="title">{{ data.title }}</h1>
       <div id="metadata" class="flex items-center justify-between">
-        <div class="profile flex">
+        <div class="profile flex gap-2">
           <div class="avatar">
             <img :src="useImage(data.account?.avatar,'80')" alt="" class="w-12 h-12 rounded-full">
           </div>
           <div>
             <div class="name">{{ data.account?.name }}@{{ data.account?.user }}</div>
-            <div class="keyword">
+            <div class="keyword flex flex-wrap gap-2">
               <template v-for="(item,index) in data.keyword" :key="index">
-                <div class="tag" @click="onLabel(item)">{{ item }}</div>
+                <router-link :to="`/video/search?label=${item}`" class="no-underline">
+                  <div class="tag bg-true-gray-100 rounded px-2" @click="onLabel(item)">#{{ item }}</div>
+                </router-link>
               </template>
             </div>
           </div>
@@ -36,7 +38,7 @@
       </div>
       <div id="discuss">
         <div class="comments">
-          <YouDiscuss mode="video" :uuid="params.uuid">9999</YouDiscuss>
+          <YouDiscuss mode="video" :code="params.uuid">9999</YouDiscuss>
         </div>
       </div>
     </div>
@@ -48,7 +50,7 @@
       </div>
     </div>
   </div>
-</template>
+  </template>
   <template v-else>
     <div class="flex items-center justify-center h-screen-sm">
       <div class="font-size-2xl  w-40 h-40 color-gray-400">{{ msg }}</div>
