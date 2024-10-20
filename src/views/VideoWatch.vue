@@ -59,9 +59,6 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive,toRefs } from "vue";
-import { useRoute } from "vue-router";
-const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:{},params:{},query:{},
   uuid:'',
@@ -70,7 +67,7 @@ const state = reactive({
   label:['西班牙','悚爽劇','紙鈔屋'],
   index:0,
   account:{},
-}),{err,msg,data,params,query} = toRefs(state)
+}),{err,msg,data,params,query} = toRefs(state),route = useRoute();
 
 // 分享文本
 const sharetext = computed(()=>{

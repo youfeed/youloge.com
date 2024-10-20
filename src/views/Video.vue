@@ -41,7 +41,6 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, toRefs } from "vue";
 const route = useRoute();
 const state = reactive({
   uuid:'',
@@ -56,10 +55,10 @@ onMounted(()=>{
   state.query = route.query;
   state.profile = useStorage('profile');
   onStorage('profile',(res)=>{
-    console.log(res)
     state.profile = res;
+    console.log('onStorage.profile',res)
   });
-})
+});
 </script>
 
 <style>

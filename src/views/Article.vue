@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-const route = useRoute() 
+const route = useRoute();
 const state = reactive({
   err:0,
   msg:'',

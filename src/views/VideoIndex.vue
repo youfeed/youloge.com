@@ -46,11 +46,6 @@
   <div id="loading"></div>
 </template>
 <script setup>
-/**
- * 主页推荐视频渲染
- */
-import { computed, onMounted, reactive, toRefs } from "vue";
-
 const state = reactive({
   limit:20,
   offset:0,
@@ -109,7 +104,7 @@ const state = reactive({
       }
     }
   ]
-})
+}),{data} = toRefs(state);
 // const imgCDN 
 const calc = computed(()=>{
   
@@ -133,8 +128,6 @@ onMounted(()=>{
   console.log('r')
   io.observe(document.querySelector("#loading"));
 })
-
-const {data} = toRefs(state)
 </script>
 
 <style>

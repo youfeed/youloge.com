@@ -1,4 +1,3 @@
-<!-- 文章预览 navbar asider article section main-->
 <template>
   <div class="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
     <div class="navbar"></div>
@@ -24,7 +23,7 @@ const state = reactive({
   count:0,
   cursor:0,
   data:{},
-}),{err,msg,data} = toRefs(state);
+}),{err,msg,data} = toRefs(state)
 // 
 const onSearch = ()=>{
   let {cursor} = state;

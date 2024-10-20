@@ -22,12 +22,12 @@ const state = reactive({
 }),{err,msg,data,query,cursor} = toRefs(state),route = useRoute();
 const onSearch = ()=>{
   let {query,cursor} = state;
-  apiFetch('search/article',{q:query.q,cursor:cursor,limit:20}).then(res=>Object.assign(state,res)).catch((err)=>{ 
+  apiFetch('search/drive',{q:query.q,cursor:cursor,limit:20}).then(res=>Object.assign(state,res)).catch((err)=>{ 
     console.log('err',state,err)
   });
 }
 
-console.log('1-route-article',route,useRoute())
+console.log('3-route-drive',route,useRoute())
 
 onMounted(()=>{
     state.query = route.query;
