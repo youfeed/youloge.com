@@ -55,7 +55,7 @@ const state = reactive({
 // 获取数据
 const getInfo = ()=>{
   let {uuid} = state;
-  apiFetch('article/info',{uuid:uuid}).then(r=>r.json()).then(res=>{
+  apiFetch('article/info',{uuid:uuid}).then(res=>{
     Object.assign(state,res);
     res.err == 200 && getRich();
   }).catch((err)=>{})

@@ -22,7 +22,7 @@ const state = reactive({
 }),{err,msg,data,query,cursor} = toRefs(state),route = useRoute();
 const onSearch = ()=>{
   let {query,cursor} = state;
-  apiFetch('search/article',{q:query.q,cursor:cursor,limit:20}).then(r=>r.json()).then(res=>Object.assign(state,res)).catch((err)=>{ 
+  apiFetch('search/article',{q:query.q,cursor:cursor,limit:20}).then(res=>Object.assign(state,res)).catch((err)=>{ 
     console.log('err',state,err)
   });
 }

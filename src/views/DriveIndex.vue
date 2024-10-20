@@ -54,7 +54,7 @@ const state = reactive({
 }),{err,msg,data} = toRefs(state);
 //
 const onSearch = ()=>{
-  apiFetch('search/drive',{}).then(r=>r.json()).then(res=>Object.assign(state,res)).catch((err)=>{ 
+  apiFetch('search/drive',{}).then(res=>Object.assign(state,res)).catch((err)=>{ 
     console.log('err',state,err)
 
   })

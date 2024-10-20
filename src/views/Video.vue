@@ -6,10 +6,10 @@
           <div class="i-tdesign:view-list"></div>
         </div>
         <div class="flex justify-between items-center ">
-          <router-link to="/" class="color-dark-500 no-underline px-2 py-1 rounded hover:bg-light-500 ">
+          <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
             <div class="flex items-center gap-1" :title="name">
-              <span class="i-tdesign:logo-github-filled"></span>
-              <span>{{user}}</span>
+              <img src="/loge.svg" alt="" class="w-4 h-4">
+              <span>Youloge</span>
             </div>
           </router-link>
           <div>/</div>
@@ -19,66 +19,46 @@
         </div>
       </div>
       <div class="search">
-        <YouSearch v-model="search" @change="searchChange" @submit="searchSubmit" @click="searchClick"></YouSearch>
-      </div>
-      <div>
-        <div class="w-4 h-4">
-          <div class="i-tdesign:add"></div>
+        <div class="max-w-40">
+          <form action="/video/search" method="get">
+            <input type="search" name="q" v-model="query.q" placeholder="搜索视频资源" class="border rounded px-2 py-1 w-full"/>
+          </form>
         </div>
-        <div class="w-4 h-4">
-          <div class="i-tdesign:view-list"></div>
+      </div>
+      <div class="flex">
+        <div class="w-8 h-8">
+          <div><img :src="useImage(profile.avatar,'80')" alt="" class="w-full h-full rounded-full"></div>
         </div>
       </div>
     </div>
   </header>
-  <main class="columns">
+  <nav></nav>
+  <aside></aside>
+  <main class="video">
     <router-view></router-view>
   </main>
-  
+  <footer></footer>
 </template>
 
 <script setup>
 import { onMounted, reactive, toRefs } from "vue";
-
+const route = useRoute();
 const state = reactive({
   uuid:'',
   user:'',
   name:'',
   mail:'',
-  search:{
-    keyword:'',
-    placeholder:'请输入视频ID',
-    selectd:'video',
-    options:[
-      {label:'视频',value:'video'},
-      {label:'文章',value:'article'},
-      {label:'用户',value:'user'},
-    ]
-  }
-}),{uuid,user,name,search} = toRefs(state)
-/**
- * 做页头侧栏登录渲染
- */
-const searchChange = (value)=>{
-  console.log('searchChange',value)
-}
-const searchSubmit = (value)=>{
-  console.log('searchSubmit',value)
-}
-const searchClick = (value)=>{
-  console.log('searchClick',value)
-}
+  query:{},
+  profile:{}
+}),{uuid,user,name,query,profile} = toRefs(state);
 
 onMounted(()=>{
-  // const {uuid} = useAuth();
-  // state.user = 'Youloge'
-  // console.log(uuid,125215)
-
-  // console.log('onMounted','vipFetch')
-  // vipFetch('drive/info',{uuid:'uuid'}).then(r=>r.json()).then(({err,msg,data})=>{
-  //   console.log('onMounted',err,msg,data)
-    
-  // })
+  state.query = route.query;
+  state.profile = useStorage('profile');
+  onStorage('profile',(res)=>{
+    console.log(res)
+    state.profile = res;
+  });
 })
 </script>
 

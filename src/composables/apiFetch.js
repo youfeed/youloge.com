@@ -6,6 +6,6 @@ export default (pathname,body={})=>{
       method: 'POST',
       headers: { 'Authorization': `Youloge-API ${APIKEY}`,'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    })
+    }).then(res=>res.json());
   }
   

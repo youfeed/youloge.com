@@ -28,7 +28,7 @@ const state = reactive({
 // 
 const onSearch = ()=>{
   let {cursor} = state;
-  apiFetch('search/article',{q:'',cursor:cursor,limit:20}).then(r=>r.json()).then(res=>Object.assign(state,res)).catch((err)=>{ 
+  apiFetch('search/article',{q:'',cursor:cursor,limit:20}).then(res=>Object.assign(state,res)).catch((err)=>{ 
     console.log('err',state,err)
   });
 }

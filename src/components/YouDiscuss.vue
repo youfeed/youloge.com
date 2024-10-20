@@ -153,7 +153,7 @@ const loadInit = ()=>{
   console.log(type,mode,100,signature)
 
   if(signature){
-    apiFetch('discuss/info',{type:type,mode:mode,signature:signature}).then(r=>r.json()).then(({err,msg,data})=>{
+    apiFetch('discuss/info',{type:type,mode:mode,signature:signature}).then(({err,msg,data})=>{
       if(err == 200){
         state.method = 'edit'
         state.content = data.content
@@ -175,14 +175,14 @@ onMounted(()=>{
 // 获取评论 - 分页 
 const loadReview = (isfirst=false)=>{
   let {type,mode,cursor,limit} = state;
-  apiFetch('discuss/review',{type:type,mode:mode,cursor:cursor,limit:limit}).then(r=>r.json()).then(res=>{
+  apiFetch('discuss/review',{type:type,mode:mode,cursor:cursor,limit:limit}).then(res=>{
     isfirst ? Object.assign(state,res) : state.data.push(...res.data);
   })
 }
 // 获取回复 - 分页
 const loadReply = (item,isfirst=false)=>{
   let {err,uuid,cursor,limit} = item;
-  apiFetch('discuss/reply',{review:uuid,cursor:cursor || false}).then(r=>r.json()).then(res=>{
+  apiFetch('discuss/reply',{review:uuid,cursor:cursor || false}).then(res=>{
     err ? item.data.push(...res.data) : Object.assign(item,res);
   })
 }
@@ -213,7 +213,7 @@ const onSubmit = ()=>{
   let {type,mode,content} = state;
   let {signature} = useAuth();
   
-  apiFetch('discuss/onreview',{type,mode,content,signature}).then(r=>r.json()).then(res=>{
+  apiFetch('discuss/onreview',{type,mode,content,signature}).then(res=>{
     console.log(res)
     // err ? item.data.push(...res.data) : Object.assign(item,res);
   })

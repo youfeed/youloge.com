@@ -116,7 +116,7 @@ const calc = computed(()=>{
 })
 const getSearch = ()=>{
   const {limit,offset} = state;
-  apiFetch('search/video',{limit,offset}).then(r=>r.json()).then(res=>{
+  apiFetch('search/video',{limit,offset}).then(res=>{
     console.log(res)
   })
 }

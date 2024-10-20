@@ -78,12 +78,12 @@ const state = reactive({
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
-  apiFetch('drive/info',{uuid:uuid}).then(r=>r.json()).then(res=>Object.assign(state,res))
+  apiFetch('drive/info',{uuid:uuid}).then(res=>Object.assign(state,res))
 }
 //
 const onDownload = async ()=>{
   let {uuid} = useAuth()
-  vipFetch('drive/download',{uuid:state.uuid}).then(r=>r.json()).then(r=>{
+  vipFetch('drive/download',{uuid:state.uuid}).then(r=>{
     console.log(r)
   })
   //

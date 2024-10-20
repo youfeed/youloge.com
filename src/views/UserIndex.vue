@@ -44,7 +44,7 @@ const route = useRoute();
 // 获取用户资料
 const userInfo = () => {
   let {user} = state;
- apiFetch('profile/user',{user:user}).then(r=>r.json()).then(res=>Object.assign(state,res))
+ apiFetch('profile/user',{user:user}).then(res=>Object.assign(state,res))
 }
 onMounted(()=>{
   state.user = route.params.user;
