@@ -5,12 +5,9 @@
 </template>
 
 <script steup>
-import { onMounted } from 'vue';
-import { useRoute } from "vue-router";
-const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:{},query:{}
-}),{err,msg,data} = toRefs(state);
+}),{err,msg,data} = toRefs(state),route = useRoute();
 // 
 const onSearch = ()=>{
   let {query} = state;
@@ -20,11 +17,11 @@ const onSearch = ()=>{
 
 }
 
-console.log('route',route)
+console.log('route',route,useRoute())
 // 
 onMounted(()=>{
   state.query = route.query;
-  console.log('route')
+  console.log('route',state.query)
   console.log(route);
   onSearch()
 });

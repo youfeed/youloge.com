@@ -17,12 +17,12 @@ export default defineConfig({
       dts:'types/auto-components.d.ts',
       dirs:['src/components'],
       directives: true,
-      extensions:['vue'],
+      extensions:['.vue'],
     }),
     AutoImport({
       imports:['vue','vue-router'],
       dirs:['src/composables','src/directives'],
-      extensions:['vue'],
+      extensions:['.vue'],
       dts:'types/auto-imports.d.ts',
       vueTemplate:true,
       eslintrc:{

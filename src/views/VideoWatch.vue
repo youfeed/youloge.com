@@ -62,7 +62,6 @@
 import { computed, onMounted, reactive,toRefs } from "vue";
 import { useRoute } from "vue-router";
 const route = useRoute();
-const props = defineProps({})
 const state = reactive({
   err:0,msg:'',data:{},params:{},query:{},
   uuid:'',
