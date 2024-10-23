@@ -20,10 +20,9 @@
 const state = reactive({
   err:0,
   msg:'',
-  count:0,
   cursor:0,
   data:{},
-}),{err,msg,data} = toRefs(state)
+}),{err,msg,data} = toRefs(state);
 // 
 const onSearch = ()=>{
   let {cursor} = state;

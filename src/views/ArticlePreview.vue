@@ -26,7 +26,7 @@
           最后更新于:{{ data.updated }} - {{ data.view }} 次浏览
         </div>
         <div class="discuss m-t-10">
-          <you-discuss type="article" :mode="uuid"></you-discuss>
+          <you-discuss mode="article" :code="params.uuid"></you-discuss>
         </div>
       </div>
     </div>
@@ -45,14 +45,14 @@ const state = reactive({
   uuid:'',
   err:0,
   msg:'',
-  count:0,
+  params:{},
   html:'',
   data:{},
   cursor:Number.MAX_SAFE_INTEGER,
-}),{uuid,err,msg,html,data} = toRefs(state);
+}),{uuid,err,msg,html,data,params} = toRefs(state);
 // 获取数据
 const getInfo = ()=>{
-  let {uuid} = state;
+  let {uuid} = state.params;
   apiFetch('article/info',{uuid:uuid}).then(res=>{
     Object.assign(state,res);
     res.err == 200 && getRich();
@@ -67,7 +67,7 @@ const getRich = ()=>{
 }
 
 onMounted(()=>{
-  state.uuid = route.params.uuid;
+  state.params = route.params;
   getInfo();
   console.log(route);
 })

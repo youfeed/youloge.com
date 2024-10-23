@@ -42,17 +42,17 @@
                     <div class="cursor-pointer flex gap-2 items-center">
                       <div class="i-tdesign:chat-bubble-1"></div> <span>{{ item.reply }} </span>
                     </div>
-                    <div class="cursor-pointer flex gap-2 items-center" @click="atReview(item)">
+                    <div class="cursor-pointer flex gap-2 items-center" @click="atReply(item)">
                       回复
                     </div>
                   </div>
                   <div class="replys  my-2" v-if="item.reply > 0">
                     
-                    <template v-for="items in item.data.data" :key="items.uuid">
+                    <template v-for="items in item.data?.data" :key="items.uuid">
                       <div class="reply flex gap-2 my-2">
                         <div class="avatar"><img :src="useImage(items.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
-                        <div class="content">
-                          <div class="user">
+                        <div class="content w-full">
+                          <div class="user flex items-center justify-between">
                             <span class="named">{{items.account.name}}@({{ items.account.user }})回复{{items.quote.name}}@({{ items.quote.user }})</span>
                             <span class="timed">{{useTimeago(items.created)}} - {{useTimeago(items.updated)}}</span>
                           </div>
@@ -72,7 +72,7 @@
                       </div>
                     </template>
                     
-                    <div class="loadreply" @click="loadReply(item)" v-if="(item.count || item.reply) - (item?.data?.length || 0) > 0">加载 余下{{(item.count || item.reply) - (item?.data?.length || 0)}} 条回复 </div>
+                    <div class="loadreply" @click="loadReply(item)" v-if="item.reply - (item.data?.data.length || 0) > 0">加载 余下{{(item.count || item.reply) - (item?.data?.length || 0)}} 条回复 </div>
                     
                   </div>
                 </div>
@@ -81,7 +81,7 @@
             <!-- 评论数据 -->
             <template v-if="reviews.data.data.length == 0">
               <div class="flex items-center justify-center">
-                <div class="font-size-2xl  w-40 h-40 color-gray-400">暂无评论</div>
+                <div class="font-size-2xl color-gray-400">暂无评论</div>
               </div>
             </template>
 
@@ -142,13 +142,13 @@
   </template>
   <template v-else>
     <div class="flex items-center justify-center h-screen-sm">
-      <div class="font-size-2xl  w-40 h-40 color-gray-400">{{ msg }}</div>
+      <div class="font-size-2xl color-gray-400">{{ msg }}</div>
     </div>
   </template>
 </template>
 <script setup>
-import { computed, onMounted, reactive, toRefs } from "vue"
-import useAuth from "../composables/useAuth";
+// import { computed, onMounted, reactive, toRefs } from "vue"
+// import useAuth from "../composables/useAuth";
 const props = defineProps(['mode','code'])
 
 const state = reactive({
@@ -163,7 +163,7 @@ const state = reactive({
   mask:false,
   next:'',
   reply:'',
-  method:'dianping',
+  method:'review',
   content:'',
   toggled:{},
   
@@ -216,10 +216,12 @@ const loadReview = (isfirst=false)=>{
   });
 }
 // 获取回复 - 分页
-const loadReply = (item,isfirst=false)=>{
-  let {err,uuid,cursor,limit} = item;
+const loadReply = (item)=>{
+  let {err,uuid,cursor,data} = item;
   apiFetch('discuss/reply',{review:uuid,cursor:cursor || false}).then(res=>{
-    err ? item.data.push(...res.data) : Object.assign(item,res);
+    data ? item.data.push(...res.data) : Object.assign(item,res);
+    console.log('item',item)
+    // res.err ? item.replys.push(...res.data) : Object.assign(item.replys,res.data);
   })
 }
 /**
@@ -229,20 +231,38 @@ const loadReply = (item,isfirst=false)=>{
  * atQuote: review:uuid quote content signature
  */
 const atReview = (item)=>{
-  // state.method ='review'
+  state.method ='review';
   state.toggled = item;
-  // state.content = '';
+  console.log(item)
+}
+const atReply = (item)=>{
+  state.method ='reply';
+  state.toggled = item;
+  state.content = '';
   console.log(item)
 }
 const atQuote = (item)=>{
   state.method ='quote';
   state.toggled = item;
   state.content = '';
+  console.log(item)
 }
+
 // 发表评论 mode atReview atReply atQuote
 const onSubmit = ()=>{
-  let {mode,code,content} = state;
-  apiFetch('discuss/onreview',{mode,code,content},true).then(res=>{
+  let {mode,code,content,method} = state;
+  let {uuid,account} = state.toggled;
+  let body = {};
+  if(method == 'review'){
+    body = {mode:mode,code:code,content}
+  }
+  if(method == 'reply'){
+    body = {review:uuid,quote:account.uuid,content}
+  }
+  if(method == 'quote'){
+    body = {review:uuid,quote:account.uuid,content}
+  }
+  apiFetch(`discuss/to${method}`,body,true).then(res=>{
     console.log(res)
     // err ? item.data.push(...res.data) : Object.assign(item,res);
   });
@@ -250,10 +270,9 @@ const onSubmit = ()=>{
 // 登录
 const onLogin = ()=>{
   usePlus('login').then(profile=>{
-    state.profile = profile;
     useStorage('profile',profile);
+    state.profile = profile;state.logged = true;
     console.log(99999,profile)
-
   });
 }
 
