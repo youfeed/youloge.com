@@ -86,8 +86,10 @@ const onDownload = async ()=>{
     apiFetch('drive/download',{uuid:state.uuid},true).then(res=>{
       console.log(res)
       //
-      let a = document.createElement('a');document.body.appendChild(a);
-      a.href = res.data.link;a.click();a.remove();
+      if(res.err == 200){
+        let a = document.createElement('a');document.body.appendChild(a);
+        a.href = res.data.link;a.click();a.remove();
+      } 
     })
   }
 }
