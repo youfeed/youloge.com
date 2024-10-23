@@ -22,7 +22,7 @@
             </div>
             <div>
               <div class="text-2xl">{{ data.title }}<span class="uppercase">{{ data.ext }}</span></div>
-              <div>{{ data.size }} · {{ data.mime }} · </div>
+              <div>{{ useBytes(data.size) }} · {{ data.mime }} · </div>
             </div>
           </div>
           
@@ -83,8 +83,11 @@ const loadMetadata = ()=>{
 const onDownload = async ()=>{
   let {uuid} = useAuth()
   if(uuid){
-    apiFetch('drive/download',{uuid:state.uuid},true).then(r=>{
-      console.log(r)
+    apiFetch('drive/download',{uuid:state.uuid},true).then(res=>{
+      console.log(res)
+      //
+      let a = document.createElement('a');document.body.appendChild(a);
+      a.href = res.data.link;a.click();a.remove();
     })
   }
 }

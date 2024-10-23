@@ -57,6 +57,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuth: typeof import('../src/composables/useAuth.js')['default']
+  const useBytes: typeof import('../src/composables/useBytes.js')['default']
   const useConfig: typeof import('../src/composables/useConfig.js')['default']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
@@ -147,6 +148,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuth: UnwrapRef<typeof import('../src/composables/useAuth.js')['default']>
+    readonly useBytes: UnwrapRef<typeof import('../src/composables/useBytes.js')['default']>
     readonly useConfig: UnwrapRef<typeof import('../src/composables/useConfig.js')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
