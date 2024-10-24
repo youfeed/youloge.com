@@ -89,6 +89,7 @@
     "watchSyncEffect": true,
     "useLoading": true,
     "useDialog": true,
-    "useBytes": true
+    "useBytes": true,
+    "iniMenu": true
   }
 }

@@ -1,7 +1,17 @@
 <template>
   <header></header>
-  <nav>
-
+  <nav class="sidebar">
+    <ul>
+      <li v-for="item in menuItems" :key="item.title">
+        <router-link :to="item.path">{{ item.title }}</router-link>
+        <!-- 如果有子菜单 -->
+        <ul v-if="item.children" class="submenu">
+          <li v-for="subItem in item.children" :key="subItem.title">
+            <router-link :to="subItem.path">{{ subItem.title }}</router-link>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </nav>
   <main class="flex-auto col-md-8 col-lg-8 px-3 px-sm-3 px-md-0">
     <div>
@@ -14,11 +24,15 @@
 </template>
 <script setup>
 const state = reactive({
-
-});
+  menuItems:[]
+}),{menuItems} = toRefs(state);
 //
+
 onMounted(()=>{
-  
+  state.menuItems = iniMenu;
+
+  console.log('iniMenu',iniMenu)
+
   // usePlus('captcha',{}).then(res=>{
   //   console.log('then',res)
   // }).catch(err=>{

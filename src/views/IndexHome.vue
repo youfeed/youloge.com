@@ -31,10 +31,10 @@
 
 <script setup>
 const { success, warning, error, info } = useMessage();
-const {show} = useLoading()
-warning('操作成功！');
+// const {show} = useLoading()
+// warning('操作成功！');
 
-useLoading().show()
+// useLoading().show()
 
 const showSuccess = () => {
   success('操作成功！');
