@@ -39,11 +39,6 @@ const state = reactive({
   menuItems:[],
   current:'home',
   components:components,
-  component:{
-	article:defineAsyncComponent(()=>import('@/console/Article.vue')),
-	index:defineAsyncComponent(()=>import('@/console/Index.vue')),
-	home:defineAsyncComponent(()=>import('@/console/Home.vue')),
-  }
 }),{menuItems} = toRefs(state);
 // 动态路由
 
@@ -58,16 +53,7 @@ const onSwitch = (name)=>{
 //
 onMounted(()=>{
   state.menuItems = iniMenu;
-
   console.log('iniMenu',iniMenu)
-
-  // usePlus('captcha',{}).then(res=>{
-  //   console.log('then',res)
-  // }).catch(err=>{
-  //   console.log('catch',err)
-  // })
-  // console.log('useAuth',useAuth())
-  
 });
 </script>
 
