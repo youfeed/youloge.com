@@ -10,6 +10,11 @@ const currentComponent = computed(() => {
   let {uuid} = useAuth()
   return uuid ? IndexConsole : IndexHome;
 });
+onMounted(()=>{
+  apiFetch('akikey/debug',{}).then(res=>{
+ 
+  }).catch((err)=>{})
+})
 </script>
 
 <style>

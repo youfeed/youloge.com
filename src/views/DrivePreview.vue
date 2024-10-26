@@ -94,7 +94,7 @@ const onDownload = async ()=>{
   }
 }
 onMounted(()=>{
-  console.log(20000)
+  console.log(20000)  
   state.uuid =  route.params.uuid
   const useImages = useImage("image/x-icon",360);
   console.log(useImages,state.uuid)

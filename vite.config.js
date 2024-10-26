@@ -10,9 +10,9 @@ export default defineConfig({
   plugins: [
     UnoCSS(),
     vue(),
-    viteExternalsPlugin({
-      vue: 'Vue'
-    }),
+    // viteExternalsPlugin({
+    //   vue: 'Vue'
+    // }),
     Components({
       dts:'types/auto-components.d.ts',
       dirs:['src/components'],
@@ -28,7 +28,7 @@ export default defineConfig({
       eslintrc:{
         enabled:true,
         files:'src/**/*.vue',
-        // injectAutoImports:true,
+        injectAutoImports:true,
         globalsPropValue:true,
         filepath: 'types/.eslintrc-auto-import.json',
       }
@@ -46,9 +46,7 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit:false,
     modulePreload:{ polyfill:false },
-    rollupOptions: {
-
-    }
+    rollupOptions: {}
   },
   resolve:{
     alias:{
