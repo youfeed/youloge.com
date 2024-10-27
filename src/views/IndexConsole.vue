@@ -1,28 +1,46 @@
 <template>
-  <header @click="onSwitch('index')">xxx</header>
-
-  <nav class="sidebar fixed inset-y-0 left-0 z-20 flex w-32 flex-col items-start gap-2 overflow-y-auto pt-4 pb-4 transition-transform duration-200 ease-in-out bg-gray-100 border-r border-gray-200">
-    <details v-for="item in menuItems" :key="item.title" class="menu-item" :open="Boolean(item.children)">
-		<summary >{{ item.title }}</summary>
-		<content v-for="subItem in item.children" :key="subItem.title">
-			<div @click="onSwitch(subItem.name)" class="menu-item">{{ subItem.title }}</div>
-		</content>
-	</details>
-  </nav>
-  <main class="flex-auto col-md-8 col-lg-8 px-3 px-sm-3 px-md-0">
-    <div>
-      <div class="flex items-center justify-center h-screen-sm">
-        <div class="font-size-2xl  w-40 h-40 color-gray-400">
-			<transition name="fade">
-				<keep-alive>
-					<component :is="currentComponent"></component>
-				</keep-alive>
-			</transition>
+  <header class="fixed h-12 w-full bg-gray-100 border-b border-gray-200">
+    <div><button @click="toggleSidebar">Toggle</button></div>
+    <div></div>
+    <div></div>
+  </header>
+  <aside
+      class="sidebar fixed inset-y-0 left-0 top-12 z-20 flex w-32 flex-col items-start justify-between overflow-y-auto pt-4 pb-4 transition-transform duration-200 ease-in-out bg-gray-100 border-r border-gray-200"
+      :class="sidebarCollapsed ? '-translate-x-full' : ''"
+    >
+      <div class="flex-1 px-2">
+        <div>
+          <div v-for="item in menuItems" :key="item.title" class="menu-item relative">
+            <div
+              class="cursor-pointer inline-flex w-full items-center p-2 text-sm text-gray-900 rounded-lg hover:bg-gray-200 group"
+              @click="toggleSubMenu(item)"
+              :class="{ 'bg-gray-200 font-bold': current.startsWith(item.name) }">
+              <span class="ml-3">{{ item.title }}</span>
+              <svg v-if="item.children" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-auto" :class="{'rotate-270':item.subExpand}" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <!-- 如果有子菜单 -->
+            <transition name="slide-fade">
+              <div v-if="item.subExpand" class="submenu py-2 space-y-2">
+                <div v-for="subItem in item.children" :key="subItem.title" class="px-3">
+                  <div @click="navigateTo(subItem.name)" class="block p-2 text-sm text-gray-700 rounded-lg hover:bg-gray-200" :class="{ 'bg-gray-200 font-bold': current === subItem.name }">
+                    {{ subItem.title }}
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
       </div>
-    </div>
+  </aside>
+  <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5" :class="sidebarCollapsed ? 'pl-16' : 'pl-37'">
+    <transition mode="out-in">
+      <keep-alive>
+        <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
+      </keep-alive>
+    </transition>
   </main>
-  <aside></aside>
 </template>
 <script setup>
 const components = {};
@@ -33,22 +51,30 @@ Object.entries(modules).forEach(([path, module]) => {
 })
 console.log('components',components)
 
-console.log('modules',modules)
-
 const state = reactive({
-  menuItems:[],
-  current:'home',
-  components:components,
-}),{menuItems} = toRefs(state);
+  menuItems:[],sidebarCollapsed:false,current:''
+}),{current,menuItems,sidebarCollapsed} = toRefs(state);
 // 动态路由
+const currentParams = shallowRef({});
+const currentComponent = shallowRef(components['index']);
+// 展开收缩菜单
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value;
+};
+// 展开收缩子菜单
+const toggleSubMenu = (item) => {
+  item.children && (item.subExpand =!item.subExpand);
+  item.children || navigateTo(item.name);
+};
 
-const currentComponent = computed(() => {
-	let {current,components} = state;
-	return components[current];
-});
-const onSwitch = (name)=>{
-	console.log('name',name)
-  state.current = name;
+// emit 事件
+const navigateTo = (name,params={})=>{
+  if(name in components){
+    state.current = name;
+    currentComponent.value = components[name];
+    currentParams.value = params;
+  }
+  console.log('onJump',name in components,state.current,name,params)
 }
 //
 onMounted(()=>{
@@ -58,32 +84,5 @@ onMounted(()=>{
 </script>
 
 <style>
-::marker {
-    font-size: 0;
-}
-details{
-	width: 100%;
-	padding: 5px;
-}
-summary {
-	display: flex;
-    user-select: none;
-    width: 100%;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 5px;
-}
-summary::after {
 
-}
-[open] summary,summary:hover {
-    background-color: #fff;width: 100%;
-    color: #00aae7;
-}
-[open] summary::after {
-    
-}
-[open] summary::before {
- 
-}
 </style>

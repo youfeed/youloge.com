@@ -1,10 +1,12 @@
 export default [
     {
       title: '首页',
-      name: 'index'
+      name: 'index',
+      icon:'home'
     },{
       title: '文章专栏',
       name: 'article',
+      icon:'home',
       children: [
         {
           title: '文章管理',
@@ -40,6 +42,7 @@ export default [
         ]
     },{
       title: '关注',
-      name: 'follow'
+      name: 'follow',
+      icon:'home'
     }
 ];

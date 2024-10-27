@@ -46,7 +46,13 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit:false,
     modulePreload:{ polyfill:false },
-    rollupOptions: {}
+    rollupOptions: {
+      output:{
+        manualChunks: {
+          vue:['vue','vue-router'],
+        }
+      }
+    }
   },
   resolve:{
     alias:{
