@@ -68,6 +68,7 @@ declare global {
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useLink: typeof import('vue-router')['useLink']
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
+  const useMenu: typeof import('../src/composables/useMenu.js')['default']
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
   const usePlus: typeof import('../src/composables/usePlus.js')['default']
@@ -109,7 +110,6 @@ declare module 'vue' {
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
-    readonly iniMenu: UnwrapRef<typeof import('../src/composables/iniMenu.js')['default']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
@@ -160,6 +160,7 @@ declare module 'vue' {
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
+    readonly useMenu: UnwrapRef<typeof import('../src/composables/useMenu.js')['default']>
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePlus: UnwrapRef<typeof import('../src/composables/usePlus.js')['default']>

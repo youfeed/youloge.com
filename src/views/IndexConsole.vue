@@ -12,7 +12,8 @@
         <div>
           <div v-for="item in menuItems" :key="item.title" class="menu-item relative">
             <div
-              class="cursor-pointer inline-flex w-full items-center p-2 text-sm text-gray-900 rounded-lg hover:bg-gray-200 group"
+              v-ripple
+              class="cursor-pointer inline-flex w-full items-center p-2 text-sm select-none text-gray-900 rounded-lg hover:bg-gray-200 group"
               @click="toggleSubMenu(item)"
               :class="{ 'bg-gray-200 font-bold': current.startsWith(item.name) }">
               <span class="ml-3">{{ item.title }}</span>
@@ -34,7 +35,7 @@
         </div>
       </div>
   </aside>
-  <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5" :class="sidebarCollapsed ? 'pl-16' : 'pl-37'">
+  <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'pl-16' : 'pl-37'">
     <transition mode="out-in">
       <keep-alive>
         <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
@@ -78,8 +79,8 @@ const navigateTo = (name,params={})=>{
 }
 //
 onMounted(()=>{
-  state.menuItems = iniMenu;
-  console.log('iniMenu',iniMenu)
+  state.menuItems = useMenu;
+  console.log('useMenu',useMenu)
 });
 </script>
 

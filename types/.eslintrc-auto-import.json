@@ -90,6 +90,7 @@
     "useLoading": true,
     "useDialog": true,
     "useBytes": true,
-    "iniMenu": true
+    "iniMenu": true,
+    "useMenu": true
   }
 }

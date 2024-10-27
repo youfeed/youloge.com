@@ -1,6 +1,6 @@
 export default [
     {
-      title: '首页',
+      title: '个人主页',
       name: 'index',
       icon:'home'
     },{
@@ -41,8 +41,8 @@ export default [
           }
         ]
     },{
-      title: '关注',
-      name: 'follow',
+      title: '退出登录',
+      name: 'logout',
       icon:'home'
     }
 ];

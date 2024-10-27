@@ -1,13 +1,11 @@
 <template>
-  <div>
+  <div class="max-w-screen-md mx-auto p-4">
     <!-- 正文 -->
      <div @click="navigateTo('index',{uuid:'123456'})">跳转到【index】子组件</div>
   </div>
 </template>
 
 <script setup>
-import { toRefs } from 'vue';
-
 const props = defineProps(['params']),emit = defineEmits(['jump']);
 const state = reactive({}),{} = toRefs(state);
 //
