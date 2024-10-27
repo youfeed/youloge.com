@@ -41,7 +41,7 @@ export default {
       },200)
     })
   },
-  unmounted(){
-    this.el.removeEventListener('pointerdown', this.handler);
+  unmounted(el){
+    el.removeEventListener('pointerdown');
   }
 }

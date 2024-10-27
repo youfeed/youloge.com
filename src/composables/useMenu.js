@@ -2,11 +2,11 @@ export default [
     {
       title: '个人主页',
       name: 'index',
-      icon:'home'
+      icon:'tdesign:user-list'
     },{
       title: '文章专栏',
       name: 'article',
-      icon:'home',
+      icon:'tdesign:article',
       children: [
         {
           title: '文章管理',
@@ -14,8 +14,19 @@ export default [
         }
       ]
     },{
+      title: '我的视频',
+      name: 'video',
+      icon:'tdesign:video',
+      children: [
+        {
+          title: '视频管理',
+          name: 'video'
+        }
+      ]
+    },{
         title: '我的云盘',
         name: 'drive',
+        icon:'tdesign:hard-drive',
         children: [
           {
             title: '云盘文件',
@@ -31,6 +42,7 @@ export default [
     },{
         title: '钱包余额',
         name: 'wallet',
+        icon:'tdesign:wallet',
         children: [
           {
             title: '钱包零钱',
@@ -40,9 +52,5 @@ export default [
             name: 'billing'
           }
         ]
-    },{
-      title: '退出登录',
-      name: 'logout',
-      icon:'home'
     }
 ];

@@ -7,7 +7,16 @@
 
 <script setup>
 const props = defineProps(['params']),emit = defineEmits(['jump']);
-const state = reactive({}),{} = toRefs(state);
+const state = reactive({
+  err:0,msg:'',data:{},list:[],
+}),{err,msg,data,list,profile} = toRefs(state);
+//
+const get = ()=>{
+  let {next_cursor} = state.data;
+  apiFetch('wallet/',{cursor:next_cursor},true).then(res=>{
+    state.list.push(...res.data.data);Object.assign(state,res);
+  })
+}
 //
 onMounted(()=>{
     

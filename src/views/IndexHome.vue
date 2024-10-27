@@ -6,20 +6,20 @@
           <div class="w-5 h-5">
             <img class="mx-auto w-full w-auto block select-none" src="/loge.svg" alt="">
           </div>
-          Youloge.COM
+          Youloge
         </div>
-        <div  @click="showSuccess"> 文档</div>
+        <div  @click="onLogin"> 登录</div>
       </div>
     </header>
-    <main class="mt-20 grid grid-cols-1 p-4 min-h-150 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:p-8 md:p-20 lg:p-30">
-      <div class="col-span-full"  v-copy="5000000" >
-        <h1 class="color-blue font-size-36px" v-ripple>杰克布达</h1>
-        <p class="font-size-24px font-bold text-gray-800">快速、零权限、零成本</p>
-        <p class="font-size-18px font-bold text-gray-500">开源开放接口服务平台.</p>
+    <main class="max-w-screen-md mx-auto mt-40 ">
+      <div class="mt-10">
+        <h1 class="color-blue font-size-36px mt-10" v-ripple>杰克布达</h1>
+        <p class="font-size-24px font-bold text-gray-800 mt-10">但行好事 莫问前程</p>
+        <p class="font-size-18px font-bold text-gray-500 mt-2">开源、快速、零权限、零成本 接口服务平台</p>
       </div>
     </main>
-    <footer class="border-0 border-solid border-t-1 border-gray-300 w-full">
-      <div class="mt-10 text-center text-gray-500">
+    <footer class="fixed bottom-0 border-0 border-solid border-t-1 border-gray-300 w-full">
+      <div class="mt-2 text-center text-gray-500">
         <a href="https://beian.miit.gov.cn/" class="text-gray no-underline">
           <p>ICP备案/许可证号：皖ICP备19004549号</p>
         </a>
@@ -36,9 +36,14 @@ const { success, warning, error, info } = useMessage();
 
 // useLoading().show()
 
-const showSuccess = () => {
+const onLogin = () => {
+  usePlus('login').then(res=>{
+
+  }).catch(err=>{
+    warning(err.msg)
+  })
+
   success('操作成功！');
-  warning('warningwarning')
 };
 </script>
 

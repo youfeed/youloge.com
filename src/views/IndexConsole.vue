@@ -1,14 +1,22 @@
 <template>
   <header class="fixed h-12 w-full bg-gray-100 border-b border-gray-200">
-    <div><button @click="toggleSidebar">Toggle</button></div>
-    <div></div>
-    <div></div>
+    <div class="flex h-full items-center justify-between px-4">
+      <div class="flex items-center">
+        <button @click="toggleSidebar" class="i-tdesign:view-list cursor-pointer"></button>
+        <div class="flex  ml-2">
+          <div class="font-medium text-gray-900">Youloge@</div>
+          <div class="text-sm text-gray-500">{{ profile.user }}</div>
+        </div>
+      </div>
+      <div></div>
+      <div>{{ profile.mail }}</div>
+    </div>
   </header>
   <aside
       class="sidebar fixed inset-y-0 left-0 top-12 z-20 flex w-32 flex-col items-start justify-between overflow-y-auto pt-4 pb-4 transition-transform duration-200 ease-in-out bg-gray-100 border-r border-gray-200"
       :class="sidebarCollapsed ? '-translate-x-full' : ''"
     >
-      <div class="flex-1 px-2">
+      <div class="flex-1 mb-2 relative w-full">
         <div>
           <div v-for="item in menuItems" :key="item.title" class="menu-item relative">
             <div
@@ -16,7 +24,7 @@
               class="cursor-pointer inline-flex w-full items-center p-2 text-sm select-none text-gray-900 rounded-lg hover:bg-gray-200 group"
               @click="toggleSubMenu(item)"
               :class="{ 'bg-gray-200 font-bold': current.startsWith(item.name) }">
-              <span class="ml-3">{{ item.title }}</span>
+              <div class="ml-2"><span :class="`i-${item.icon}`"></span>{{ item.title }}</div>
               <svg v-if="item.children" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-auto" :class="{'rotate-270':item.subExpand}" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
               </svg>
@@ -31,6 +39,11 @@
                 </div>
               </div>
             </transition>
+          </div>
+        </div>
+        <div class="absolute bottom-0 left-0 w-full">
+          <div v-ripple class="cursor-pointer inline-flex w-full items-center p-2 text-sm select-none text-gray-900 rounded-lg hover:bg-gray-200 group">
+            <div class="ml-2" @click="navigateTo('logout')"><span class="i-tdesign:login"></span>退出登录</div>
           </div>
         </div>
       </div>
@@ -53,8 +66,8 @@ Object.entries(modules).forEach(([path, module]) => {
 console.log('components',components)
 
 const state = reactive({
-  menuItems:[],sidebarCollapsed:false,current:''
-}),{current,menuItems,sidebarCollapsed} = toRefs(state);
+  profile:{},menuItems:[],sidebarCollapsed:false,current:''
+}),{profile,current,menuItems,sidebarCollapsed} = toRefs(state);
 // 动态路由
 const currentParams = shallowRef({});
 const currentComponent = shallowRef(components['index']);
@@ -80,6 +93,7 @@ const navigateTo = (name,params={})=>{
 //
 onMounted(()=>{
   state.menuItems = useMenu;
+  state.profile = useAuth();
   console.log('useMenu',useMenu)
 });
 </script>
