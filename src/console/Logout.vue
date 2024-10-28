@@ -12,6 +12,7 @@ const state = reactive({}),{} = toRefs(state);
 //
 onMounted(()=>{
   localStorage.removeItem('profile');
+  location.reload();
 })
 // 路由跳转(动态组件内部跳转)
 const navigateTo = (path,params='')=>{

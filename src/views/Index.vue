@@ -10,6 +10,7 @@ const currentComponent = computed(() => {
   let {uuid} = useAuth()
   return uuid ? IndexConsole : IndexHome;
 });
+
 onMounted(()=>{
 
 })

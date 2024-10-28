@@ -7,7 +7,7 @@ export default {
     el.style.position = 'relative';
     el.style.overflow = 'hidden'
     el.addEventListener('pointerdown', (e) => {
-      console.log(e)
+      // console.log(e)
       let ripple = document.createElement('div')
       ripple.className = 'y-ripple'
       // ripple.style = `position: absolute;transform: translate(-50%,-50%);  pointer-events: none; overflow: hidden;background: currentColor; border-radius: 50%;`;
@@ -27,8 +27,8 @@ export default {
       //
       nextTick(()=>{
         ripple.animate([
-          {width: '50%', height:'100%', opacity: .5},
-          {width: '400%', height:'400%', opacity: 0},
+          {width: '50%', height:'100%', opacity: .3},
+          {width: '400%', height:'400%', opacity: .1},
         ],
         {
           iterations: 1,
@@ -42,6 +42,8 @@ export default {
     })
   },
   unmounted(el){
-    el.removeEventListener('pointerdown');
+    // console.log('unmounted',el)
+
+    // el.removeEventListener('pointerdown');
   }
 }

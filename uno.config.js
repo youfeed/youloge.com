@@ -17,7 +17,7 @@ export default defineConfig({
   ],
   preflights:[{
     getCSS:()=>`
-      a{text-decoration: none;user-select:none;}
+      a{text-decoration: unset !;user-select:none;}
       *{box-sizing:border-box;padding:0;margin: 0;}
     `
   }]

@@ -37,13 +37,13 @@ const { success, warning, error, info } = useMessage();
 // useLoading().show()
 
 const onLogin = () => {
-  usePlus('login').then(res=>{
-
+  usePlus('login').then(profile=>{
+    console.log(profile)
+    useStorage('profile',profile);
+    location.reload()
   }).catch(err=>{
     warning(err.msg)
   })
-
-  success('操作成功！');
 };
 </script>
 

@@ -7,7 +7,7 @@
         </div>
         <div class="flex justify-between items-center ">
           <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
-            <div class="flex items-center gap-1" :title="name">
+            <div class="flex items-center gap-1">
               <img src="/loge.svg" alt="" class="w-4 h-4">
               <span>Youloge</span>
             </div>
@@ -21,7 +21,7 @@
       <div class="search">
         <div class="max-w-40">
           <form action="/drive/search" method="get">
-            <input type="search" name="q" placeholder="搜索云盘资源" class="border rounded px-2 py-1 w-full"/>
+            <input type="search" name="q" v-model="query.q" placeholder="搜索云盘资源" class="border rounded px-2 py-1 w-full"/>
           </form>
         </div>
       </div>
@@ -41,12 +41,15 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, toRefs } from "vue";
+const route = useRoute();
 const state = reactive({
+  err:0,msg:'',data:[], query:{},
   profile:{}
-}),{profile} = toRefs(state)
+}),{query,profile} = toRefs(state)
 
 onMounted(()=>{
+  state.query = route.query;
+  state.user = route.params.user
   state.profile = useStorage('profile');
   onStorage('profile',(res)=>{
     console.log(res)

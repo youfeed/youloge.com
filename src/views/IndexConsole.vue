@@ -48,7 +48,7 @@
         </div>
       </div>
   </aside>
-  <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'pl-16' : 'pl-37'">
+  <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'lg:pl16' : 'md:pl-37'" @click="closeSidebar">
     <transition mode="out-in">
       <keep-alive>
         <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
@@ -64,7 +64,7 @@ Object.entries(modules).forEach(([path, module]) => {
 	components[name] = defineAsyncComponent(module);
 })
 console.log('components',components)
-
+// 
 const state = reactive({
   profile:{},menuItems:[],sidebarCollapsed:false,current:''
 }),{profile,current,menuItems,sidebarCollapsed} = toRefs(state);
@@ -74,6 +74,11 @@ const currentComponent = shallowRef(components['index']);
 // 展开收缩菜单
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value;
+};
+// 关闭收缩菜单
+const closeSidebar = () => {
+  console.log('closeSidebar')
+  sidebarCollapsed.value = true;
 };
 // 展开收缩子菜单
 const toggleSubMenu = (item) => {

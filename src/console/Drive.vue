@@ -7,7 +7,11 @@
     <div>
       <template v-for="item in list" :key="item.id">
         <div class="mb-4">
-          <div class="font-medium">{{item.title}}{{ item.ext }} </div>
+          <div class="font-medium">
+            <router-link :to="`/drive/${item.uuid}`" target="_blank" class="text-current decoration-none hover:opacity-80">
+              {{item.title}}{{ item.ext }} 
+            </router-link>
+          </div>
           <div class="text-sm ">售价:<span class="text-red-500"><sub>#</sub>{{ item.cost}}<sup>RGB</sup></span> · {{ useBytes(item.size) }} · {{item.mime}}  {{ useTimeago(item.created) }}</div>
         </div>
       </template>

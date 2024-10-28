@@ -7,7 +7,7 @@
         </div>
         <div class="flex justify-between items-center ">
           <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
-            <div class="flex items-center gap-1" :title="name">
+            <div class="flex items-center gap-1" >
               <img src="/loge.svg" alt="" class="w-4 h-4">
               <span>Youloge</span>
             </div>
@@ -40,12 +40,9 @@
 <script setup>
 const route = useRoute();
 const state = reactive({
-  err:0,
-  msg:'',
-  data:[],
+  err:0,msg:'',data:[],
   user:'',
-  query:{},
-  profile:{},
+  query:{},profile:{},
 }),{user,query,profile} = toRefs(state)
 // 
 onMounted(()=>{
