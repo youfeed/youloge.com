@@ -34,20 +34,17 @@
 <script setup>
 import { onMounted, toRefs } from "vue";
 const state = reactive({
-  err:0,
-  msg:'',
-  data:{},
-  user:'',
-  profile:{}
-}),{user,err,msg,data} = toRefs(state)
+  err:0,msg:'',data:{},
+  params:'',profile:{}
+}),{err,msg,data,params} = toRefs(state)
 const route = useRoute();
 // 获取用户资料
 const userInfo = () => {
-  let {user} = state;
+  let {user} = state.params;
  apiFetch('account/info',{user:user}).then(res=>Object.assign(state,res))
 }
 onMounted(()=>{
-  state.user = route.params.user;
+  state.params = route.params;
   userInfo()
 })
 console.log(route)
