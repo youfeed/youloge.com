@@ -8,7 +8,7 @@
           </div>
           Youloge
         </div>
-        <div  @click="onLogin"> 登录</div>
+        <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button>
       </div>
     </header>
     <main class="max-w-screen-md mx-auto mt-40 ">

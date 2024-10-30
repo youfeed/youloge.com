@@ -2,22 +2,22 @@
   <div class="max-w-screen-md mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
       <div>我的钱包</div>
-      <div @click="getBalance" class="i-tdesign-loading"></div>
+      <div @click="reFresh" class="i-tdesign-loading"></div>
     </div>
     <div>
-      <div class="flex justify-between items-center mb-4">
-        <div>余额</div>
-        <div class="text-xl font-bold">#{{data.amount}} RGB</div>
+        <div class="flex justify-between items-center mb-4">
+          <div>余额</div>
+          <div class="text-xl font-bold">#{{data.amount}} RGB</div>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+          <div>猫币</div>
+          <div class="text-xl font-bold">{{data.catcoin}}</div>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+          <div>积分</div>
+          <div class="text-xl font-bold">{{data.integral}}</div>
+        </div>
       </div>
-      <div class="flex justify-between items-center mb-4">
-        <div>猫币</div>
-        <div class="text-xl font-bold">{{data.catcoin}}</div>
-      </div>
-      <div class="flex justify-between items-center mb-4">
-        <div>积分</div>
-        <div class="text-xl font-bold">{{data.integral}}</div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -31,7 +31,12 @@ const state = reactive({
 const getBalance = ()=>{
   apiFetch('wallet/balance',{},true).then(res=>Object.assign(state,res))
 }
-//
+// 刷新余额
+const reFresh = ()=>{
+  state.data = {}
+  getBalance()
+}
+
 onMounted(()=>{
     state.profile = useAuth();
     getBalance();

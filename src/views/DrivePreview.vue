@@ -73,14 +73,16 @@ const state = reactive({
   err:1,
   msg:'',
   data:{},
+  qrcode:'',
   metadata:{}
-}),{err,msg,data,metadata,uuid} = toRefs(state);;
-
+}),{err,msg,data,qrcode,metadata,uuid} = toRefs(state);
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
   apiFetch('drive/info',{uuid:uuid}).then(res=>Object.assign(state,res))
 }
+
+
 //
 const onDownload = async ()=>{
   let {uuid} = useAuth()
@@ -102,13 +104,16 @@ onMounted(()=>{
   console.log(useImages,state.uuid)
   // usePlus('captcha')
   loadMetadata();
+  // 生成二维码
+  useQrcode(`https://youloge.com/drive/${state.uuid}?from=`).then(canvas=>{
+    canvas.toBlob((blob)=>{
+      var file = new Blob([blob], {type: "image/png;charset=utf-8"});
+      var src = URL.createObjectURL(file);
+      state.qrcode = src;///URL.revokeObjectURL(src);
+    },"image/png", 0.95)
+  })
 })
-// 计算二维码
-const qrcode = computed(()=>{
-  let {uuid} = state;
-  let data = encodeURIComponent(`https://youloge.com/drive/${uuid}?u=qr`);
-  return `https://qun.qq.com/qrcode/index?data=${data}`
-})
+
 // 复制分享文本
 const onShare = (e)=>{
   let {uuid,title,ext,size,mime,updated} = state.data;

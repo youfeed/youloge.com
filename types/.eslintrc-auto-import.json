@@ -91,6 +91,7 @@
     "useDialog": true,
     "useBytes": true,
     "iniMenu": true,
-    "useMenu": true
+    "useMenu": true,
+    "useQrcode": true
   }
 }

@@ -72,6 +72,7 @@ declare global {
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
   const usePlus: typeof import('../src/composables/usePlus.js')['default']
+  const useQrcode: typeof import('../src/composables/useQrcode.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
@@ -164,6 +165,7 @@ declare module 'vue' {
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePlus: UnwrapRef<typeof import('../src/composables/usePlus.js')['default']>
+    readonly useQrcode: UnwrapRef<typeof import('../src/composables/useQrcode.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
