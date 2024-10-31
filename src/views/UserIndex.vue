@@ -8,20 +8,24 @@
       <div class="head  border-b-1 border-gray-500 border-b-solid pb-2">
         <div class="flex items-center justify-between max-w-3xl mx-auto">
           <div class="flex gap-2">
-            <div class="w-20 h-20 bg-cover bg-center rounded-full" >
-              <img :src="useImage(data.avatar,'150')" alt="" class="w-full h-full rounded-sm">
+            <div class="w-10 h-10 sm:w-15 sm:h-15 bg-cover bg-center rounded-full" >
+              <img :src="useImage(data.avatar,'80')" alt="" class="max-w-full rounded-sm">
             </div>
             <div class="">
-              <div class="text-lg font-bold ">{{ data.name }} · @{{ data.user }}</div>
-              <div class="mt-4">{{ data.uuid }} · {{ data.mail }} · {{ data.created }}</div>
+              <div class="font-bold ">{{ data.name }} · @{{ data.user }}</div>
+              <div class="mt-1"><sapn class="hidden sm:inline">{{ data.uuid }} · </sapn>{{ data.mail }}<sapn class="hidden sm:inline"> · {{ data.created }}</sapn></div>
             </div>
           </div>
           <div class="ml-2">
-            <div class="font-size-sm color-gray-400" title="对方不知道你的关注，但你可以获取他的最新动态">单项订阅</div>
+            <div class="font-size-sm color-gray-400" title="对方不知道你的关注，但你可以获取他的最新动态">
+              <div class="i-tdesign:usergroup-add w-6 h-6"></div>添加好友
+            </div>
           </div>
         </div>
       </div>
-      <div class="body"></div>
+      <div class="body">
+        用户主页 介绍： cdn.youloge.com/111.readme size < 10kb 
+      </div>
       <div class="foot"></div>
     </div>
     <div v-else>

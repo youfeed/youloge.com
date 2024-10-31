@@ -2,33 +2,24 @@
   <header class="h-14 px-2 flex  items-center sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
     <div class="w-full flex justify-between items-center h-10">
       <div class="left flex  items-center justify-start gap-2">
-        <div class="w-6 h-6 border-gray-500 border border-solid rounded-md flex justify-center items-center">
-          <div class="i-tdesign:view-list"></div>
-        </div>
         <div class="flex justify-between items-center ">
           <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
             <div class="flex items-center gap-1" >
-              <img src="/loge.svg" alt="" class="w-4 h-4">
+              <img src="/loge.svg" alt="" class="w-6 h-6">
               <span>Youloge</span>
             </div>
           </router-link>
           <div>/</div>
-          <router-link :to="user" class="color-dark-500 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
+          <router-link :to="user" class="color-dark-200 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
             <div>{{user}}</div>
           </router-link>
         </div>
       </div>
-      <div class="search">
-        <div class="max-w-40">
-          <form action="/drive/search" method="get">
-            <input type="search" name="q" placeholder="" class="border rounded px-2 py-1 w-full"/>
-          </form>
-        </div>
+      <div class="hidden sm:block">
+        <!-- <div class="i-tdesign:setting-1 w-6 h-6"></div> -->
       </div>
-      <div class="flex">
-        <div class="w-8 h-8">
-          <div><img :src="useImage(profile.avatar,'80')" alt="" class="w-full h-full rounded-full"></div>
-        </div>
+      <div class="search">
+        <div class="i-tdesign:notification w-6 h-6"></div>订阅
       </div>
     </div>
   </header>

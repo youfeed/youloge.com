@@ -1,14 +1,13 @@
 <template>
   <header class="fixed h-12 w-full bg-gray-100 border-b border-gray-200">
-    <div class="flex h-full items-center justify-between px-4">
-      <div class="flex items-center">
-        <button @click="toggleSidebar" class="i-tdesign:view-list cursor-pointer"></button>
-        <div class="flex  ml-2">
-          <div class="font-medium text-gray-900">Youloge@</div>
-          <div class="text-sm text-gray-500">{{ profile.user }}</div>
-        </div>
+    <div class="flex h-full items-center justify-between px-3">
+      <div class="flex items-center " @click="toggleSidebar">
+        <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
+          <!-- <div class="i-tdesign:view-list cursor-pointer w-4 h-4"></div> -->
+          <img src="/loge.svg" alt="" class="w-4 h-4">
+          <div class="font-medium text-gray-900 pl-1">{{ profile.user }}</div>
+        </button>
       </div>
-      <div></div>
       <div>{{ profile.mail }}</div>
     </div>
   </header>
