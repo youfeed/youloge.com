@@ -4,6 +4,19 @@ export default [
       name: 'index',
       icon:'tdesign:user-list'
     },{
+      title: '聊天通讯',
+      name: 'message',
+      icon:'tdesign:chat-bubble-smile',
+      children: [
+        {
+          title: '聊天会话',
+          name: 'message'
+        },{
+          title: '通讯录',
+          name: 'contact'
+        }
+      ]
+    },{
       title: '文章专栏',
       name: 'article',
       icon:'tdesign:article',

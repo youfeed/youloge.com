@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="body">
-        用户主页 介绍： cdn.youloge.com/111.readme size < 10kb 
+        用户主页 介绍： cdn.youloge.com/111.readme size  10kb 
       </div>
       <div class="foot"></div>
     </div>

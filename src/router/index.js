@@ -7,6 +7,7 @@ import User from '@/views/User.vue'
 import UserIndex from '@/views/UserIndex.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import UserArticle from '@/views/UserArticle.vue'
+import UserMessage from '@/views/UserMessage.vue'
 
 import Article from '@/views/Article.vue'
 import ArticleIndex from '@/views/ArticleIndex.vue'
@@ -75,6 +76,10 @@ const routes = [
       }
     ]
   },{
+    path:'/-',
+    component: Index,
+    
+  },{
     path: '/:user',
     component: User,
     children:[
@@ -86,6 +91,12 @@ const routes = [
         component: UserArticle,
       },{
         path: 'profile',
+        component: UserProfile,
+      },{
+        path: 'message',
+        component: UserMessage,
+      },{
+        path: 'message',
         component: UserProfile,
       },
     ]
