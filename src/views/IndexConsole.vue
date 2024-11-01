@@ -49,7 +49,7 @@
   </aside>
   <main class="fixed w-full h-full transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'lg:pl16' : 'md:pl-37'" @click="closeSidebar">
     <transition mode="out-in">
-      <keep-alive>
+      <keep-alive max="100">
         <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
       </keep-alive>
     </transition>

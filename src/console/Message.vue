@@ -1,6 +1,6 @@
 <template>
-  <!-- IM即时通讯 -->
   <div class="max-w-screen-md mx-auto p-4">
+    <!-- IM即时通讯 -->
      <div class="cookies">
       <div>cookies</div>
       <div>
@@ -79,6 +79,17 @@ const onCookies = (item)=>{
 onMounted(()=>{
     state.profile = useAuth();
     getCokies();
+})
+onActivated(() => {
+  console.log(100,'onActivated')
+  // 调用时机为首次挂载
+  // 以及每次从缓存中被重新插入时
+})
+
+onDeactivated(() => {
+  console.log(100,'onDeactivated')
+  // 在从 DOM 上移除、进入缓存
+  // 以及组件卸载时调用
 })
 // 路由跳转(动态组件内部跳转)
 const navigateTo = (path,params='')=>{
