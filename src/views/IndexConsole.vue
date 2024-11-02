@@ -56,6 +56,7 @@
   </main>
 </template>
 <script setup>
+
 const components = {};
 const modules = import.meta.glob('@/console/*.vue');
 Object.entries(modules).forEach(([path, module]) => {

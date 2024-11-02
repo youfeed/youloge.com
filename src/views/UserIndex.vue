@@ -13,7 +13,7 @@
             </div>
             <div class="">
               <div class="font-bold ">{{ data.name }} · @{{ data.user }}</div>
-              <div class="mt-1"><sapn class="hidden sm:inline">{{ data.uuid }} · </sapn>{{ data.mail }}<sapn class="hidden sm:inline"> · {{ data.created }}</sapn></div>
+              <div class="mt-1"><span class="hidden sm:inline">{{ data.uuid }} · </span>{{ data.mail }}<span class="hidden sm:inline"> · {{ data.created }}</span></div>
             </div>
           </div>
           <div class="ml-2">
@@ -24,7 +24,10 @@
         </div>
       </div>
       <div class="body">
-        用户主页 介绍： cdn.youloge.com/111.readme size  10kb 
+        <div v-html="html" class=""></div>
+        <div class="mt-5 max-w-3xl mx-auto">
+          <YouEditor></YouEditor>
+        </div>
       </div>
       <div class="foot"></div>
     </div>
@@ -36,16 +39,33 @@
 </template>
 
 <script setup>
-import { onMounted, toRefs } from "vue";
 const state = reactive({
   err:0,msg:'',data:{},
-  params:'',profile:{}
-}),{err,msg,data,params} = toRefs(state)
+  html:'',params:'',profile:{}
+}),{err,msg,data,html,params} = toRefs(state)
 const route = useRoute();
 // 获取用户资料
 const userInfo = () => {
   let {user} = state.params;
- apiFetch('account/info',{user:user}).then(res=>Object.assign(state,res))
+  apiFetch('account/info',{user:user}).then(res=>{
+    Object.assign(state,res);
+    res.data.uuid && getReadme()
+  })
+}
+// 获得用户介绍
+const getReadme = ()=>{
+  let {uuid} = state.data;
+  fetch(`https://cdn.youloge.com/readme/${uuid}`).then(r=>{
+    if(r.ok){
+      return r.text();
+    };
+    throw new Error();
+  }).then(html=>{
+    state.html = html;console.log(html)
+  }).catch(err=>{
+    console.log(333)
+    console.log(err)
+  })
 }
 onMounted(()=>{
   state.params = route.params;

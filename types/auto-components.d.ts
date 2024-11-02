@@ -11,6 +11,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     YouDialog: typeof import('./../src/components/YouDialog.vue')['default']
     YouDiscuss: typeof import('./../src/components/YouDiscuss.vue')['default']
+    YouEditor: typeof import('./../src/components/YouEditor.vue')['default']
     YouLoading: typeof import('./../src/components/YouLoading.vue')['default']
     YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
     YouPayment: typeof import('./../src/components/YouPayment.vue')['default']

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "tinymce": "^7.4.1",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0"
   },

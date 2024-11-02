@@ -20,9 +20,11 @@ export default defineConfig({
       // extensions:['vue'],
     }),
     AutoImport({
-      imports:['vue','vue-router'],
+      imports:['vue','vue-router',{
+        'tinymce': [['default', 'tinymce']]
+        // ['default as tinymce','init']
+      }],
       dirs:['src/composables','src/directives'],
-      // extensions:['.vue'],
       dts:'types/auto-imports.d.ts',
       vueTemplate:true,
       eslintrc:{
@@ -50,6 +52,7 @@ export default defineConfig({
       output:{
         manualChunks: {
           vue:['vue','vue-router'],
+          tinymce:['tinymce']
         }
       }
     }
