@@ -24,9 +24,8 @@
         </div>
       </div>
       <div class="body">
-        <div v-html="html" class=""></div>
         <div class="mt-5 max-w-3xl mx-auto">
-          <YouEditor></YouEditor>
+          <div v-html="html"></div>
         </div>
       </div>
       <div class="foot"></div>
@@ -41,8 +40,14 @@
 <script setup>
 const state = reactive({
   err:0,msg:'',data:{},
-  html:'',params:'',profile:{}
-}),{err,msg,data,html,params} = toRefs(state)
+  html:'2333',params:'',profile:{},viewlist:[
+    {src:'https://www.wetools.com/imgplaceholder/800x800?text=0'},
+    {src:'https://www.wetools.com/imgplaceholder/800x800?text=1'},
+    {src:'https://www.wetools.com/imgplaceholder/800x800?text=2'},
+    {src:'https://www.wetools.com/imgplaceholder/800x800?text=3'},
+    {src:'https://www.wetools.com/imgplaceholder/800x800?text=4'},
+  ]
+}),{err,msg,data,html,params,viewlist} = toRefs(state)
 const route = useRoute();
 // 获取用户资料
 const userInfo = () => {
@@ -52,10 +57,15 @@ const userInfo = () => {
     res.data.uuid && getReadme()
   })
 }
+// 
+const onSave = ()=>{
+  console.log(999,state.html)
+
+}
 // 获得用户介绍
 const getReadme = ()=>{
   let {uuid} = state.data;
-  fetch(`https://cdn.youloge.com/readme/${uuid}`).then(r=>{
+  fetch(`https://cdn.youloge.com/readme/${uuid}?t=${new Date().getTime()}`).then(r=>{
     if(r.ok){
       return r.text();
     };

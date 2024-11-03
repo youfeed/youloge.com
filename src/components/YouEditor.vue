@@ -1,15 +1,18 @@
 <template>
   <div>
-    <h1>TinyMCE Editor</h1>
-    <textarea id="tinymce-editor" ref="tinymceEditor"></textarea>
+    <textarea id="tinymce-editor"></textarea>
 </div>
 </template>
 
 <script setup>
-const props = defineProps(['content']),emit = defineEmits(['change']);
+const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue']);
+const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
 const editorSettings = {
     base_url:'tinymce',
-    height: 500,
+    max_height: 500,
+    max_width: 500,
+    min_height: 100,
+    min_width: 400,
     menubar: false,
     plugins: 'code quickbars preview searchreplace autolink fullscreen image link media codesample table charmap advlist lists wordcount autoresize',
     toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect',
@@ -46,23 +49,27 @@ const editorSettings = {
         xhr.send(formData);
     }),
 };
+console.log(666,props.modelValue)
+
 onMounted(() => {
-    console.log('Editor mounted',tinymce);
     tinymce.init({
         selector: 'textarea',
         ...editorSettings,
         // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
         license_key:'gpl',
+        init_instance_callback:(editor)=>{
+            editor.setContent(props.modelValue||'<p>写点啥...</p>',{format : 'raw'});
+        },
         setup: (editor) => {
-            console.dir(editor);
+            editorInstance = editor;
             editor.on('change', () => {
-                console.log('Editor content changed:', editor.getContent());
+                model.value = editor.getContent();
             });
         }
     });
 });
 onBeforeUnmount(() => {
-//   tinymce.remove('#tinymce-editor');
+    editorInstance && editorInstance.destroy();
 });
 </script>
 
