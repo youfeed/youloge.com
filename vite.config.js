@@ -21,7 +21,8 @@ export default defineConfig({
     }),
     AutoImport({
       imports:['vue','vue-router',{
-        'tinymce': [['default', 'tinymce']]
+        'tinymce': [['default', 'tinymce']],
+        'pako':[['default','pako']]
         // ['default as tinymce','init']
       }],
       dirs:['src/composables','src/directives'],

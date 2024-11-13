@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "pako": "^2.1.0",
     "tinymce": "^7.4.1",
     "vue": "^3.3.4",
     "vue-router": "^4.3.0"
