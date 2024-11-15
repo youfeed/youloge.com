@@ -103,12 +103,14 @@ const initSocket = ()=>{
   wss.onmessage = function(e){
     let json = JSON.parse(e.data);
     if(json.type == 'pixel.block'){
+        console.log('pixel.block',json)
         const compressed = new Uint8Array(json.blob.data);
+        console.log('compressed',compressed.length)
         const restored  = pako.inflate(compressed) // , { to: 'string' }
-        console.log('restored',restored.size)
-        const imageData = new ImageData(new Uint8ClampedArray(restored), 256, 256);
+        const clampedArray = new Uint8ClampedArray(restored.buffer, restored.byteOffset, restored.byteLength);
+        console.log('clampedArray',clampedArray)
+        const imageData = new ImageData(clampedArray, 256, 256);
         state.ctx.putImageData(imageData, 0, 0);
-        console.log('onmessage',imageData)
     }
   }
   wss.onclose = function(){}
@@ -119,7 +121,7 @@ const sendMessage = (data) => {
 }
 // 同步画布
 const syncCanvas = ()=>{
-    sendMessage({type:'pixel.block',x:1,y:1,level:4})
+    sendMessage({type:'pixel.block',x:0,y:0,level:4})
 }
 // 自动提交
 const autoPost = ()=>{
@@ -129,7 +131,7 @@ const autoPost = ()=>{
     }
     setTimeout(() => {
         autoPost()
-    }, 1000);
+    }, 10);
 }
 //
 const drawPixel = (x, y, color)=>{
