@@ -112,6 +112,11 @@ const initSocket = ()=>{
         const imageData = new ImageData(clampedArray, 256, 256);
         state.ctx.putImageData(imageData, 0, 0);
     }
+    if(json.type == 'pixel.update'){
+        let {x,y,rgba} = json;
+        const imageData = new ImageData(new Uint8ClampedArray(rgba.data), 1, 1);
+        state.ctx.putImageData(imageData, x, y);
+    }
   }
   wss.onclose = function(){}
   state.socket = wss;
@@ -127,7 +132,9 @@ const syncCanvas = ()=>{
 const autoPost = ()=>{
     let shift = state.pixels.shift();
     if(shift){
-        sendMessage({type:'pixel.update',x:shift.x,y:shift.y,color:shift.color})
+        let data = {type:'pixel.update',x:shift.x,y:shift.y,color:shift.color}
+        console.log('data',data)
+        sendMessage(data)
     }
     setTimeout(() => {
         autoPost()
