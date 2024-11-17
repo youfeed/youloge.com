@@ -1,6 +1,6 @@
 <template>
   <div class="layout w-screen h-screen relative">
-    <header class="fixed w-full px-2">
+    <header class="fixed w-full px-2 z-1">
       <div class="h-10 flex flex-row justify-between items-center">
         <div class="flex items-center">
           <div class="w-5 h-5">
@@ -8,15 +8,17 @@
           </div>
           Youloge
         </div>
-        <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button>
+        <div class="flex items-center gap-2">
+            <div>{{ hover.x }}x{{ hover.y }}</div>
+            <input type="color" id="colorPicker" v-model="color" />
+            <div>{{ width }}x{{ height }}</div>
+        </div>
+        <!-- <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button> -->
       </div>
     </header>
     <main >
         <div id="container" class="relative w-screen h-screen" ref="containerRef">
           <canvas id="canvas" ref="canvasRef" v-on="getBind" :style="{ transform: transformMatrix }"></canvas>
-          <div id="picker">
-            <input type="color" id="colorPicker" v-model="color" />
-          </div>
         </div>
     </main>
     <!-- <main class="max-w-screen-md mx-auto mt-40 ">
@@ -42,8 +44,10 @@ const { success, warning, error, info } = useMessage();
 //
 const containerRef = ref(null);
 const canvasRef = ref(null);
+const canvasCtx = ref(null);
 const state = reactive({
-    color:'#23ca92',
+    color:'#23ca92',hover:{},
+    width:0,height:0,
     socket:null,
     pixels:[],
     canvas:null,
@@ -59,10 +63,9 @@ const state = reactive({
     startY: 0,
     mouseX:0,
     mouseY:0,
-}),{canvas,color} = toRefs(state);
+}),{canvas,color,width,height,hover} = toRefs(state);
 //
 const onStart = ({button,clientX,clientY,offsetX,offsetY}=e)=>{
-    
     if(button == 0){
         state.isDragging = true;
         state.initialX = clientX;
@@ -71,51 +74,86 @@ const onStart = ({button,clientX,clientY,offsetX,offsetY}=e)=>{
         state.startY = state.currentY;
     }
     if(button ==2){
-        state.scale = 10
-        rightClick(clientX,clientY);
+        console.log('rightClick',clientX,clientY,offsetX,offsetY)
+        // state.scale = 4
+        rightClick(offsetX,offsetY);
     }
-//   console.log(e)
-
 }
 const onMove = ({clientX,clientY,offsetX,offsetY})=>{
     if(state.isDragging){
         state.currentX = clientX - state.initialX + state.startX;
         state.currentY = clientY - state.initialY + state.startY;
     }else{
-        state.mouseX = clientX;
-        state.mouseY = clientY;
+        state.mouseX = offsetX;
+        state.mouseY = offsetY;
     }
+    // console.log(clientX,clientY,offsetX,offsetY)
 } 
 const onEnd = ()=>{
     state.isDragging = false
 } 
 const onWheel = (event)=>{
+    const { clientX, clientY } = event;
+    // const canvas = canvasRef.value;
+    // const rect = canvas.getBoundingClientRect();
+    // const mouseX = clientX - rect.left;
+    // const mouseY = clientY - rect.top;
+
+    // // 计算缩放前后的偏移量
+    // const oldScale = state.scale;
+    // const delta = event.deltaY < 0 ? 1.1 : 0.9; // 放大或缩小的比例
+    // const newScale = state.scale * delta;
+
+    // const deltaX = mouseX * (newScale - oldScale);
+    // const deltaY = mouseY * (newScale - oldScale);
+
+    // // 更新缩放比例和偏移量
+    // state.scale = newScale;
+    // state.currentX += deltaX;
+    // state.currentY += deltaY;
+    
     const delta = Math.sign(event.deltaY);
-    const newScale = state.scale - delta * 0.4;
-    state.scale = Math.max(0.7, Math.min(newScale, 20));
+    console.log(delta)
+    const newScale = state.scale - delta * 0.2;
+    state.scale = Math.max(0.5, Math.min(newScale, 20));
 }
+/**
+ * 初始化socket
+ * open: 
+ */
 const initSocket = ()=>{
-  let wss = new WebSocket('ws://127.0.0.1:997/pixel');
+  let wss = new WebSocket('wss://wss.youloge.com/pixel');
   wss.onopen = function(){
-    syncCanvas();autoPost();
+    wss.send(`{"id":"0000","type":"pixel.info"}`)
     console.log('socket连接成功')
   }
   wss.onmessage = function(e){
     let json = JSON.parse(e.data);
+    if(json.type == 'pixel.info'){
+        canvasRef.value.width = state.width = json.width;
+        canvasRef.value.height = state.height = json.height;
+        canvasRef.value.style.width = state.width + 'px';
+        canvasRef.value.style.height = state.height + 'px';
+        wss.send(`{"id":"0001","type":"pixel.block"}`)
+    }
     if(json.type == 'pixel.block'){
-        console.log('pixel.block',json)
         const compressed = new Uint8Array(json.blob.data);
         console.log('compressed',compressed.length)
-        const restored  = pako.inflate(compressed) // , { to: 'string' }
+        const restored  = pako.inflate(compressed)
         const clampedArray = new Uint8ClampedArray(restored.buffer, restored.byteOffset, restored.byteLength);
-        console.log('clampedArray',clampedArray)
-        const imageData = new ImageData(clampedArray, 256, 256);
-        state.ctx.putImageData(imageData, 0, 0);
+        const imageData = new ImageData(clampedArray, state.width, state.height);
+        canvasCtx.value.putImageData(imageData,0,0);
     }
     if(json.type == 'pixel.update'){
-        let {x,y,rgba} = json;
-        const imageData = new ImageData(new Uint8ClampedArray(rgba.data), 1, 1);
-        state.ctx.putImageData(imageData, x, y);
+        let {x,y,blob} = json;
+        const imageData = new ImageData(new Uint8ClampedArray(blob.data), 1, 1);
+        canvasCtx.value.putImageData(imageData, x, y);
+        if(state.hover.x == x && state.hover.y == y){
+            state.hover.data = imageData.data
+        }
+    }
+    if(json.type == 'pixel.tips'){
+        alert(json.msg)
     }
   }
   wss.onclose = function(){}
@@ -141,11 +179,9 @@ const autoPost = ()=>{
     }, 10);
 }
 //
-const drawPixel = (x, y, color)=>{
-    const imageData = state.ctx.createImageData(1, 1);
-    const [r, g, b, a] = color;
-    imageData.data.set([r, g, b, a]);
-    state.ctx.putImageData(imageData, x, y);
+const drawPixel = (x, y, data)=>{
+    const imageData = new ImageData(new Uint8ClampedArray(data), 1, 1);
+    canvasCtx.value.putImageData(imageData, x, y);
 }
 const hexToRGBA = (hex) =>{
   hex = hex.replace(/^#/, '');
@@ -161,39 +197,32 @@ const transformMatrix = computed(() => {
 });
 const rightClick = (clientX,clientY)=>{
     const {mouseX,mouseY,currentX,currentY,scale} = state
-    const {left,top} = canvasRef.value.getBoundingClientRect();
-    const x = (mouseX - currentX) / scale >> 0;
-    const y = (mouseY - currentY) / scale >> 0;
-    const color = state.color;
-    const rgba = hexToRGBA(color)
-    drawPixel(x, y, rgba, color);
-    state.pixels.push({ x, y, rgba, color });
-    console.log(state.color)
+    state.socket.send(JSON.stringify({type:'pixel.update',x:mouseX,y:mouseY,color:state.color}))
 }
-const drawMousePixel = () => {
-  if (state.ctx) {
-    const { ctx, mouseX, mouseY, scale, currentX, currentY } = state;
-    ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
-    // 重新绘制所有右键绘制的点
-    state.pixels.forEach(({ x, y, rgba }) => {
-      drawPixel(x, y, rgba);
-    });
-    const x = (mouseX - currentX) / scale >> 0;
-    const y = (mouseY - currentY) / scale >> 0;
-    drawPixel(x, y, hexToRGBA(state.color));
-  }
-//   requestAnimationFrame(drawMousePixel);
-};
+// 悬浮配色
+const hoverPixel = () => {
+    const { ctx,hover, mouseX, mouseY, scale, currentX, currentY } = state;
+    if(mouseX && mouseY && (hover.x !== mouseX || hover.y !== mouseY)){
+        // 恢复旧像素
+        if(hover.data){
+            const imageOld = new ImageData(hover.data, 1, 1);
+            canvasCtx.value.putImageData(imageOld, hover.x, hover.y);
+        }
+        // 存储新像素
+        const imageNew = canvasCtx.value.getImageData(mouseX,mouseY,1,1);
+        state.hover = {x:mouseX,y:mouseY,data:imageNew.data}
+        // console.log('hover',state.hover)
+        // 绘制Hover点
+        drawPixel(mouseX, mouseY, hexToRGBA(state.color));
+    }
+    requestAnimationFrame(hoverPixel);
+}
 //
 onMounted(()=>{
-  const ctx = canvasRef.value.getContext('2d');
-  state.ctx = ctx;
-  ctx.fillStyle = 'blue';
-  ctx.fillRect(50, 50, 100, 100);
-  //
+  canvasCtx.value = canvasRef.value.getContext('2d');
+  // 
   initSocket()
-  //
-  requestAnimationFrame(drawMousePixel);
+  requestAnimationFrame(hoverPixel);
 })
 const onLogin = () => {
   usePlus('login').then(profile=>{
@@ -222,26 +251,18 @@ const getBind = {
     // touchend:onEnd,
     // touchcancel:onEnd
 };
-
-
 </script>
 
 <style>
 #container{overflow: hidden;}
-#picker{
-    position: absolute;
-    top: 100px;
-    right: 100px;
-}
 #canvas {
     position: absolute;
     top: 0;
     left: 0;
     opacity: 1;
-    /* cursor: none; */
     visibility: visible;
     image-rendering: pixelated;
-    transform-origin: 0px 0px 0px;
-    box-shadow: 0px 0px 2px 1px #d9baba;
+    /* transform-origin: 0px 0px 0px; */
+    box-shadow: 0px 0px 0px 8px #9C27B0
 }
 </style>
