@@ -6,7 +6,7 @@
           <div class="w-5 h-5">
             <img class="mx-auto w-full w-auto block select-none" src="/loge.svg" alt="">
           </div>
-          Youloge
+          <span>Youloge <sup class="text-sm text-fuchsia-600">像素大战</sup></span>
         </div>
         <div class="flex items-center gap-2">
             <div>{{ hover.x }}x{{ hover.y }}</div>
