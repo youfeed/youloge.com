@@ -74,8 +74,6 @@ const onStart = ({button,clientX,clientY,offsetX,offsetY}=e)=>{
         state.startY = state.currentY;
     }
     if(button ==2){
-        console.log('rightClick',clientX,clientY,offsetX,offsetY)
-        // state.scale = 4
         rightClick(offsetX,offsetY);
     }
 }
