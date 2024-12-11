@@ -93,7 +93,7 @@ const navigateTo = (name,params={})=>{
     currentComponent.value = components[name];
     currentParams.value = params;
   }
-  console.log('onJump',name in components,state.current,name,params)
+  console.log('navigateTo: console/',name,state.current,params)
 }
 //
 onMounted(()=>{

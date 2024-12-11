@@ -6,7 +6,7 @@ import { createApp } from 'vue'
 import { setupRouter } from './router'
 
 const storage = {
-  APIKEY:'it-lk1ER3z-iVEDdHRtIxh-jwymtE65cfZwjh2OUOYbBg3E6Z54DILcVgfbi5KYyn5J0OVyCTReXCIaFtgGxdw',
+  APIKEY:'n8ABGn5_bZcVGnm2-J6mbhSLFeiXCxvB4cKo0ow9NixmPVTVfMLX5kIpF4xlFdnQVqLiLGJtxPAJbjRyRFKsnyFChssy-HBlmYqjZXkrq6oVxPKWUm3QchVYY7TTd8qo',
   NOTIFY:'https://www.youloge.com',
   APIURL:'https://api.youloge.com',
   VIPURL:'https://www.youloge.com',

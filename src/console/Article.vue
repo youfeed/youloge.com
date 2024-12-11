@@ -6,7 +6,7 @@
           <div>文章</div>
           <div>草稿</div>
         </div>
-        <div>新建草稿</div>
+        <div @click="newDraft">新建草稿</div>
       </div>
       <div class="panel-body pt-2">
         <div class="lists">
@@ -45,6 +45,13 @@ const loadArticle = ()=>{
   apiFetch('article/list',{next_cursor:state.data.next_cursor},true).then(res=>{
     Object.assign(state,res);
   }).catch(err=>{});
+}
+// 新建草稿
+const newDraft = ()=>{
+  apiFetch('article/create').then(res=>{
+    console.log(res)
+  }).catch(err=>{});
+  console.log('newDraft')
 }
 //
 onMounted(()=>{

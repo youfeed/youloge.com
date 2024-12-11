@@ -13,7 +13,7 @@
             <input type="color" id="colorPicker" v-model="color" />
             <div>{{ width }}x{{ height }}</div>
         </div>
-        <!-- <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button> -->
+        <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button>
       </div>
     </header>
     <main >
