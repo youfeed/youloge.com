@@ -13,6 +13,7 @@ import Article from '@/views/Article.vue'
 import ArticleIndex from '@/views/ArticleIndex.vue'
 import ArticleSearch from '@/views/ArticleSearch.vue'
 import ArticlePreview from '@/views/ArticlePreview.vue'
+// import ArticleDraft from '@/views/ArticleDraft.vue' // 编辑草稿
 
 import Drive from '@/views/Drive.vue'
 import DriveIndex from '@/views/DriveIndex.vue'

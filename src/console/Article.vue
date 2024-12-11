@@ -1,15 +1,16 @@
 <template>
   <div class="max-w-screen-md mx-auto p-4">
     <div class="panel mb-4 bg-light p-2 rounded-sm">
-      <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
-        <div class="flex items-center gap-5">
-          <div>文章</div>
-          <div>草稿</div>
+      <template v-if="mode == 'preview'">
+        <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
+          <div class="flex items-center gap-5">
+            <div>文章</div>
+            <div>草稿</div>
+          </div>
+          <div @click="newDraft">新建草稿</div>
         </div>
-        <div @click="newDraft">新建草稿</div>
-      </div>
-      <div class="panel-body pt-2">
-        <div class="lists">
+        <div class="panel-body pt-2">
+          <div class="lists">
           <template v-for="item in data.data" :key="item.uuid">
             <div class="list border-b-solid border-b border-gray-300 py-4">
               <div class="">
@@ -19,13 +20,38 @@
               </div>
               <div class="flex justify-between items-center">
                 <div class="text-sm text-gray-500">{{ item.created }} · {{ item.view }} · {{ item.uuid }}</div>
-                <div>浏览</div>
+                <template v-if="item.status == 0">
+                  <div class="text-sm text-gray-500" @click="navigateTo('articledraft',item.uuid)">编辑</div>
+                </template>
+                <template v-else-if="item.status == 1">
+                  <div class="text-sm text-gray-500">浏览</div>
+                </template>
+                <template v-else>
+                  <div class="text-sm text-gray-500">审核中</div>
+                </template>
               </div>
             </div>
           </template>
         </div>
+        </div>
+      </template>
+      
+      
+        
+        <template v-if="mode == 'editor'">
+          <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
+            <div class="flex items-center gap-5">
+              <div>编辑模式</div>
+            </div>
+            <div>保存草稿</div>
+          </div>
+          <div class="panel-body pt-2">
+            <YouEditor v-model="html"></YouEditor>
+            <button class="" @click="saveReadme">记得保存</button>
+          </div>
+        </template>
+        
         <div v-if="data.nextcure" class="">加载更多</div>
-      </div>
     </div>
     <!-- README -->
     <div class="README">
@@ -42,7 +68,7 @@ const state = reactive({
 }),{err,msg,data,profile} = toRefs(state);
 //
 const loadArticle = ()=>{
-  apiFetch('article/list',{next_cursor:state.data.next_cursor},true).then(res=>{
+  apiFetch('article/list',{cursor:state.data.next_cursor},true).then(res=>{
     Object.assign(state,res);
   }).catch(err=>{});
 }

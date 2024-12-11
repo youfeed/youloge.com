@@ -76,7 +76,6 @@ const onUpload = (upload,bolb)=>{
     console.log(err)
     useMessage().error('保存失败');
   })
-
 }
 //
 onMounted(()=>{
