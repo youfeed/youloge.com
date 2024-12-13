@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <h1 class="text-2xl font-bold">素材选择</h1>
+    <h1 class="text-2xl font-bold">素材选择(0/{{props.limit}})</h1>
     <div class="mt-4">
       
     </div>
@@ -27,7 +27,7 @@ const state = reactive({
 
 // 素材列表
 const loadMaterial = ()=>{
-  apiFetch(`metarial/${props.mime}`,{cursor:'',limit:10},true).then(res=>{
+  apiFetch(`material/${props.mime}`,{cursor:'',limit:10},true).then(res=>{
     // state.list.push(...res.data.data);Object.assign(state,res);
   })
 }
