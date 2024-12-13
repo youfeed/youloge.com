@@ -5,7 +5,7 @@
         <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
           <!-- <div class="i-tdesign:view-list cursor-pointer w-4 h-4"></div> -->
           <img src="/loge.svg" alt="" class="w-5 h-5">
-          <div class="font-medium text-gray-900 pl-1">{{ profile.user }}</div>
+          <div class="font-medium text-gray-900 pl-1">Youloge</div>
         </button>
       </div>
       <div>{{ profile.mail }}</div>

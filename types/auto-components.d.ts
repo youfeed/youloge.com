@@ -14,6 +14,7 @@ declare module 'vue' {
     YouDiscuss: typeof import('./../src/components/YouDiscuss.vue')['default']
     YouEditor: typeof import('./../src/components/YouEditor.vue')['default']
     YouLoading: typeof import('./../src/components/YouLoading.vue')['default']
+    YouMaterial: typeof import('./../src/components/YouMaterial.vue')['default']
     YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
     YouPayment: typeof import('./../src/components/YouPayment.vue')['default']
     YouSearch: typeof import('./../src/components/YouSearch.vue')['default']

@@ -93,6 +93,7 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "pako": true
+    "pako": true,
+    "useMaterial": true
   }
 }

@@ -2,6 +2,7 @@
   <div class="max-w-screen-md mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
       <div>视频短片</div>
+      <div @click="onUpload" class="">上传视频</div>
       <div @click="reFresh" class="i-tdesign-loading"></div>
     </div>
     <div>
@@ -32,7 +33,15 @@ const getVideo = ()=>{
     state.list.push(...res.data.data);Object.assign(state,res);
   })
 }
-//
+// 上传视频
+const onUpload = ()=>{
+  useMaterial({mime:'video',limit:2}).then(res=>{
+    console.log(res)
+  }).catch(err=>{
+    console.log(err)
+  })
+}
+// 刷新列表
 const reFresh = ()=>{
   state.data.next_cursor = null;
   state.list = [];

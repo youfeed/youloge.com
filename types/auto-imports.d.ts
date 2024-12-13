@@ -69,6 +69,7 @@ declare global {
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useLink: typeof import('vue-router')['useLink']
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
+  const useMaterial: typeof import('../src/composables/useMaterial.js')['useMaterial']
   const useMenu: typeof import('../src/composables/useMenu.js')['default']
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
@@ -164,6 +165,7 @@ declare module 'vue' {
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
+    readonly useMaterial: UnwrapRef<typeof import('../src/composables/useMaterial.js')['useMaterial']>
     readonly useMenu: UnwrapRef<typeof import('../src/composables/useMenu.js')['default']>
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
