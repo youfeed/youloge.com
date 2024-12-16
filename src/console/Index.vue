@@ -39,7 +39,7 @@ const state = reactive({
 // 获得用户介绍
 const getReadme = ()=>{
   let {uuid} = state.profile;
-  fetch(`https://cdn.youloge.com/readme/${uuid}`).then(r=>{
+  fetch(`https://cdn.youloge.com/readme/${uuid}?t=${new Date().getTime}`).then(r=>{
     if(r.ok){
       return r.text();
     };
