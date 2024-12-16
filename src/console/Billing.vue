@@ -6,9 +6,18 @@
     </div>
     <div>
       <template v-for="item in list" :key="item.id">
-        <div class="mb-4">
-          <div class="font-medium">{{item.remark}} {{ (item.oldest - item.latest).toFixed(2)}}</div>
-          <div class="text-sm ">{{ item.created }} · {{item.oldest}}  {{ item.latest }}</div>
+        <div class="mb-2 hover:bg-gray-100 hover:rounded-lg p-2">
+          <div class="font-medium flex justify-between items-center">
+            <div>{{item.remark}}</div>
+            <div>
+              <span v-text="item.oldest < item.latest ? '+' : '-' "></span>
+              <span>{{ Math.abs(item.oldest - item.latest).toFixed(2)}}</span>
+            </div>
+          </div>
+          <div class="text-sm text-dark-50 flex justify-between items-center">
+            <div>{{ item.created }}</div>
+            <div>{{ item.latest }}</div>
+          </div>
         </div>
       </template>
       <div v-if="data.next_cursor" @click="getBilling">加载更多</div>

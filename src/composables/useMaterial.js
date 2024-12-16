@@ -12,11 +12,13 @@ export function useMaterial(options){
             onDestroy();
             reject();
         }
+        const container = document.createElement('div');
+        container.className = 'y-material-container z-9999';document.body.appendChild(container);
         const app = createApp(YouMaterial,{...options,onConfirm:onConfirm,onCancel:onCancel});
-        const Vm =  app.mount(document.createDocumentFragment());
-        Vm.$el.className = 'y-material-container';document.body.appendChild(Vm.$el);Vm.$el.style.zIndex = 9999;
+        app.mount(container);
         const onDestroy = () => {
             app.unmount();
+            container.remove();
         };
     });
 }
