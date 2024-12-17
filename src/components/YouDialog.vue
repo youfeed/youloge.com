@@ -1,17 +1,17 @@
 <template>
-    <TransitionGroup tag="div" mode="out-in">
-      <div v-for="item in messaged" :key="item.uuid" :class="['y-message',`y-message-${item.method}`]" @click="onClose(item)" >
-        <div v-html="item.params ||'unknown'"></div>
-      </div>
-    </TransitionGroup>
+    <dialog open="true">
+        <TransitionGroup tag="div" mode="out-in">
+            <slot></slot>
+        </TransitionGroup>
+    </dialog>
 </template>
 
 <script setup>
-  import { computed, reactive } from 'vue'
-  const state = reactive({ 'message':[] })
+import { computed, reactive } from 'vue'
+const state = reactive({ 'message':[] })
   
-  const messaged = computed(()=>state.message.filter(item=>item.active));
-  const onDestroy = (uuid)=>{
+const messaged = computed(()=>state.message.filter(item=>item.active));
+const onDestroy = (uuid)=>{
     state.message.find(item=>item.uuid==uuid).active = false;
     state.message = state.message.filter(item=>item.active);
 }
@@ -29,7 +29,7 @@ const onClose = (method,params,duration)=>{
 defineExpose({onOpen,onClose});
 </script>
 <style lang="scss">
-    .y-message-container{
+    .y-dialog-container{
         user-select: none;
         position: fixed;
         top: 10px;
