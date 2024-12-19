@@ -1,24 +1,24 @@
 import YouMaterial from '@/components/YouMaterial.vue'
 import {createApp} from 'vue'
+let dialogApp = null,el = null;
 export function useMaterial(options){
     return new Promise((resolve,reject)=>{
-        const onConfirm = (item)=>{
+        el = document.createElement('div');el.className = 'y-material-container';
+        if (dialogApp) {
+            el.remove();
+            dialogApp.unmount();
+            dialogApp = null;
+        }
+        options.onConfirm = (item)=>{
             console.log('onConfirm');
-            onDestroy();
-            resolve(item);
+            el.remove();dialogApp.unmount();resolve(item);
         }
-        const onCancel = ()=>{
+        options.onCancel = ()=>{
             console.log('onCancel');
-            onDestroy();
-            reject();
+            el.remove();dialogApp.unmount();reject();
         }
-        const container = document.createElement('div');
-        container.className = 'y-material-container z-9999';document.body.appendChild(container);
-        const app = createApp(YouMaterial,{...options,onConfirm:onConfirm,onCancel:onCancel});
-        app.mount(container);
-        const onDestroy = () => {
-            app.unmount();
-            container.remove();
-        };
+        let app = createApp(YouMaterial,options);
+        dialogApp = markRaw(app);
+        document.body.appendChild(el);dialogApp.mount(el);
     });
 }

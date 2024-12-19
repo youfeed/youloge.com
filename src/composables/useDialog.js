@@ -1,17 +1,30 @@
 import YouDialog from '@components/YouDialog.vue'
 import {createApp} from 'vue'
-export function useDialog(){
-    let Vm = createApp(YouDialog).mount(document.createDocumentFragment());
-    Vm.$el.className = 'y-dialog-container'
-    document.body.appendChild(Vm.$el);
-  const showDialog = (option) => {
-    Vm.onOpen(option);
-  }
-  const closeDialog = (option) => {
-    Vm.onClose(option);
-  }
-  return {
-    open: (option) => showDialog(option),
-    close: (option) => closeDialog(option),
-  }
+/**
+ * 
+ **/
+let dialogApp = null,el = null;
+export function useDialog(option={}){
+    if (dialogApp) {
+        el.remove();
+        dialogApp.unmount();
+        dialogApp = null;
+    }
+    // 单例模式
+    return new Promise((resolve,reject)=>{
+        el = document.createElement('div');el.className = 'y-dialog-container';
+        option.onConfirm = ()=>{
+            console.log('onConfirm')
+            el.remove();
+            dialogApp.unmount();resolve()
+        }
+        option.onCancel = ()=>{
+            console.log('取消')
+            el.remove();
+            dialogApp.unmount();reject()
+        }
+        let app = createApp(YouDialog,option);
+        dialogApp = markRaw(app);
+        document.body.appendChild(el);dialogApp.mount(el);
+    });
 }

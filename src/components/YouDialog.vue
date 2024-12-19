@@ -1,58 +1,84 @@
 <template>
-    <dialog open="true">
-        <TransitionGroup tag="div" mode="out-in">
-            <slot></slot>
-        </TransitionGroup>
-    </dialog>
+    <transition>
+        <dialog ref="dialog" @close="onCancel" class="y-dialog rounded-sm shadow-sm">
+            <div>
+                <div class="head flex justify-between items-center border-b">
+                    <div>{{props.title}}</div>
+                    <button class="i-carbon:close hover:bg-blueGray cursor-pointer" @click="onCancel"></button>
+                </div>
+                <div class="body py-4 text-gray-600 min-w-32" v-html="props.content"></div>
+                <div class="foot flex justify-end items-center mt-1">
+                    <button @click="onCancel" v-if="props.cancel" class="bg-gray-200 rounded-sm px-4 py-2 border-none cursor-pointer">{{props.cancel}}</button>
+                    <button @click="onConfirm" v-if="props.confirm" class="bg-blue-600 rounded-sm px-4 py-2 border-none text-white ml-2 cursor-pointer">{{props.confirm}}</button>
+                </div>
+            </div>
+        </dialog>
+    </transition>
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
-const state = reactive({ 'message':[] })
-  
-const messaged = computed(()=>state.message.filter(item=>item.active));
-const onDestroy = (uuid)=>{
-    state.message.find(item=>item.uuid==uuid).active = false;
-    state.message = state.message.filter(item=>item.active);
-}
+const props = defineProps({
+    title:{
+        type:String,
+        default:'提示'
+    },
+    content:{
+        type:String,
+        default:''
+    },
+    cancel:{
+        type:[String,Boolean],
+        default:'取消'
+    },
+    confirm:{
+        type:[String,Boolean],
+        default:'确认'
+    }
+});
+const dialog = ref(null);
+const emit = defineEmits(['confirm','cancel']);
 // 暴漏方法
-const onOpen = (method,params,duration)=>{
-    let uuid = Math.random().toString(32);
-    let timer = setTimeout(()=>{ onDestroy(uuid) },duration)
-    state.message.push({uuid,method,params,timer,duration,active:true})
+const onConfirm = ()=>{
+    emit('confirm',[]);
+}
+const onCancel = ()=>{
+    emit('cancel',[]);
 };
-const onClose = (method,params,duration)=>{
-    let uuid = Math.random().toString(32);
-    let timer = setTimeout(()=>{ onDestroy(uuid) },duration)
-    state.message.push({uuid,method,params,timer,duration,active:true})
-};
-defineExpose({onOpen,onClose});
+
+onMounted(()=>{
+    console.log('dialog',dialog)
+    // dialog.value.show()
+    dialog.value.showModal()
+})
 </script>
 <style lang="scss">
     .y-dialog-container{
         user-select: none;
         position: fixed;
-        top: 10px;
-        left: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         z-index: 99999;
-        .y-message{
-            transform: translate(-50%);
-            cursor: pointer;
-            min-width: 180px;
+        .y-dialog{
+            position: relative;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: #fff;
             display: flex;
             align-items: center;
             justify-content:flex-start;
             margin: 5px;
             padding: 10px;
+            border: 0;
             box-shadow: 0 0 2px 1px #e1e1e1;
         }
     }
-
+    dialog::backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+        // opacity: 0.75;
+    }
     .v-enter-active,.v-leave-active {
         transition: all 0.5s ease;
     }

@@ -32,7 +32,7 @@
             <transition name="slide-fade">
               <div v-if="item.subExpand" class="submenu py-2 space-y-2">
                 <div v-for="subItem in item.children" :key="subItem.title" class="px-3">
-                  <div @click="navigateTo(subItem.name)" class="block p-2 text-sm text-gray-700 rounded-lg hover:bg-gray-200" :class="{ 'bg-gray-200 font-bold': current === subItem.name }">
+                  <div v-ripple @click="navigateTo(subItem.name)" class="block p-2 text-sm text-gray-700 rounded-lg cursor-pointer  hover:bg-gray-200" :class="{ 'bg-gray-200 font-bold': current === subItem.name }">
                     {{ subItem.title }}
                   </div>
                 </div>

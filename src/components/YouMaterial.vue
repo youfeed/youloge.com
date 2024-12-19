@@ -1,28 +1,32 @@
 <template>
-  <div class="">
-    <h1 class="text-2xl font-bold">
-        <div>素材选择({{onConut}}/{{props.limit}})</div>
-        <label class="" for="file">上传素材</label>
-    </h1>
-    <div class="mt-4">
-      <div class="flow">
-        <div class="" v-for="(item,index) in state.list" :key="index">
-            <div class="relative porter-bottom-1/2" @click="onSelect(item)">
-                <img :src="useImage(item.url,80)" alt="">
-                <div class="name">{{ item.checked }}</div>
+  <dialog ref="dialog" @close="onCancel" class="y-material">
+    <div class="">
+        <div class="head flex justify-between items-center border-b">
+            <div>素材选择({{onConut}}/{{props.limit}})</div>
+            <label class="" for="file">上传素材</label>
+        </div>
+        <div class="body py-4">
+            <div class="flow grid grid-cols-6 gap-2">
+                <div class="" v-for="(item,index) in state.list" :key="index">
+                    <div class="relative porter-bottom-1/2" @click="onSelect(item)">
+                        <img :src="useImage(item.etag,80)" alt="">
+                        <div class="name">{{ item.checked }}</div>
+                    </div>
+                </div>
             </div>
         </div>
-      </div>
+        <div class="foot flex justify-end items-center mt-1">
+            <button @click="onCancel" class="bg-gray-200 rounded-sm px-4 py-2 border-none cursor-pointer">取消</button>
+            <button @click="onConfirm" class="bg-blue-600 rounded-sm px-4 py-2 border-none text-white ml-2 cursor-pointer">确认</button>
+        </div>
     </div>
-    <div class="" @click="onCancel">取消</div>
-    <div class="" @click="onSubmit">确认</div>
-  </div>
+  </dialog>
   <input type="file" id="file" :accept="state.accept" name="file" class="hidden" @change="onFileChange"/>
 </template>
 
 <script setup>
 const props = defineProps({
-    'mime':{
+    'type':{
       type:String,
       default:'image'
     },
@@ -30,19 +34,19 @@ const props = defineProps({
       type:Number,
       default:1
     }
-}),emit = defineEmits(['confirm','cancel']);
+}),emit = defineEmits(['confirm','cancel']),dialog = ref(null);;
 //
 const onConut = computed(()=>{
   return state.list.filter(item=>item.checked).length;
 });
 const state = reactive({
   err:0,msg:'',data:{},list:[],
-  profile:{},accept:`${props.mime}/*`,
+  profile:{},accept:`${props.type}/*`,
 }),{err,msg,data,list,profile} = toRefs(state);
 
 // 素材列表
 const loadMaterial = ()=>{
-  apiFetch(`material/${props.mime}`,{cursor:'',limit:10},true).then(res=>{
+  apiFetch(`material/${props.type}`,{cursor:'',limit:10},true).then(res=>{
     state.list = res.data.data;
     console.log(state.list )
     // state.list.push(...res.data.data);Object.assign(state,res);
@@ -57,13 +61,15 @@ const onSelect = (item)=>{
     item.checked = !item.checked;
     if(onConut.value >= props.limit){
         let items = state.list.filter(item=>item.checked);
-        console.log(items)
         emit('confirm',items);
     }
 }
 // 确认提交
-const onSubmit = ()=>{
-    console.log('onSubmit')
+const onConfirm = ()=>{
+    if(onConut.value < props.limit){
+        alert('请选择素材');return;
+    }
+    console.log('onConfirm')
     emit('confirm',[]);
 }
 // 文件上传
@@ -98,18 +104,39 @@ const onUpload = (url,file)=>{
 // 初始加载
 onMounted(()=>{
     loadMaterial(); 
+    dialog.value.showModal()
     console.log(props,emit)
 })
 </script>
 
-<style>
-.y-material-container{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #fff;
-}
+<style  lang="scss">
+    .y-material-container {
+        user-select: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999999999;
+        // background-color: rgba(0, 0, 0, .5);
+        .y-material {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translate(-50%);
+            z-index: 999999999;
+            background-color: #fff;
+            width: 600px;
+            // height: 100%;
+            overflow-y: auto;
+            margin: 5px;
+            padding: 10px;
+            border: 0;
+        }
+    }
+    dialog::backdrop {
+        background-color: rgba(0, 0, 0, .1);
+        // opacity: 0.75;
+    }
 
 </style>

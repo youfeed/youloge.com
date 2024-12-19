@@ -35,7 +35,7 @@ const getVideo = ()=>{
 }
 // 上传视频
 const onUpload = ()=>{
-  useMaterial({mime:'video',limit:2}).then(res=>{
+  useMaterial({mime:'image',limit:1}).then(res=>{
     console.log(res)
   }).catch(err=>{
     console.log(err)

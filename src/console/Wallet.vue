@@ -23,13 +23,28 @@
         <button class="bg-blue-600 text-white rounded border-current px-2 py-1 border-none pointer" @click="onCharge">账户充值</button>
       </div>
   </div>
+  <!-- 支付抽屉 -->
+   <you-drawer v-model:visible="state.visible" title="账户充值" confirm="充值下单" size="mini" @confirm="onConfirm">
+     <div class="p-4">
+       <div class="text-xl font-bold">充值金额：<span class="text-red-500">￥100</span></div>
+       <button>30RGB</button>
+       <button>30RGB</button>
+       <button>30RGB</button>
+       <div class="text-xl font-bold">充值方式：<span class="text-red-500">支付宝</span></div>
+       <div class="text-gray-600">充值金额：</div>
+       <div class="text-gray-600">充值方式：支付宝</div>
+       <div class="text-gray-600">
+         充值说明：
+       </div>
+     </div>
+   </you-drawer>
 </template>
 
 <script setup>
 const props = defineProps(['params']),emit = defineEmits(['jump']);
 const state = reactive({
-  err:0,msg:'',data:{},
-  profile:{},
+  err:0,msg:'',data:{}, 
+  profile:{},visible:true
 }),{err,msg,data,profile} = toRefs(state);
 // 获取余额
 const getBalance = ()=>{
@@ -42,13 +57,44 @@ const reFresh = ()=>{
 }
 // 账户充值
 const onCharge = ()=>{
-  apiFetch('wallet/charge',{
-    type:'alipay',
-    amount:1000,
-    remark:'账户充值'
-  },true).then(res=>console.log(res))
+  console.log('账户充值',state.visible)
+  state.visible = true;
+  
+    console.log(res)
+    
+    
+  
+  //
+  //
   console.log('账户充值')
 }
+// 确认下单
+const onConfirm = ()=>{
+  apiFetch('wallet/charge',{
+    type:'alipay',
+    money:'100',
+    remark:'账户充值'
+  },true).then(res=>{
+    console.log(res)
+    showQrcode(res.data.href)
+  })
+  console.log('确认下单')
+}
+// 显示支付
+const showQrcode = (href)=>{
+    let data = encodeURIComponent(href);
+    useDialog({
+      title:'账户充值',
+      content:`<div><img src="https://qun.qq.com/qrcode/index?data=${data}"/></div>`,
+      confirm:'我已充值',
+    }).then(res=>{
+      getBalance()
+      console.log(res)
+    }).catch(err=>{
+      console.log(err)
+    })
+}
+
 onMounted(()=>{
     state.profile = useAuth();
     getBalance();

@@ -5,10 +5,13 @@
         <img :src="useImage(profile.avatar,'80')" alt="avatar" class="rounded-full w-12 h-12 border"/>
       </div>
       <div class="ml-2">
-        <div class="text-sm font-bold">{{profile.name}}@{{ profile.user }} · {{ profile.uuid }}</div>
-        <div class="text-sm text-gray-400">{{profile.mail}}</div>
+        <div class="text-sm font-bold flex items-center">
+          <div class="name">{{profile.name}}</div>
+          <div class="user max-w-40 truncate">@{{ profile.user }}</div>
+        </div>
+        <div class="text-sm text-gray-400">{{ profile.uuid }} · {{profile.mail}}</div>
       </div>
-      <div class="absolute right-1 top-1 text-sm text-blue-500 cursor-pointer" @click="navigateTo('profile')">编辑</div>
+      <div class="absolute right-1 top-1 text-sm text-blue-500 cursor-pointer" @click="mode='profile'">编辑</div>
     </div>
     <!-- README -->
     <div class="README">
@@ -18,19 +21,51 @@
           <div class="text-sm text-blue-500 cursor-pointer" @click="onMode">编辑 预览</div>
         </div>
       </div>
-      
+      <!-- 默认预览 -->
       <template v-if="mode == 'preview'">
         <div v-html="html"></div>
       </template>
+      <!-- 编辑个人说明 -->
       <template v-if="mode == 'editor'">
         <YouEditor v-model="html"></YouEditor>
         <button class="" @click="saveReadme">记得保存</button>
+      </template>
+      <!-- 编辑个人资料 -->
+      <template v-if="mode == 'profile'">
+        <div class="item">
+          <div class="title">头像</div>
+          <div @click="chooseAvatar">选择新头像</div>
+        </div>
+        <div>
+          <form @submit.prevent="">
+            <div>
+              <label>昵称</label>
+              <div class="tips">引用用户名可以更好被搜索到</div>
+            </div>
+            <input type="text" v-model="profile.name" />
+            <button>变更</button>
+          </form>
+        </div>
+        <div>
+          <form @submit.prevent="">
+            <div>
+              <label>别称</label>
+              <div class="tips">引用用户名可以更好被搜索到</div>
+            </div>
+            <input type="text" v-model="profile.name" />
+            <button>变更</button>
+          </form>
+        </div>
+        <div>2333</div>
+        <button @click="mode='preview'">返回</button>
       </template>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useDialog } from '../composables/useDialog';
+
 const props = defineProps(['params']),emit = defineEmits(['jump']);
 const state = reactive({
   profile:{},mode:"preview",html:''
@@ -77,12 +112,20 @@ const onUpload = (upload,bolb)=>{
     useMessage().error('保存失败');
   })
 }
-//
+// 更换头像
+const chooseAvatar = ()=>{
+  useMaterial({type:'image',limit:1}).then(items=>{
+    let [item] = items;
+    state.profile.avatar = item.etag;
+    console.log('ss',items,item.etag)
+    console.log('ss',items,item.etag)
+  })
+}
 onMounted(()=>{
   state.profile = useAuth();
   const profile = useAuth();
-    console.log('profile',profile)
-    getReadme();
+  console.log('profile',profile)
+  getReadme();
 });
 // 路由跳转(动态组件内部跳转)
 const navigateTo = (path,params='')=>{

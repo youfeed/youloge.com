@@ -12,6 +12,7 @@ declare module 'vue' {
     YouCarousel: typeof import('./../src/components/YouCarousel.vue')['default']
     YouDialog: typeof import('./../src/components/YouDialog.vue')['default']
     YouDiscuss: typeof import('./../src/components/YouDiscuss.vue')['default']
+    YouDrawer: typeof import('./../src/components/YouDrawer.vue')['default']
     YouEditor: typeof import('./../src/components/YouEditor.vue')['default']
     YouLoading: typeof import('./../src/components/YouLoading.vue')['default']
     YouMaterial: typeof import('./../src/components/YouMaterial.vue')['default']
