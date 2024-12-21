@@ -37,22 +37,22 @@
           <div @click="chooseAvatar">选择新头像</div>
         </div>
         <div>
-          <form @submit.prevent="">
+          <form @submit.prevent="updateName">
             <div>
               <label>昵称</label>
-              <div class="tips">引用用户名可以更好被搜索到</div>
+              <div class="tips">可以更好被搜索到(每次消耗1RGB)</div>
             </div>
             <input type="text" v-model="profile.name" />
-            <button>变更</button>
+            <button type="submit">变更</button>
           </form>
         </div>
         <div>
           <form @submit.prevent="">
             <div>
               <label>别称</label>
-              <div class="tips">引用用户名可以更好被搜索到</div>
+              <div class="tips">@别名可以更好被搜索到(30天可以修改一次)</div>
             </div>
-            <input type="text" v-model="profile.name" />
+            <input type="text" v-model="profile.user" />
             <button>变更</button>
           </form>
         </div>
@@ -118,7 +118,17 @@ const chooseAvatar = ()=>{
     let [item] = items;
     state.profile.avatar = item.etag;
     console.log('ss',items,item.etag)
-    console.log('ss',items,item.etag)
+    apiFetch('profile/avatar',{uuid:item.uuid}).then(res=>{
+      useMessage().success('保存成功');
+      useStorage('profile',{avatar:item.etag});
+    })
+  })
+}
+// 修改昵称
+const updateName = ()=>{
+  apiFetch('profile/name',{name:state.profile.name}).then(res=>{
+    useMessage().success('保存成功');
+    useStorage('profile',{name:state.profile.name});
   })
 }
 onMounted(()=>{

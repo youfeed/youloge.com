@@ -1,8 +1,11 @@
 <template>
-  <div class="max-w-screen-md mx-auto p-4">
-    <div class="flex justify-between items-center mb-4">
-      <div>云盘文件</div>
-      <div @click="reFresh" class="i-tdesign-loading"></div>
+  <div class="max-w-screen-md mx-auto p-4 border-solid border-1 rounded border-gray-300">
+    <div class="flex justify-between items-center mb-4 border-b-solid border-b-1 border-gray-300 p-b-2">
+      <div @click="reFresh">
+        <span>云盘文件</span>
+        <span class="i-tdesign-loading"></span>
+      </div>
+      <div @click="onChoose" class="i-tdesign:arrow-up-circle">上传</div>
     </div>
     <div>
       <template v-for="item in list" :key="item.id">
@@ -37,6 +40,10 @@ const reFresh = ()=>{
   state.data.next_cursor = null;
   state.list = [];
   getDrive()
+}
+// 上传文件
+const onChoose = ()=>{
+  console.log('上传文件')
 }
 onMounted(()=>{
   getDrive()

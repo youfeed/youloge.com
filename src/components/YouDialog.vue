@@ -1,19 +1,17 @@
 <template>
-    <transition>
-        <dialog ref="dialog" @close="onCancel" class="y-dialog rounded-sm shadow-sm">
-            <div>
-                <div class="head flex justify-between items-center border-b">
-                    <div>{{props.title}}</div>
-                    <button class="i-carbon:close hover:bg-blueGray cursor-pointer" @click="onCancel"></button>
-                </div>
-                <div class="body py-4 text-gray-600 min-w-32" v-html="props.content"></div>
-                <div class="foot flex justify-end items-center mt-1">
-                    <button @click="onCancel" v-if="props.cancel" class="bg-gray-200 rounded-sm px-4 py-2 border-none cursor-pointer">{{props.cancel}}</button>
-                    <button @click="onConfirm" v-if="props.confirm" class="bg-blue-600 rounded-sm px-4 py-2 border-none text-white ml-2 cursor-pointer">{{props.confirm}}</button>
-                </div>
+    <dialog ref="dialog" @close="onCancel" class="y-dialog rounded-sm shadow-sm">
+        <div>
+            <div class="head flex justify-between items-center border-b">
+                <div>{{props.title}}</div>
+                <button class="i-carbon:close hover:bg-blueGray cursor-pointer" @click="onCancel"></button>
             </div>
-        </dialog>
-    </transition>
+            <div class="body py-4 text-gray-600 min-w-32" v-html="props.content"></div>
+            <div class="foot flex justify-end items-center mt-1">
+                <button @click="onCancel" v-if="props.cancel" class="bg-gray-200 rounded-sm px-4 py-2 border-none cursor-pointer">{{props.cancel}}</button>
+                <button @click="onConfirm" v-if="props.confirm" class="bg-blue-600 rounded-sm px-4 py-2 border-none text-white ml-2 cursor-pointer">{{props.confirm}}</button>
+            </div>
+        </div>
+    </dialog>
 </template>
 
 <script setup>

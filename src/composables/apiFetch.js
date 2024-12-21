@@ -1,4 +1,3 @@
-
 export default (pathname,body={},Authenticate=true)=>{
     const {APIURL, APIKEY} = useConfig('youloge');
     const url = new URL(APIURL || '/');url.pathname = pathname;
@@ -6,11 +5,15 @@ export default (pathname,body={},Authenticate=true)=>{
     headers.append('Content-Type',`application/json`);
     headers.append('Youloge-Key',` ${APIKEY}`);
     if(Authenticate) headers.append('Youloge-Token',useAuth()?.access_token);
-
-    return fetch(url.href,{
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(body)
-    }).then(res=>res.json());
+    return new Promise((resolve,reject)=>{
+      fetch(url.href,{
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+      }).then(res=>res.json()).then(res=>{
+        if(res.err === 401) (console.log('401'),location.reload(),reject(res));
+        res.err === 200 ? resolve(res) : reject(res);
+      }).catch(err=>reject(err))
+    });
 }
   
