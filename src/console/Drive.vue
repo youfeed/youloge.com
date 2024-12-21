@@ -2,10 +2,13 @@
   <div class="max-w-screen-md mx-auto p-4 border-solid border-1 rounded border-gray-300">
     <div class="flex justify-between items-center mb-4 border-b-solid border-b-1 border-gray-300 p-b-2">
       <div @click="reFresh">
-        <span>云盘文件</span>
-        <span class="i-tdesign-loading"></span>
+        <div class="navbar">
+          <span>云盘文件</span>
+          <span>已购文件</span>
+        </div>
+        <button class="p-1 bg-transparent border-none rounded-sm ml-2 cursor-pointer hover:bg-gray-200"><i class="i-tdesign-refresh"></i></button>
       </div>
-      <div @click="onChoose" class="i-tdesign:arrow-up-circle">上传</div>
+      <button @click="onChoose" class="bg-blue-600 rounded-sm px-2 py-1 border-none text-white ml-2 cursor-pointer"><span class="i-tdesign:arrow-up-circle"></span>上传</button>
     </div>
     <div>
       <template v-for="item in list" :key="item.id">
@@ -43,7 +46,9 @@ const reFresh = ()=>{
 }
 // 上传文件
 const onChoose = ()=>{
-  console.log('上传文件')
+  useMaterial({type:'file',limit:1}).then(res=>{
+    console.log('上传文件',res)
+  });
 }
 onMounted(()=>{
   getDrive()
