@@ -94,6 +94,7 @@
     "watchPostEffect": true,
     "watchSyncEffect": true,
     "pako": true,
-    "useMaterial": true
+    "useMaterial": true,
+    "useSingle": true
   }
 }

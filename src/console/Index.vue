@@ -95,7 +95,7 @@ const saveReadme = ()=>{
   let bolb = new Blob([state.html],{type:'text/html'});
   useMessage().success('保存成功');
   console.log(bolb)
-  apiFetch('account/readme',{size:bolb.size},true).then(res=>{
+  apiFetch('account/readme',{size:bolb.size}).then(res=>{
     onUpload(res.data.upload,bolb)
   })
 }

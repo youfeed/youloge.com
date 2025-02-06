@@ -75,7 +75,7 @@ const state = reactive({
 }),{err,msg,data,profile} = toRefs(state);
 //
 const loadArticle = ()=>{
-  apiFetch('article/list',{cursor:state.data.next_cursor},true).then(res=>{
+  apiFetch('article/list',{cursor:state.data.next_cursor}).then(res=>{
     Object.assign(state,res);
   }).catch(err=>{});
 }

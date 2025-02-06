@@ -34,7 +34,7 @@ const state = reactive({
 // 拉取账单
 const getBilling = ()=>{
   let {next_cursor} = state.data;
-  apiFetch('wallet/billing',{cursor:next_cursor},true).then(res=>{
+  apiFetch('wallet/billing',{cursor:next_cursor}).then(res=>{
     state.list.push(...res.data.data);Object.assign(state,res);
   })
 }

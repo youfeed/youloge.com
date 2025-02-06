@@ -29,7 +29,7 @@ const state = reactive({
 //
 const getVideo = ()=>{
   let {next_cursor} = state.data;
-  apiFetch('video/list',{cursor:next_cursor},true).then(res=>{
+  apiFetch('video/list',{cursor:next_cursor}).then(res=>{
     state.list.push(...res.data.data);Object.assign(state,res);
   })
 }

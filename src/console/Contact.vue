@@ -13,7 +13,7 @@ const state = reactive({
 //
 const get = ()=>{
   let {next_cursor} = state.data;
-  apiFetch('wallet/',{cursor:next_cursor},true).then(res=>{
+  apiFetch('wallet/',{cursor:next_cursor}).then(res=>{
     state.list.push(...res.data.data);Object.assign(state,res);
   })
 }

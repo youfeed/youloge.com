@@ -21,7 +21,7 @@
         </div>
     </div>
   </dialog>
-  <input type="file" id="file" :accept="state.accept" name="file" class="hidden" @change="onFileChange"/>
+  <input type="file" id="file" :accept="onAccept" name="file" class="hidden" @change="onFileChange"/>
 </template>
 
 <script setup>
@@ -39,14 +39,17 @@ const props = defineProps({
 const onConut = computed(()=>{
   return state.list.filter(item=>item.checked).length;
 });
+const onAccept = computed(()=>{
+    return ['image','audio','video'].includes(props.type) ? `${props.type}/*` : '*/*';
+})
 const state = reactive({
   err:0,msg:'',data:{},list:[],
-  profile:{},accept:`${props.type}/*`,
+  profile:{}
 }),{err,msg,data,list,profile} = toRefs(state);
 
 // 素材列表
 const loadMaterial = ()=>{
-  apiFetch(`material/${props.type}`,{cursor:'',limit:10},true).then(res=>{
+  apiFetch(`material/${props.type}`,{cursor:'',limit:10}).then(res=>{
     state.list = res.data.data;
     console.log(state.list )
     // state.list.push(...res.data.data);Object.assign(state,res);
@@ -76,7 +79,7 @@ const onConfirm = ()=>{
 const onFileChange = (e)=>{
     let [file] = e.target.files
     console.log(1111,file)
-    apiFetch(`material/create`,{type:props.mime,size:file.size}).then(res=>{
+    apiFetch(`material/create`,{type:props.type,size:file.size}).then(res=>{
         onUpload(res.data.url,file);
     });
 }

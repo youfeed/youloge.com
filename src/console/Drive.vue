@@ -34,7 +34,7 @@ const state = reactive({
 //
 const getDrive = ()=>{
   let {next_cursor} = state.data;
-  apiFetch('drive/list',{cursor:next_cursor},true).then(res=>{
+  apiFetch('drive/list',{cursor:next_cursor}).then(res=>{
     state.list.push(...res.data.data);Object.assign(state,res);
   })
 }
@@ -46,7 +46,7 @@ const reFresh = ()=>{
 }
 // 上传文件
 const onChoose = ()=>{
-  useMaterial({type:'file',limit:1}).then(res=>{
+  useMaterial({type:'drive',limit:1}).then(res=>{
     console.log('上传文件',res)
   });
 }

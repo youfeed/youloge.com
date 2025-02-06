@@ -189,7 +189,7 @@ const state = reactive({
 const loadInfo = ()=>{
   let {mode,code,logged} = state;
   console.log(mode,code)
-  apiFetch('discuss/info',{mode:mode,code:code},logged).then(res=>{
+  apiFetch('discuss/info',{mode:mode,code:code}).then(res=>{
     Object.assign(state,res);loadReview(true);
     res.data.mime && (state.toggled = res.data.mime);
 
@@ -262,7 +262,7 @@ const onSubmit = ()=>{
   if(method == 'quote'){
     body = {review:uuid,quote:account.uuid,content}
   }
-  apiFetch(`discuss/to${method}`,body,true).then(res=>{
+  apiFetch(`discuss/to${method}`,body).then(res=>{
     console.log(res)
     // err ? item.data.push(...res.data) : Object.assign(item,res);
   });

@@ -50,7 +50,7 @@ const state = reactive({
 }),{err,msg,data,profile} = toRefs(state);
 // 获取余额
 const getBalance = ()=>{
-  apiFetch('wallet/balance',{},true).then(res=>Object.assign(state,res))
+  apiFetch('wallet/balance',{}).then(res=>Object.assign(state,res))
 }
 // 刷新余额
 const reFresh = ()=>{
@@ -76,7 +76,7 @@ const onConfirm = ()=>{
     type:'alipay',
     money:'100',
     remark:'账户充值'
-  },true).then(res=>{
+  }).then(res=>{
     console.log(res)
     showQrcode(res.data.href)
   })

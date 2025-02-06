@@ -55,7 +55,7 @@ const state = reactive({
 // 会话列表
 const getCokies = ()=>{
   let {next_cursor} = state.cookies;
-  apiFetch('chat/cookies',{cursor:next_cursor},true).then(res=>{
+  apiFetch('chat/cookies',{cursor:next_cursor}).then(res=>{
     Object.assign(state,res);state.cookiesList.push(...res.data.data);
     console.log(res)
   })
@@ -63,7 +63,7 @@ const getCokies = ()=>{
 // 会话消息
 const getMessage = ()=>{
   let {next_cursor,item} = state.message;
-  apiFetch('chat/message',{session:item.session.uuid,cursor:next_cursor},true).then(res=>{
+  apiFetch('chat/message',{session:item.session.uuid,cursor:next_cursor}).then(res=>{
     Object.assign(state,res);state.messageList.push(...res.data.data);
     console.log(20,state.messageList)
   })

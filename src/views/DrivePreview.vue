@@ -87,7 +87,7 @@ const loadMetadata = ()=>{
 const onDownload = async ()=>{
   let {uuid} = useAuth()
   if(uuid){
-    apiFetch('drive/download',{uuid:state.uuid},true).then(res=>{
+    apiFetch('drive/download',{uuid:state.uuid}).then(res=>{
       console.log(res)
       //
       if(res.err == 200){
