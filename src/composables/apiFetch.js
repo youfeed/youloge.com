@@ -6,7 +6,8 @@ export default (pathname,body={},timeout=5000)=>{
     const {APIURL, APIKEY} = useConfig('youloge'),access_token = useAuth()?.access_token;
     const url = new URL(APIURL || '/');url.pathname = pathname;
     const headers = new Headers();
-    headers.append('Authorization',`${APIKEY} ${access_token}`);
+    headers.append('Organization',APIKEY);
+    headers.append('Authorization',access_token);
     headers.append('Content-Type',`application/json`);
     //
     return new Promise((resolve,reject)=>{
