@@ -3,7 +3,6 @@
     <textarea id="tinymce-editor"></textarea>
 </div>
 </template>
-
 <script setup>
 const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue']);
 const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
@@ -49,11 +48,9 @@ const editorSettings = {
         xhr.send(formData);
     }),
 };
-console.log(666,props.modelValue)
-
 onMounted(() => {
     tinymce.init({
-        selector: 'textarea',
+        selector: 'textarea#tinymce-editor',
         ...editorSettings,
         // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
         license_key:'gpl',
@@ -71,11 +68,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
     editorInstance && editorInstance.destroy();
 });
+// defineEmits(['update:modelValue']);
 </script>
 
 <style>
 #tinymce-editor {
   width: 100%;
-  height: 500px;
+  min-height: 500px;
 }
 </style>

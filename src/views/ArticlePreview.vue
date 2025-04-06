@@ -34,7 +34,7 @@
   </template>
   <template v-else>
     <div class="flex items-center justify-center h-screen-sm">
-      <div class="font-size-2xl  w-40 h-40 color-gray-400">{{ msg }}</div>
+      <div class="font-size-2xl  w-80 h-40 color-gray-400">{{ msg }}</div>
     </div>
   </template>
 </template>
@@ -56,7 +56,10 @@ const getInfo = ()=>{
   apiFetch('article/info',{uuid:uuid}).then(res=>{
     Object.assign(state,res);
     res.err == 200 && getRich();
-  }).catch((err)=>{})
+  }).catch((err)=>{
+    state.err = err.err;
+    state.msg = err.msg;
+  })
 }
 // 获取内容
 const getRich = ()=>{
