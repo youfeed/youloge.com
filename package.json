@@ -24,6 +24,6 @@
     "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.7",
     "vite-plugin-externals": "^0.6.2",
-    "youloge": "^2.0.2"
+    "youloge": "^2.1.1"
   }
 }
