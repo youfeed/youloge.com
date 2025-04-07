@@ -12,7 +12,9 @@
     "pako": "^2.1.0",
     "tinymce": "^7.4.1",
     "vue": "^3.3.4",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "youloge": "^2.1.1",    
+    "youloge.plus": "^2.0.5"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.1",
@@ -23,7 +25,6 @@
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4",
     "vite": "^5.4.7",
-    "vite-plugin-externals": "^0.6.2",
-    "youloge": "^2.1.1"
+    "vite-plugin-externals": "^0.6.2"
   }
 }
