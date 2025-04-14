@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xl mx-auto p-4">
+  <div class="max-w-7xl mx-auto p-4">
     <div class="profile flex items-center mb-4 relative bg-light p-2 rounded-sm">
       <div>
         <img :src="useImage(profile.avatar,'80')" alt="avatar" class="rounded-full w-12 h-12 border"/>
@@ -12,6 +12,19 @@
         <div class="text-sm text-gray-400">{{ profile.uuid }} · {{profile.mail}}</div>
       </div>
       <div class="absolute right-1 top-1 text-sm text-blue-500 cursor-pointer" @click="mode='profile'">编辑</div>
+    </div>
+    <!-- FEED -->
+    <div class="feed">
+      <div>
+        <div class="text-sm font-bold flex items-center">
+          <div class="name">Feed</div>
+        </div>
+      </div>
+      <div class="grid col-span-4 grid-cols-2 gap-2">
+        <div class="rounded-xl border bg-card text-card-foreground shadow @container/card"><div class="flex flex-col space-y-1.5 p-6 relative"><div class="text-sm text-muted-foreground">Total Revenue</div><div class="tracking-tight @[250px]/card:text-3xl text-2xl font-semibold tabular-nums">$1,250.00</div><div class="absolute right-4 top-4"><div class="items-center border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex gap-1 rounded-lg text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>+12.5%</div></div></div><div class="flex p-6 pt-0 flex-col items-start gap-1 text-sm"><div class="line-clamp-1 flex gap-2 font-medium">Trending up this month <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-4"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></div><div class="text-muted-foreground">Visitors for the last 6 months</div></div></div>
+        <div class="rounded-xl border bg-card text-card-foreground shadow @container/card"><div class="flex flex-col space-y-1.5 p-6 relative"><div class="text-sm text-muted-foreground">Total Revenue</div><div class="tracking-tight @[250px]/card:text-3xl text-2xl font-semibold tabular-nums">$1,250.00</div><div class="absolute right-4 top-4"><div class="items-center border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex gap-1 rounded-lg text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>+12.5%</div></div></div><div class="flex p-6 pt-0 flex-col items-start gap-1 text-sm"><div class="line-clamp-1 flex gap-2 font-medium">Trending up this month <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-4"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></div><div class="text-muted-foreground">Visitors for the last 6 months</div></div></div>
+        <div class="rounded-xl border bg-card text-card-foreground shadow @container/card"><div class="flex flex-col space-y-1.5 p-6 relative"><div class="text-sm text-muted-foreground">Total Revenue</div><div class="tracking-tight @[250px]/card:text-3xl text-2xl font-semibold tabular-nums">$1,250.00</div><div class="absolute right-4 top-4"><div class="items-center border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground flex gap-1 rounded-lg text-xs"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-3"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>+12.5%</div></div></div><div class="flex p-6 pt-0 flex-col items-start gap-1 text-sm"><div class="line-clamp-1 flex gap-2 font-medium">Trending up this month <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up size-4"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg></div><div class="text-muted-foreground">Visitors for the last 6 months</div></div></div>
+      </div>
     </div>
     <!-- README -->
     <div class="README">

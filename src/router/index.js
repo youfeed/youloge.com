@@ -79,7 +79,6 @@ const routes = [
   },{
     path:'/-',
     component: Index,
-    
   },{
     path: '/:user',
     component: User,
