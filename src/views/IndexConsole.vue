@@ -114,7 +114,7 @@ const navigateTo = (name,params={})=>{
 // 退出登录
 const onLogout = ()=>{
   stateProfile.logout();
-  storeMenu.change()
+  stateMenu.change()
   // navigateTo('login');
 }
 //
