@@ -20,12 +20,12 @@ export default defineConfig({
       // extensions:['vue'],
     }),
     AutoImport({
-      imports:['vue','vue-router',{
+      imports:['vue','pinia','vue-router',{
         'tinymce': [['default', 'tinymce']],
         'pako':[['default','pako']]
         // ['default as tinymce','init']
       }],
-      dirs:['src/composables','src/directives'],
+      dirs:['src/composables','src/directives','src/stores'],
       dts:'types/auto-imports.d.ts',
       vueTemplate:true,
       eslintrc:{

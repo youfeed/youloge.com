@@ -7,7 +7,23 @@
           <div class="font-medium text-gray-900 pl-1">Youloge</div>
         </button>
       </div>
-      <div>{{ profile.mail }}</div>
+      <div>
+        <a-dropdown>
+          <a-avatar :image-url="useImage(stateProfile.avatar,'80')" :size="35"></a-avatar>
+          <template #content>
+            <a-doption>
+              <div>
+                <div>{{ stateProfile.name }}<span class="font-2 ">@({{ stateProfile.user }})</span></div>
+                <div>{{ stateProfile.mail }}</div>
+              </div>
+            </a-doption>
+            <a-doption @click="onLogout">
+              <span class="i-tdesign:logout"></span>
+              退出登录  
+            </a-doption>
+          </template>
+        </a-dropdown>
+      </div>
     </div>
   </header>
   <aside
@@ -64,6 +80,8 @@ Object.entries(modules).forEach(([path, module]) => {
 })
 console.log('components',components)
 // 
+const stateMenu = storeMenu()//,{} = storeToRefs(stateMenu);
+const stateProfile = storeProfile()//,{} = storeToRefs(stateProfile);
 const state = reactive({
   profile:{},menuItems:[],sidebarCollapsed:false,current:''
 }),{profile,current,menuItems,sidebarCollapsed} = toRefs(state);
@@ -84,7 +102,6 @@ const toggleSubMenu = (item) => {
   item.children && (item.subExpand =!item.subExpand);
   item.children || navigateTo(item.name);
 };
-
 // emit 事件
 const navigateTo = (name,params={})=>{
   if(name in components){
@@ -94,11 +111,19 @@ const navigateTo = (name,params={})=>{
   }
   console.log('navigateTo: console/',name,state.current,params)
 }
+// 退出登录
+const onLogout = ()=>{
+  stateProfile.logout();
+  storeMenu.change()
+  // navigateTo('login');
+}
 //
 onMounted(()=>{
   state.menuItems = useMenu;
   state.profile = useAuth();
   console.log('useMenu',useMenu)
+  console.log('storeProfile',stateProfile)
+  console.log('storeMenu',stateMenu)
 });
 </script>
 

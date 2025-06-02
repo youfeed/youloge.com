@@ -147,7 +147,7 @@ const updateName = ()=>{
 onMounted(()=>{
   state.profile = useAuth();
   const profile = useAuth();
-  console.log('profile',profile)
+  // console.log('profile',profile)
   getReadme();
 });
 // 路由跳转(动态组件内部跳转)
