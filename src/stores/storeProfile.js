@@ -7,7 +7,7 @@ export default defineStore('profile',()=>{
         user: 'unknown',
         name: 'No Login',
         expire:0,
-        avatar:'FjGW8UMGZ8LKvSrIlo7bZvge6Fr1',
+        avatar:'FqTI4_efMPTwFs2LFBL0pEGFsl8K',
         mail:'u******n@youloge.com',
         access_token:'',
     }
