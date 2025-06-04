@@ -35,6 +35,7 @@ export default defineStore('menu', ()=>{
     }
     load();
     onMounted(()=>{
+        console.log('onMounted',state)
     })
     return {...toRefs(state),load,change}
 })
