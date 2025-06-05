@@ -70,7 +70,7 @@
 const route = useRoute();
 const state = reactive({
   uuid:0,
-  err:1,
+  err:0,
   msg:'',
   data:{},
   qrcode:'',
@@ -79,7 +79,9 @@ const state = reactive({
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
-  apiFetch('drive/info',{uuid:uuid}).then(res=>Object.assign(state,res))
+  apiFetch('drive/info',{uuid:uuid}).then(res=>Object.assign(state,res)).catch((err)=>{
+    Object.assign(state,err)
+  });
 }
 
 
