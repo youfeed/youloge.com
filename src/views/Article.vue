@@ -1,6 +1,6 @@
 <template>
-  <header class="h-14 px-2 flex  items-center sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
-    <div class="w-full flex justify-between items-center h-10">
+  <header class="h-14 px-2 border-b border-slate-900/10 border-b-solid sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
+    <div class="w-full flex justify-between items-center h-full">
       <div class="left flex  items-center justify-start gap-2">
         <div class="flex justify-between items-center ">
           <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
@@ -22,8 +22,13 @@
           </form>
         </div>
       </div>
-      <div class="hidden sm:block">
-        <div class="i-tdesign:setting-1 w-6 h-6"></div>
+      <div class="">
+        <div v-if="stateProfile.logged" @click="onLayout">
+          <img :src="useImage(stateProfile.avatar,'80')" alt="stateProfile.name" class="rounded-full w-8 h-8">
+        </div>
+        <div v-else>
+          <button class="">登录</button>
+        </div>
       </div>
     </div>
   </header>
@@ -33,17 +38,23 @@
 </template>
 
 <script setup>
+const stateProfile = storeProfile();
 const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:[],
   user:'',
   query:{},profile:{},
 }),{user,query,profile} = toRefs(state)
-// 
+//
+const onLayout = ()=>{
+  stateProfile.logout();
+} 
+//
 onMounted(()=>{
   state.query = route.query;
   state.user = route.params.user
   state.profile = useStorage('profile');
+  console.log(6666,stateProfile)
   onStorage('profile',(res)=>{
     console.log(res)
     state.profile = res;

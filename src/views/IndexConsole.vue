@@ -4,7 +4,7 @@
       <div class="flex items-center " @click="toggleSidebar">
         <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
           <img src="/loge.svg" alt="" class="w-5 h-5">
-          <div class="font-medium text-gray-900 pl-1">Youloge</div>
+          <div class="font-bold text-gray-900 pl-1">Youloge</div>
         </button>
       </div>
       <div>

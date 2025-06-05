@@ -7,7 +7,7 @@
   </template>
   <template v-if="err == 200">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
-      <div class="navbar"></div>
+      <div class="navbar">navbar</div>
       <div class="article">
         <div class="title">
           <h1>{{ data.title }}</h1>
@@ -30,11 +30,36 @@
         </div>
       </div>
     </div>
-    <div class="asider"></div>
+    <div class="asider">asider</div>
   </template>
   <template v-else>
-    <div class="flex items-center justify-center h-screen-sm">
+    <div class="mx-auto px-4 py-16 flex-grow flex flex-col items-center justify-center">
+      <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-gray-800 mb-4 text-shadow">页面不见了</h1>
       <div class="font-size-2xl  w-80 h-40 color-gray-400">{{ msg }}</div>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+        <a href="javascript:history.back()" class=" px-8 py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+           返回上一页
+        </a>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 max-w-lg mx-auto">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+          <i class="fa fa-lightbulb-o text-accent mr-2"></i> 您可以尝试以下操作:
+        </h3>
+        <ul class="text-gray-600 space-y-2 text-left">
+          <li class="flex items-start">
+            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+            <span>检查URL拼写是否正确</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+            <span>使用网站导航查找所需内容</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+            <span>刷新页面尝试重新加载</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </template>
 </template>
@@ -49,6 +74,8 @@ const state = reactive({
   html:'',
   data:{},
   cursor:Number.MAX_SAFE_INTEGER,
+  // 发布者信息
+  anthor:{}
 }),{uuid,err,msg,html,data,params} = toRefs(state);
 // 获取数据
 const getInfo = ()=>{
@@ -68,11 +95,19 @@ const getRich = ()=>{
     state.html = text;
   })
 }
+// 获取作者
+const getAnthor = ()=>{
+  let {uuid} = state.params; 
+}
+// 获取评论
+const getComment = ()=>{
+  let {uuid} = state.params; 
+}
 
 onMounted(()=>{
   state.params = route.params;
+  console.log('onMounted',state.params);
   getInfo();
-  console.log(route);
 })
 </script>
 

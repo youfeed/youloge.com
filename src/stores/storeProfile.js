@@ -1,6 +1,6 @@
 /**
  * 用户状态持久化
- * 
+ * init reload distroy render
  **/
 export default defineStore('profile',()=>{
     const draft = {
@@ -25,9 +25,10 @@ export default defineStore('profile',()=>{
         // state.user = 'unknown';
         console.log('logout',state)
     }
-    (()=>{
+    const reload = ()=>{
         const savedData = localStorage.getItem('profile');
         savedData && (Object.assign(state,JSON.parse(savedData)));
-    })();
+    }
+    reload();
     return {...toRefs(state),logged,logout,$reset};
 });
