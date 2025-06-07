@@ -2,8 +2,8 @@
   <header class="h-14 px-2 flex  items-center sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
     <div class="w-full flex justify-between items-center h-10">
       <div class="left flex  items-center justify-start gap-2">
-        <div class="w-6 h-6 border-gray-500 border border-solid rounded-md flex justify-center items-center">
-          <div class="i-tdesign:view-list"></div>
+        <div class="w-8 h-8 p-1 hover:bg-gray-200 rounded-full cursor-pointer flex justify-center items-center" @click="asideRef?.onShow()">
+          <you-icon name="tdesign:view-list"></you-icon>
         </div>
         <div class="flex justify-between items-center ">
           <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
@@ -38,14 +38,16 @@
   <main class="drive">
     <router-view></router-view>
   </main>
+  <!-- 通用侧栏 -->
+  <you-aside ref="asideRef"></you-aside>
 </template>
 
 <script setup>
 const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:[], query:{},
-  profile:{}
-}),{query,profile} = toRefs(state)
+  asideRef:null,profile:{},
+}),{query,profile,asideRef} = toRefs(state);
 
 onMounted(()=>{
   state.query = route.query;
