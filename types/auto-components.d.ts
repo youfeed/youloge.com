@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    copy: typeof import('./../src/components/YouAside copy.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     YouAside: typeof import('./../src/components/YouAside.vue')['default']
@@ -20,6 +21,7 @@ declare module 'vue' {
     YouMaterial: typeof import('./../src/components/YouMaterial.vue')['default']
     YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
     YouPayment: typeof import('./../src/components/YouPayment.vue')['default']
+    YouProfile: typeof import('./../src/components/YouProfile.vue')['default']
     YouSearch: typeof import('./../src/components/YouSearch.vue')['default']
     YouWatch: typeof import('./../src/components/YouWatch.vue')['default']
   }

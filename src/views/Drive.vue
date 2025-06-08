@@ -30,7 +30,9 @@
           <div class="i-tdesign:add"></div>
         </div> -->
         <div class="w-8 h-8">
-          <div><img :src="useImage(profile.avatar,'80')" alt="" class="w-full h-full rounded-full"></div>
+          <div @click="profileRef?.open()">
+            <img :src="useImage(profile.avatar,'80')" alt="" class="w-full h-full rounded-full">
+          </div>
         </div>
       </div>
     </div>
@@ -40,14 +42,15 @@
   </main>
   <!-- 通用侧栏 -->
   <you-aside ref="asideRef"></you-aside>
+  <you-profile ref="profileRef"></you-profile>
 </template>
 
 <script setup>
 const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:[], query:{},
-  asideRef:null,profile:{},
-}),{query,profile,asideRef} = toRefs(state);
+  asideRef:null,profileRef:null,profile:{},
+}),{query,profile,asideRef,profileRef} = toRefs(state);
 
 onMounted(()=>{
   state.query = route.query;
