@@ -95,6 +95,7 @@ declare global {
   const useSlots: typeof import('vue')['useSlots']
   const useStorage: typeof import('../src/composables/useStorage.js')['default']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
+  const useTheme: typeof import('../src/composables/useTheme.js')['default']
   const useTimeago: typeof import('../src/composables/useTimeago.js')['default']
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
@@ -206,6 +207,7 @@ declare module 'vue' {
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useStorage: UnwrapRef<typeof import('../src/composables/useStorage.js')['default']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useTheme: UnwrapRef<typeof import('../src/composables/useTheme.js')['default']>
     readonly useTimeago: UnwrapRef<typeof import('../src/composables/useTimeago.js')['default']>
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>

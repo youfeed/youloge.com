@@ -16,10 +16,14 @@
         <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button>
       </div>
     </header>
-    <main >
+    <main class="grid grid-cols-24 gap-4">
+      <div class="col-span-4"></div>
+      <div class="col-span-16">
         <div id="container" class="relative w-screen h-screen" ref="containerRef">
           <canvas id="canvas" ref="canvasRef" v-on="getBind" :style="{ transform: transformMatrix }"></canvas>
         </div>
+      </div>
+      <div class="col-span-4"></div>
     </main>
     <!-- <main class="max-w-screen-md mx-auto mt-40 ">
       <div class="mt-10">  @change="onColorChange"
