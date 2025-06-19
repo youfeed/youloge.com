@@ -1,5 +1,9 @@
+/**
+ * 素材选择选择器 
+ * 图片 视频 音频 附件
+ **/
 import YouMaterial from '@/components/YouMaterial.vue'
-import {createApp} from 'vue'
+
 let dialogApp = null,el = null;
 export function useMaterial(options){
     return new Promise((resolve,reject)=>{

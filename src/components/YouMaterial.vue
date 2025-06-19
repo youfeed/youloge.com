@@ -34,7 +34,7 @@ const props = defineProps({
       type:Number,
       default:1
     }
-}),emit = defineEmits(['confirm','cancel']),dialog = ref(null);;
+}),emit = defineEmits(['confirm','cancel']),dialog = ref(null);
 //
 const onConut = computed(()=>{
   return state.list.filter(item=>item.checked).length;
@@ -44,7 +44,7 @@ const onAccept = computed(()=>{
 })
 const state = reactive({
   err:0,msg:'',data:{},list:[],
-  profile:{}
+  cursor:{}
 }),{err,msg,data,list,profile} = toRefs(state);
 
 // 素材列表
