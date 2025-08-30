@@ -25,6 +25,8 @@
 </template>
 
 <script setup>
+import { toRaw } from "vue";
+
 const props = defineProps({
     'type':{
       type:String,
@@ -64,7 +66,7 @@ const onSelect = (item)=>{
     item.checked = !item.checked;
     if(onConut.value >= props.limit){
         let items = state.list.filter(item=>item.checked);
-        emit('confirm',items);
+        emit('confirm',JSON.parse(JSON.stringify(items)));
     }
 }
 // 确认提交
