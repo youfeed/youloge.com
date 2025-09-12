@@ -95,7 +95,7 @@ const onBuyDrive = ()=>{
     attach:'',
     notify:'https://test.youloge.com/drive/notify',
     payer:{
-      mail:'11247005@qq.com'
+      uuid:useAuth().uuid,
     },
     payee:{
       uuid:uuid,
