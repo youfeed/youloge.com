@@ -7,6 +7,7 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const YouPlus: typeof import('youloge.plus')['default']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const apiFetch: typeof import('../src/composables/apiFetch.js')['default']
   const computed: typeof import('vue')['computed']
@@ -119,6 +120,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly YouPlus: UnwrapRef<typeof import('youloge.plus')['default']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly apiFetch: UnwrapRef<typeof import('../src/composables/apiFetch.js')['default']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>

@@ -43,9 +43,11 @@
   </div>
 </template>
 <script setup>
-// import {ref, onMounted,computed } from 'vue';
 const { success, warning, error, info } = useMessage();
-//
+const useYouPlus = YouPlus({
+    debug:false
+});
+
 const containerRef = ref(null);
 const canvasRef = ref(null);
 const canvasCtx = ref(null);
@@ -227,13 +229,14 @@ onMounted(()=>{
   requestAnimationFrame(hoverPixel);
 })
 const onLogin = () => {
-  usePlus('login').then(profile=>{
+  useYouPlus.useLogin().then(profile=>{
     console.log(profile)
     useStorage('profile',profile);
     location.reload()
   }).catch(err=>{
+    console.log(err)
     warning(err.msg)
-  })
+  });
 };
 const preventDefault = (handler) => (event) => {
     event.preventDefault();

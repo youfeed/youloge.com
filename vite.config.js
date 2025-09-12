@@ -22,7 +22,8 @@ export default defineConfig({
     AutoImport({
       imports:['vue','pinia','vue-router',{
         'tinymce': [['default', 'tinymce']],
-        'pako':[['default','pako']]
+        'pako':[['default','pako']],
+        'youloge.plus':[['default','YouPlus']]
         // ['default as tinymce','init']
       }],
       dirs:['src/composables','src/directives','src/stores'],

@@ -67,7 +67,11 @@
   </template>
 </template>
 <script setup>
+const youPlus = YouPlus({
+  // debug:'http://localhost:4173/'
+})
 const route = useRoute();
+const { success, warning, error, info } = useMessage();
 const state = reactive({
   uuid:0,
   err:0,
@@ -83,11 +87,30 @@ const loadMetadata = ()=>{
     Object.assign(state,err)
   });
 }
-
-
+// 购买权限
+const onBuyDrive = ()=>{
+  const {uuid} = state;
+  youPlus.usePayment({
+    local:'123456',
+    attach:'',
+    notify:'https://test.youloge.com/drive/notify',
+    payer:{
+      mail:'11247005@qq.com'
+    },
+    payee:{
+      uuid:uuid,
+      type:'drive',
+    }
+  }).then(res=>{
+    console.log(res)
+    if(res.err == 200){
+      success('购买成功')
+    }
+  })
+}
 //
 const onDownload = async ()=>{
-  let {uuid} = useAuth()
+  let {uuid} = useAuth();
   if(uuid){
     apiFetch('drive/download',{uuid:state.uuid}).then(res=>{
       console.log(res)
@@ -95,7 +118,11 @@ const onDownload = async ()=>{
       if(res.err == 200){
         let a = document.createElement('a');document.body.appendChild(a);
         a.href = res.data.link;a.click();a.remove();
-      } 
+      }
+      info(res.msg)
+
+    }).catch(err=>{
+      onBuyDrive()
     })
   }
 }
