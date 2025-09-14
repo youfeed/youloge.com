@@ -4,6 +4,7 @@
 </div>
 </template>
 <script setup>
+import 'youloge.custom'
 const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue']);
 const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
 const editorSettings = {
