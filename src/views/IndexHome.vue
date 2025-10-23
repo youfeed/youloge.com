@@ -1,62 +1,124 @@
 <template>
-  <div class="layout w-screen h-screen relative">
-    <header class="fixed w-full px-2 z-1">
-      <div class="h-10 flex flex-row justify-between items-center">
-        <div class="flex items-center">
-          <div class="w-5 h-5">
-            <img class="mx-auto w-full w-auto block select-none" src="/loge.svg" alt="">
-          </div>
-          <span>Youloge <sup class="text-sm text-fuchsia-600">像素大战</sup></span>
-        </div>
-        <div class="flex items-center gap-2">
-            <div>{{ hover.x }}x{{ hover.y }}</div>
-            <input type="color" id="colorPicker" v-model="color" />
-            <div>{{ width }}x{{ height }}</div>
-        </div>
-        <button @click="onLogin" class="border-0 bg-blue-400 text-white rounded-md px-4 py-2 hover:bg-blue-500"><span class="i-tdesign:mail"></span> 登录</button>
-      </div>
-    </header>
-    <main class="grid grid-cols-24 gap-4">
-      <div class="col-span-4"></div>
-      <div class="col-span-16">
-        <div id="container" class="relative w-screen h-screen" ref="containerRef">
-          <canvas id="canvas" ref="canvasRef" v-on="getBind" :style="{ transform: transformMatrix }"></canvas>
-        </div>
-      </div>
-      <div class="col-span-4"></div>
-    </main>
-    <!-- <main class="max-w-screen-md mx-auto mt-40 ">
-      <div class="mt-10">  @change="onColorChange"
-        <h1 class="color-blue font-size-36px mt-10" v-ripple>杰克布达</h1>
-        <p class="font-size-24px font-bold text-gray-800 mt-10">但行好事 莫问前程</p>
-        <p class="font-size-18px font-bold text-gray-500 mt-2">开源、快速、零权限、零成本 接口服务平台</p>
-      </div>
-    </main> -->
-    <footer class="fixed bottom-0 border-0 border-solid border-t-1 border-gray-300 w-full">
-      <div class="mt-2 text-center text-gray-500">
-        <a href="https://beian.miit.gov.cn/" class="text-gray no-underline">
-          <p>ICP备案/许可证号：皖ICP备19004549号</p>
-        </a>
-        <p>皖公安备 34112402000344</p>
-      </div>
-    </footer>
-  </div>
+    <div class="layout font-sans text-gray-800 bg-white">
+        <!-- 导航栏 -->
+        <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="#" class="flex items-center space-x-2">
+                            <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.161 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12c0-5.523-4.477-10-10-10z">
+                                </path>
+                            </svg>
+                            <span class="text-xl font-bold text-secondary">Youloge</span>
+                        </a>
+                    </div>
+
+                    <!-- 主导航 - 桌面端 -->
+                    <nav class="hidden md:flex items-center space-x-8">
+                        <router-link to="video" class="text-gray-600 hover:text-primary transition-colors">视频</router-link>
+                        <router-link to="article" class="text-gray-600 hover:text-primary transition-colors">新闻</router-link>
+                        <router-link to="goods" class="text-gray-600 hover:text-primary transition-colors">购物</router-link>
+                        <router-link to="drive" class="text-gray-600 hover:text-primary transition-colors">网盘</router-link>
+                    </nav>
+
+                    <!-- 登录/注册按钮 -->
+                    <div class="flex items-center space-x-4">
+                        <a href="#login" @click="onLogin"
+                            class="hidden sm:block text-gray-600 hover:text-primary transition-colors">登录·注册</a>
+                        <!-- 移动端菜单按钮 -->
+                        <button class="md:hidden text-gray-600 hover:text-primary">
+                            <i class="fa fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main class="">
+            <!-- 英雄区域 -->
+            <section class="bg-gradient-to-b from-neutral to-white py-16 md:py-24">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-6 leading-tight">
+                            为开发者打造的<br class="md:hidden">基建服务平台
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-8 text-balance">
+                            快速、零权限、零成本
+                        </p>
+                        <!-- 快速统计 -->
+                        <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-gray-500">
+                            <div><span class="font-semibold text-secondary">100M+</span> 注册用户</div>
+                            <div><span class="font-semibold text-secondary">40M+</span> 专栏文章</div>
+                            <div><span class="font-semibold text-secondary">190+</span> 音视频电影</div>
+                            <div><span class="font-semibold text-secondary">190+</span> 分享资源</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- 特性展示 -->
+            <section id="features" class="py-16 md:py-24">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl md:text-4xl font-bold text-secondary mb-4">为什么选择 Youloge?</h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            接口免费、资源共享、开源可控、完整权限
+                        </p>
+                    </div>
+                </div>
+                <!-- 宫格卡片 -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 特性卡片 1 -->
+                    <div class="bg-white p-8 rounded-lg border border-gray-200 card-hover">
+                        <div class="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-6">
+                            <i class="fa fa-code text-primary text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-secondary">API接口</h3>
+                        <p class="text-gray-600">
+                            平台所有接口、服务API请求方式
+                        </p>
+                        <a href="https://s.apifox.cn/7302e0d5-18da-4730-adc5-4b532b346923" target="_blank">查看</a>
+                    </div>
+                    <!-- 特性卡片 2 -->
+                    <div class="bg-white p-8 rounded-lg border border-gray-200 card-hover">
+                        <div class="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-6">
+                            <i class="fa fa-users text-primary text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-secondary">开放组件</h3>
+                        <p class="text-gray-600">
+                            平台配套组件服务
+                        </p>
+                        <a href="https://docs.youloge.com/" target="_blank">查看</a>
+                    </div>
+                    <!-- 特性卡片 4 -->
+                </div>
+            </section>
+            <!-- 行动召唤 -->
+
+        </main>
+        <footer class=" border-0 border-solid border-t-1 border-gray-300 w-full">
+            <div class="mt-2 text-center text-gray-500">
+                <a href="https://beian.miit.gov.cn/" class="text-gray no-underline">
+                    <p>ICP备案/许可证号：皖ICP备19004549号</p>
+                </a>
+                <p>皖公安备 34112402000344</p>
+            </div>
+        </footer>
+    </div>
 </template>
 <script setup>
 const { success, warning, error, info } = useMessage();
 const useYouPlus = YouPlus({
-    debug:false
+    debug: false
 });
 
-const containerRef = ref(null);
-const canvasRef = ref(null);
-const canvasCtx = ref(null);
 const state = reactive({
-    color:'#23ca92',hover:{},
-    width:0,height:0,
-    socket:null,
-    pixels:[],
-    canvas:null,
+    color: '#23ca92', hover: {},
+    width: 0, height: 0,
+    socket: null,
+    pixels: [],
+    canvas: null,
     ctx: null,
     isDragging: false,
     initialX: 0,
@@ -67,199 +129,40 @@ const state = reactive({
     initialScale: 1,
     startX: 0,
     startY: 0,
-    mouseX:0,
-    mouseY:0,
-}),{canvas,color,width,height,hover} = toRefs(state);
-//
-const onStart = ({button,clientX,clientY,offsetX,offsetY}=e)=>{
-    if(button == 0){
-        state.isDragging = true;
-        state.initialX = clientX;
-        state.initialY = clientY;
-        state.startX = state.currentX;
-        state.startY = state.currentY;
-    }
-    if(button ==2){
-        rightClick(offsetX,offsetY);
-    }
-}
-const onMove = ({clientX,clientY,offsetX,offsetY})=>{
-    if(state.isDragging){
-        state.currentX = clientX - state.initialX + state.startX;
-        state.currentY = clientY - state.initialY + state.startY;
-    }else{
-        state.mouseX = offsetX;
-        state.mouseY = offsetY;
-    }
-    // console.log(clientX,clientY,offsetX,offsetY)
-} 
-const onEnd = ()=>{
-    state.isDragging = false
-} 
-const onWheel = (event)=>{
-    const { clientX, clientY } = event;
-    // const canvas = canvasRef.value;
-    // const rect = canvas.getBoundingClientRect();
-    // const mouseX = clientX - rect.left;
-    // const mouseY = clientY - rect.top;
+    mouseX: 0,
+    mouseY: 0,
+}), { canvas, color, width, height, hover } = toRefs(state);
 
-    // // 计算缩放前后的偏移量
-    // const oldScale = state.scale;
-    // const delta = event.deltaY < 0 ? 1.1 : 0.9; // 放大或缩小的比例
-    // const newScale = state.scale * delta;
+onMounted(() => {
 
-    // const deltaX = mouseX * (newScale - oldScale);
-    // const deltaY = mouseY * (newScale - oldScale);
-
-    // // 更新缩放比例和偏移量
-    // state.scale = newScale;
-    // state.currentX += deltaX;
-    // state.currentY += deltaY;
-    
-    const delta = Math.sign(event.deltaY);
-    console.log(delta)
-    const newScale = state.scale - delta * 0.2;
-    state.scale = Math.max(0.5, Math.min(newScale, 20));
-}
-/**
- * 初始化socket
- * open: 
- */
-const initSocket = ()=>{
-  let wss = new WebSocket('wss://wss.youloge.com/pixel');
-  wss.onopen = function(){
-    wss.send(`{"id":"0000","type":"pixel.info"}`)
-    console.log('socket连接成功')
-  }
-  wss.onmessage = function(e){
-    let json = JSON.parse(e.data);
-    if(json.type == 'pixel.info'){
-        canvasRef.value.width = state.width = json.width;
-        canvasRef.value.height = state.height = json.height;
-        canvasRef.value.style.width = state.width + 'px';
-        canvasRef.value.style.height = state.height + 'px';
-        wss.send(`{"id":"0001","type":"pixel.block"}`)
-    }
-    if(json.type == 'pixel.block'){
-        const compressed = new Uint8Array(json.blob.data);
-        console.log('compressed',compressed.length)
-        const restored  = pako.inflate(compressed)
-        const clampedArray = new Uint8ClampedArray(restored.buffer, restored.byteOffset, restored.byteLength);
-        const imageData = new ImageData(clampedArray, state.width, state.height);
-        canvasCtx.value.putImageData(imageData,0,0);
-    }
-    if(json.type == 'pixel.update'){
-        let {x,y,blob} = json;
-        const imageData = new ImageData(new Uint8ClampedArray(blob.data), 1, 1);
-        canvasCtx.value.putImageData(imageData, x, y);
-        if(state.hover.x == x && state.hover.y == y){
-            state.hover.data = imageData.data
-        }
-    }
-    if(json.type == 'pixel.tips'){
-        alert(json.msg)
-    }
-  }
-  wss.onclose = function(){}
-  state.socket = wss;
-}
-const sendMessage = (data) => {
-    state.socket.send(JSON.stringify(data))
-}
-// 同步画布
-const syncCanvas = ()=>{
-    sendMessage({type:'pixel.block',x:0,y:0,level:4})
-}
-// 自动提交
-const autoPost = ()=>{
-    let shift = state.pixels.shift();
-    if(shift){
-        let data = {type:'pixel.update',x:shift.x,y:shift.y,color:shift.color}
-        console.log('data',data)
-        sendMessage(data)
-    }
-    setTimeout(() => {
-        autoPost()
-    }, 10);
-}
-//
-const drawPixel = (x, y, data)=>{
-    const imageData = new ImageData(new Uint8ClampedArray(data), 1, 1);
-    canvasCtx.value.putImageData(imageData, x, y);
-}
-const hexToRGBA = (hex) =>{
-  hex = hex.replace(/^#/, '');
-  // 将十六进制字符串转换为整数
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const a = parseInt(hex.substring(6, 8), 16) || 255;
-  return [r, g, b, a];
-}
-const transformMatrix = computed(() => {
-  return `matrix(${state.scale}, 0, 0, ${state.scale}, ${state.currentX}, ${state.currentY})`;
-});
-const rightClick = (clientX,clientY)=>{
-    const {mouseX,mouseY,currentX,currentY,scale} = state
-    state.socket.send(JSON.stringify({type:'pixel.update',x:mouseX,y:mouseY,color:state.color}))
-}
-// 悬浮配色
-const hoverPixel = () => {
-    const { ctx,hover, mouseX, mouseY, scale, currentX, currentY } = state;
-    if(mouseX && mouseY && (hover.x !== mouseX || hover.y !== mouseY)){
-        // 恢复旧像素
-        if(hover.data){
-            const imageOld = new ImageData(hover.data, 1, 1);
-            canvasCtx.value.putImageData(imageOld, hover.x, hover.y);
-        }
-        // 存储新像素
-        const imageNew = canvasCtx.value.getImageData(mouseX,mouseY,1,1);
-        state.hover = {x:mouseX,y:mouseY,data:imageNew.data}
-        // console.log('hover',state.hover)
-        // 绘制Hover点
-        drawPixel(mouseX, mouseY, hexToRGBA(state.color));
-    }
-    requestAnimationFrame(hoverPixel);
-}
-//
-onMounted(()=>{
-  canvasCtx.value = canvasRef.value.getContext('2d');
-  // 
-  initSocket()
-  requestAnimationFrame(hoverPixel);
 })
 const onLogin = () => {
-  useYouPlus.useLogin().then(profile=>{
-    console.log(profile)
-    useStorage('profile',profile);
-    location.reload()
-  }).catch(err=>{
-    console.log(err)
-    warning(err.msg)
-  });
-};
-const preventDefault = (handler) => (event) => {
-    event.preventDefault();
-    handler && handler(event);
+    useYouPlus.useLogin().then(profile => {
+        console.log(profile)
+        useStorage('profile', profile);
+        location.reload()
+    }).catch(err => {
+        console.log(err)
+        warning(err.msg)
+    });
 };
 const getBind = {
     // mousedown:onStart,
-    mousedown:preventDefault(onStart),
-    mousemove:preventDefault(onMove),
-    mouseup:preventDefault(onEnd),
-    mouseleave:preventDefault(onEnd),
-    wheel:preventDefault(onWheel),
-    contextmenu:preventDefault(),
+    // mousedown:preventDefault(onStart),
+    // mousemove:preventDefault(onMove),
+    // mouseup:preventDefault(onEnd),
+    // mouseleave:preventDefault(onEnd),
+    // wheel:preventDefault(onWheel),
+    // contextmenu:preventDefault(),
 
-    // touchstart:onStart, 
-    // touchmove:onMove,
-    // touchend:onEnd,
-    // touchcancel:onEnd
 };
 </script>
 
 <style>
-#container{overflow: hidden;}
+#container {
+    overflow: hidden;
+}
+
 #canvas {
     position: absolute;
     top: 0;

@@ -4,6 +4,7 @@
   </div>
 </template>
 <script setup>
+import 'youloge.custom'
 import IndexHome from './IndexHome.vue'
 import IndexConsole from './IndexConsole.vue'
 //
@@ -14,8 +15,7 @@ const currentComponent = computed(() => {
 });
 
 onMounted(()=>{
-  console.log('onMountedonMountedonMounted',stateProfile)
-  console.log('onMountedonMountedonMounted',stateProfile.logged())
+  console.log('import.youloge.custom',stateProfile)
 })
 </script>
 

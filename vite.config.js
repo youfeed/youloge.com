@@ -9,7 +9,13 @@ import { viteExternalsPlugin } from 'vite-plugin-externals'
 export default defineConfig({
   plugins: [
     UnoCSS(),
-    vue(),
+    vue({
+      template:{
+        compilerOptions:{
+          isCustomElement: (tag) => tag.startsWith('youloge-'),
+        }
+      }
+    }),
     // viteExternalsPlugin({
     //   vue: 'Vue'
     // }),
