@@ -1,5 +1,5 @@
 /**
- * 素材选择选择器 
+ * 素材选择选择器
  * 图片 视频 音频 附件
  **/
 import YouMaterial from '@/components/YouMaterial.vue'

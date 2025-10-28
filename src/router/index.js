@@ -25,6 +25,8 @@ import VideoIndex from '@/views/VideoIndex.vue'
 import VideoSearch from '@/views/VideoSearch.vue'
 import VideoWatch from '@/views/VideoWatch.vue'
 
+import Goods from '@/views/Goods.vue'
+
 const routes = [
   {
     path: '/',
@@ -105,7 +107,7 @@ const routes = [
     component: NotFound
   }
 ];
-// console.log('init-routes',routes)
+// 
 const router = createRouter({
   history:createWebHistory(),
   strict:true,
@@ -125,7 +127,9 @@ export const setupRouter = (app) => {
   router.beforeEach((to, from, next) => {
     // console.log(to, from)
     // whitelist.includes(to.name) || useAuth() ? next() : next({ name: 'login' });
-    next();
+    if (to.meta.title) {
+      document.title = to.meta.title
+    };next();
   })
   app.use(router)
 }
