@@ -10,7 +10,7 @@
         <div class="head flex justify-between items-center border-b-solid border-b-1 border-gray-300 p-b-2">
           <div class="flex items-center gap-1">
             <img :src="useImage(data.account?.avatar,'80')" alt="" class="w-4 h-4 rounded-full">
-            <router-link :to="`${data.account.user}`" class="w-40 truncate text-current decoration-none hover:opacity-80">
+            <router-link :to="`/${data.account.user}`" class="w-40 truncate text-current decoration-none hover:opacity-80">
               <span>{{ data.account?.name }}@{{ data.account?.user }}</span>
             </router-link>
           </div>
