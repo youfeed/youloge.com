@@ -26,6 +26,10 @@ import VideoSearch from '@/views/VideoSearch.vue'
 import VideoWatch from '@/views/VideoWatch.vue'
 
 import Goods from '@/views/Goods.vue'
+import Risk from '@/views/Risk.vue'
+import RiskIndex from '@/views/RiskIndex.vue'
+import RiskHistory from '@/views/RiskHistory.vue'
+import RiskProcess from '@/views/RiskProcess.vue'
 
 const routes = [
   {
@@ -79,8 +83,22 @@ const routes = [
       }
     ]
   },{
-    path:'/-',
-    component: Index,
+    path:'/risk',
+    component: Risk,
+    children:[
+      {
+        path:"",
+        component:RiskIndex
+      },
+      {
+        path:"history",
+        component:RiskHistory
+      },{
+        path: ':uuid',
+        component: RiskProcess,
+      }
+
+    ]
   },{
     path: '/:user',
     component: User,

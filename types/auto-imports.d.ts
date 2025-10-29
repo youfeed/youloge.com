@@ -101,6 +101,7 @@ declare global {
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
   const vCopy: typeof import('../src/directives/vCopy.js')['default']
+  const vLogin: typeof import('../src/directives/vLogin.js')['default']
   const vRipple: typeof import('../src/directives/vRipple.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
   const watch: typeof import('vue')['watch']
@@ -214,6 +215,7 @@ declare module 'vue' {
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
+    readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>
     readonly vRipple: UnwrapRef<typeof import('../src/directives/vRipple.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>

@@ -1,7 +1,7 @@
 export default (traget,options={})=>{
     const {APIKEY,NOTIFY} = useConfig('youloge'),HASH = `#${crypto.randomUUID()}`;
     options.apikey = APIKEY;options.notify = NOTIFY;
-    const URL = `https://open.youloge.com/${traget}${HASH}`;
+    const URL = `https://open.youloge.com/${traget}.html${HASH}`;
     const EVENTS = {[HASH]:{resolve:null,reject:null,iframe:null,fragme:null}};
     const PROMISE = new Promise((resolve, reject) => (EVENTS[HASH].resolve = resolve,EVENTS[HASH].reject = reject));
     PROMISE.emit = event => (EVENTS[HASH].event = event,PROMISE);

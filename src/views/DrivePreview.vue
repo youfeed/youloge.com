@@ -41,7 +41,7 @@
               </div>
               <div class="text-blue-500 cursor-pointer hover:opacity-80" v-copy="onShare">复制分享文件</div>
             </div>
-            <button @click="onDownload" v-ripple class="border-0 px-1 py-2 bg-blue-500 text-white rounded-md hover:opacity-80 cursor-pointer">
+            <button v-login:click="onDownload" v-ripple class="border-0 px-1 py-2 bg-blue-500 text-white rounded-md hover:opacity-80 cursor-pointer">
               <div>立即下载(#{{ data.cost }}RGB)</div>
               <div>购买后24小时内 无限制下载</div>
             </button>
@@ -72,6 +72,7 @@ const youPlus = YouPlus({
 })
 const route = useRoute();
 const { success, warning, error, info } = useMessage();
+const useloading = useLoading();
 const state = reactive({
   uuid:0,
   err:0,
@@ -103,28 +104,30 @@ const onBuyDrive = ()=>{
     }
   }).then(res=>{
     console.log(res)
-    if(res.err == 200){
-      success('购买成功')
-    }
+    success('购买成功');
+    onDownload();
+  }).catch(err=>{
+    error(err.msg)
   })
 }
-//
-const onDownload = async ()=>{
-  let {uuid} = useAuth();
-  if(uuid){
+// 请求下载地址
+const onDownload = ()=>{
+    useLoading().show();
     apiFetch('drive/download',{uuid:state.uuid}).then(res=>{
       console.log(res)
-      //
-      if(res.err == 200){
-        let a = document.createElement('a');document.body.appendChild(a);
-        a.href = res.data.link;a.click();a.remove();
-      }
-      info(res.msg)
-
+      // 原生下载资源
+      let a = document.createElement('a');document.body.appendChild(a);
+      a.href = res.data.link;a.click();a.remove();
     }).catch(err=>{
-      onBuyDrive()
-    })
-  }
+      onBuyDrive();
+      info(err.msg);
+      info('使用余额快捷购买');
+      info('购买后24小时内无限制下载');
+      console.log('err',err)
+    }).finally(e=>{
+      useLoading().hide();
+    });
+  
 }
 onMounted(()=>{
   console.log(20000)  

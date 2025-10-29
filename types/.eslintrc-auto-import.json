@@ -111,6 +111,7 @@
     "setMapStoreSuffix": true,
     "storeToRefs": true,
     "useTheme": true,
-    "YouPlus": true
+    "YouPlus": true,
+    "vLogin": true
   }
 }
