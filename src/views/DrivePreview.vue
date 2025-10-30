@@ -84,7 +84,14 @@ const state = reactive({
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
-  apiFetch('drive/info',{uuid:uuid}).then(res=>Object.assign(state,res)).catch((err)=>{
+  // apiBatch('drive/info',[{uuid:uuid},{uuid:uuid}]).then(data=>{
+  apiFetch('drive/info',{uuid:uuid}).then(data=>{
+    state.err = 200;
+    state.data = data;
+    console.log(6666,data);
+    // Object.assign(state,res)
+  }).catch((err)=>{
+    console.log(7777,err)
     Object.assign(state,err)
   });
 }

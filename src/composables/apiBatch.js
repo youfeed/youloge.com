@@ -1,19 +1,20 @@
 /**
  * 增加超时 
- * API接口请求
+ * 批量请求：不做权限判断 返回resolve
  **/
-export default (pathname,body={},timeout=5000)=>{
+export default (pathname,params=[],timeout=5000)=>{
     const {APIURL, APIKEY} = useConfig('youloge'),access_token = useAuth()?.access_token;
     const url = new URL(APIURL || '/');url.pathname = pathname;
     const headers = new Headers();
     headers.append('Organization',APIKEY);
     headers.append('Authorization',access_token);
     headers.append('Content-Type',`application/json`);
-    body.id = crypto.randomUUID();
     //
     return new Promise((resolve,reject)=>{
+        if(!Array.isArray(params)) reject({err:408,msg:'参数需要数组'});
         const controller = new AbortController();
         const signal = controller.signal;
+        const body = params.map(is=>(is.id=crypto.randomUUID(),is));
         setTimeout(()=>{
             controller.abort();reject({err:408,msg:'请求超时'});
         },timeout);
@@ -22,10 +23,8 @@ export default (pathname,body={},timeout=5000)=>{
             headers: headers,
             signal:signal,
             body: JSON.stringify(body),
-        }).then(res=>res.json()).then(({error,result})=>{
-            if(result) resolve(result);
-            if(error && error.code === 401) location.reload();
-            if(error) reject(result);
+        }).then(res=>res.json()).then(res=>{
+            resolve(res);
         }).catch(err=>reject(err))
     });
 }

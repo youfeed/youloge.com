@@ -112,6 +112,7 @@
     "storeToRefs": true,
     "useTheme": true,
     "YouPlus": true,
-    "vLogin": true
+    "vLogin": true,
+    "apiBatch": true
   }
 }
