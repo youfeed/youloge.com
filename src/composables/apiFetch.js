@@ -23,9 +23,11 @@ export default (pathname,body={},timeout=5000)=>{
             signal:signal,
             body: JSON.stringify(body),
         }).then(res=>res.json()).then(({error,result})=>{
-            if(result) resolve(result);
-            if(error && error.code === 401) location.reload();
-            if(error) reject(result);
+            if(error && error.code === 401){
+                location.reload();
+                reject(error);
+            }
+            error ? reject(error) : resolve(result);
         }).catch(err=>reject(err))
     });
 }

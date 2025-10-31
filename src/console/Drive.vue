@@ -51,6 +51,10 @@ const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
   err: 0, msg: '', data: {}, list: [],
   mode: 'preview',// preview draft
+  // 分页游标
+  cursor:{
+    next_cursor:''
+  },
   draft: {
     title: '',
     poster: '',
@@ -61,10 +65,25 @@ const state = reactive({
 }), { err, msg, data, list, mode, draft } = toRefs(state);
 //
 const getDrive = () => {
-  let { next_cursor } = state.data;
+  let { next_cursor } = state.cursor;
   apiFetch('drive/list', { cursor: next_cursor }).then(res => {
-    state.list.push(...res.data.data); Object.assign(state, res);
-  })
+    state.err = 200;
+    // 去重追加
+    res.data.forEach(is=>{
+      let findIndex = state.list.findIndex(it=>it.uuid == is.uuid);
+      if(findIndex == -1){
+        state.list.push(is);
+      }
+    })
+    state.cursor.next_cursor = res.next_cursor
+    state.cursor.next_page_url = res.next_page_url
+    state.cursor.path = res.path
+    state.cursor.per_page = res.per_page
+    state.cursor.prev_cursor = res.prev_cursor
+    state.cursor.prev_page_url = res.prev_page_url
+  }).catch(error=>{
+    state.msg = error.message;
+  });
 }
 //
 const reFresh = () => {
