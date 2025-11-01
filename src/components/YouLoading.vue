@@ -21,16 +21,14 @@
       uuid:uuid,
       timer:timer
     });
-
     return uuid
   }
-
-  // 显示加载指示器
+  // 移出指示器
   const remove = (uuid) => {
     let findIndex = state.taskGroup.findIndex(is=>is.uuid == uuid);
     findIndex == -1 || state.taskGroup.splice(findIndex,1);
   };
-  // 暴露 show 和 hide 方法给父组件
+  // 暴露 create 和 remove 方法给函数组件
   defineExpose({ create,remove });
   </script>
   
