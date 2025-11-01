@@ -13,15 +13,19 @@
           <h1>{{ metadata.title }}</h1>
         </div>
         <div class="meta m-b-5">
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4"><img :src="useImage(anthor.avatar,'80')" :alt="anthor.name" class="w-full h-full rounded-full" /></div>
+          <div class="flex items-center gap-4 color-gray-500">
             <div>
-              <router-link :to="`/${anthor.user}`" class="no-underline color-blue-500">{{ anthor.name }}<span>@{{ anthor.user }}</span></router-link>
+              <router-link :to="`/${anthor.user}`" class="no-underline color-gray-500">{{ anthor.name }}</router-link>
             </div>
-            <div> · {{ metadata.created }}</div>
+            <div>
+              {{ metadata.created }}
+            </div>
+            <div>
+              {{ metadata.views }}
+            </div>
           </div>
         </div>
-        <div class="RichText" v-html="html"></div>
+        <div class="" v-html="html"></div>
         <div class="m-t-5">
           最后更新于:{{ metadata.updated }} - {{ metadata.view }} 次浏览
         </div>
@@ -37,8 +41,9 @@
       <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-gray-800 mb-4 text-shadow">页面不见了</h1>
       <div class="font-size-2xl  w-80 h-40 color-gray-400">{{ msg }}</div>
       <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-        <a href="javascript:history.back()" class=" px-8 py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
-           返回上一页
+        <a href="javascript:history.back()"
+          class=" px-8 py-3 bg-white hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center">
+          返回上一页
         </a>
       </div>
       <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 max-w-lg mx-auto">
@@ -67,39 +72,39 @@
 <script setup>
 const route = useRoute()
 const state = reactive({
-  uuid:'',err:0,msg:'',
+  uuid: '', err: 0, msg: '',
   // 发布者信息
-  anthor:{},metadata:{},
-  params:{},html:'',
-  cursor:Number.MAX_SAFE_INTEGER,
-}),{uuid,err,msg,params,anthor,metadata,html} = toRefs(state);
+  anthor: {}, metadata: {},
+  params: {}, html: '',
+  cursor: Number.MAX_SAFE_INTEGER,
+}), { uuid, err, msg, params, anthor, metadata, html } = toRefs(state);
 // 获取元数据
-const metaData = ()=>{
-  let {uuid} = state.params;
-  apiFetch('article/info',{uuid:uuid}).then(({account,...metadata})=>{
+const metaData = () => {
+  let { uuid } = state.params;
+  apiFetch('article/info', { uuid: uuid }).then(({ account, ...metadata }) => {
     console.log(account)
     state.err = 200;
     state.anthor = account;
     state.metadata = metadata;
     // 加载正文
     getRich();
-  }).catch((error)=>{
+  }).catch((error) => {
     state.msg = error.message;
   })
 }
 // 获取内容
-const getRich = ()=>{
-  let {rich} = state.metadata;
-  fetch(rich).then(r=>r.text()).then(text=>{
+const getRich = () => {
+  let { rich } = state.metadata;
+  fetch(rich).then(r => r.text()).then(text => {
     state.html = text;
   });
 }
 // 获取评论
-const getComment = ()=>{
-  let {uuid} = state.params; 
+const getComment = () => {
+  let { uuid } = state.params;
 }
 
-onMounted(()=>{
+onMounted(() => {
   state.params = route.params;
   metaData();
 })
@@ -107,19 +112,46 @@ onMounted(()=>{
 
 <style lang="scss">
 .RichText {
+
   /* 基础重置 */
-  body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, dl, dd, ol, ul, figure, hr, fieldset, legend {
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  pre,
+  dl,
+  dd,
+  ol,
+  ul,
+  figure,
+  hr,
+  fieldset,
+  legend {
     margin: 0;
     padding: 0;
   }
 
   /* 文本对齐 */
-  .text-left { text-align: left; }
-  .text-center { text-align: center; }
-  .text-right { text-align: right; }
+  .text-left {
+    text-align: left;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-right {
+    text-align: right;
+  }
 
   /* 列表 */
-  ul, ol {
+  ul,
+  ol {
     margin: 1em 0;
     padding-left: 2em;
   }
@@ -138,7 +170,8 @@ onMounted(()=>{
     width: 100%;
   }
 
-  th, td {
+  th,
+  td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
@@ -179,7 +212,12 @@ onMounted(()=>{
   }
 
   /* 标题 */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 1em 0;
   }
 
@@ -208,7 +246,8 @@ onMounted(()=>{
   }
 
   /* 代码块 */
-  pre, code {
+  pre,
+  code {
     font-family: monospace;
     background-color: #f4f4f4;
     padding: 0.5em;
