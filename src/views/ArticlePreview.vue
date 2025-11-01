@@ -10,20 +10,20 @@
       <div class="navbar">navbar</div>
       <div class="article">
         <div class="title">
-          <h1>{{ data.title }}</h1>
+          <h1>{{ metadata.title }}</h1>
         </div>
         <div class="meta m-b-5">
           <div class="flex items-center gap-2">
-            <div class="w-4 h-4"><img :src="useImage(data.account.avatar,'80')" :alt="data.account.name" class="w-full h-full rounded-full" /></div>
+            <div class="w-4 h-4"><img :src="useImage(anthor.avatar,'80')" :alt="anthor.name" class="w-full h-full rounded-full" /></div>
             <div>
-              <router-link :to="`/${data.account.user}`" class="no-underline color-blue-500">{{ data.account.name }}<span>@{{ data.account.user }}</span></router-link>
+              <router-link :to="`/${anthor.user}`" class="no-underline color-blue-500">{{ anthor.name }}<span>@{{ anthor.user }}</span></router-link>
             </div>
-            <div> · {{ data.created }}</div>
+            <div> · {{ metadata.created }}</div>
           </div>
         </div>
         <div class="RichText" v-html="html"></div>
         <div class="m-t-5">
-          最后更新于:{{ data.updated }} - {{ data.view }} 次浏览
+          最后更新于:{{ metadata.updated }} - {{ metadata.view }} 次浏览
         </div>
         <div class="discuss m-t-10">
           <you-discuss mode="article" :code="params.uuid"></you-discuss>
@@ -67,33 +67,32 @@
 <script setup>
 const route = useRoute()
 const state = reactive({
-  uuid:'',
-  err:0,
-  msg:'',
-  params:{},
-  html:'',
-  data:{},
-  cursor:Number.MAX_SAFE_INTEGER,
+  uuid:'',err:0,msg:'',
   // 发布者信息
-  anthor:{}
-}),{uuid,err,msg,html,data,params} = toRefs(state);
+  anthor:{},metadata:{},
+  params:{},html:'',
+  cursor:Number.MAX_SAFE_INTEGER,
+}),{uuid,err,msg,params,anthor,metadata,html} = toRefs(state);
 // 获取数据
 const getInfo = ()=>{
   let {uuid} = state.params;
-  apiFetch('article/info',{uuid:uuid}).then(res=>{
-    Object.assign(state,res);
-    res.err == 200 && getRich();
-  }).catch((err)=>{
-    state.err = err.err;
-    state.msg = err.msg;
+  apiFetch('article/info',{uuid:uuid}).then(({account,...metadata})=>{
+    console.log(account)
+    state.err = 200;
+    state.anthor = account;
+    state.metadata = metadata;
+    // 加载正文
+    getRich();
+  }).catch((error)=>{
+    state.msg = error.message;
   })
 }
 // 获取内容
 const getRich = ()=>{
-  let {rich} = state.data;
+  let {rich} = state.metadata;
   fetch(rich).then(r=>r.text()).then(text=>{
     state.html = text;
-  })
+  });
 }
 // 获取作者
 const getAnthor = ()=>{
@@ -106,7 +105,6 @@ const getComment = ()=>{
 
 onMounted(()=>{
   state.params = route.params;
-  console.log('onMounted',state.params);
   getInfo();
 })
 </script>

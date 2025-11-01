@@ -44,7 +44,7 @@
             <template v-if="state.mode == 'draft'">
                 <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
                     <div class="flex items-center gap-5">
-                        <div>编辑模式·27 lines (15 loc) · 467 Bytes</div>
+                        <div> <button @click="state.mode='preview'">返回</button> 编辑模式·27 lines (15 loc) · 467 Bytes</div>
                     </div>
                     <div @click="onSubmit">发布</div>
                 </div>
@@ -97,9 +97,10 @@ const state = reactive({
     },
 }), { err, msg, list,cursor, profile, draft } = toRefs(state);
 // 加载文章列表
-const loadArticle = () => {
-    let { next_cursor } = state.cursor;
-    apiFetch('article/list', { cursor: next_cursor, }).then(({data,...cursor}) => {
+const loadArticle = (isClear=false) => {
+    isClear && (state.list = [],state.cursor.next_cursor = '');
+    // 
+    apiFetch('article/list', { cursor: state.cursor.next_cursor, }).then(({data,...cursor}) => {
         state.cursor = cursor;
         data.forEach(is=>{
             let findIndex = state.list.findIndex(it=>it.uuid == is.uuid);
@@ -107,6 +108,7 @@ const loadArticle = () => {
         });
     }).catch(error => {
         console.log(error);
+        useMessage().error(error.messgae)
     });
 };
 // 文章预设
@@ -135,7 +137,7 @@ const loadDraft = () => {
 const newDraft = () => {
     apiFetch('article/create').then(res => {
         state.cursor.next_cursor = ''
-        loadArticle();
+        loadArticle(true);
         console.log(res)
     }).catch(error => { 
         useMessage().error(error.message)
@@ -172,7 +174,7 @@ const onSubmit = (e) => {
     apiFetch('article/update', { uuid, title, poster, keywords, description }).then((res) => {
         console.log(res)
         state.mode = 'preview';
-        loadArticle();
+        loadArticle(true);
         seMessage().success('更新成功')
     }).catch(error => { 
         useMessage().error(error.message)
@@ -180,7 +182,7 @@ const onSubmit = (e) => {
 }
 //
 onMounted(() => {
-    loadArticle();
+    loadArticle(true);
 });
 // 路由跳转(动态组件内部跳转)
 const navigateTo = (path, params = '') => {
