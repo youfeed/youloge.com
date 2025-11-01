@@ -72,13 +72,20 @@ const state = reactive({
 
 // 素材列表
 const loadMaterial = (cursor = '') => {
-    let next_cursor = state.cursor
-    apiFetch(`material/${props.type}`, { cursor: next_cursor, limit: 10 }).then(res => {
-        state.list = res.data.data;
-        state.cursor.next_cursor = res.data.next_cursor
-        console.log(state.list)
-        // state.list.push(...res.data.data);Object.assign(state,res);
-    })
+    let next_cursor = state.cursor;
+    apiFetch(`material/${props.type}`, { cursor: next_cursor, limit: 10 }).then(({data,...cursor}) => {
+        state.cursor = cursor;
+        // 
+        data.forEach(is=>{
+            let Findex = state.data.findIndex(it=>it.uuid == is.uuid);
+            if(Findex == -1){
+                state.list.push(is)
+            }
+        });
+        console.log(data)
+    }).catch(err=>{
+        console.log(err)
+    });
 }
 // 取消选择
 const onCancel = () => {
@@ -92,7 +99,7 @@ const onSelect = (item) => {
         emit('confirm', JSON.parse(JSON.stringify(items)));
     }
 }
-// 确认提交
+// 确认选择
 const onConfirm = () => {
     if (onConut.value < props.limit) {
         alert('请选择素材'); return;

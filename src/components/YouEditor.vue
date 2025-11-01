@@ -5,7 +5,7 @@
 </template>
 <script setup>
 import 'youloge.custom'
-const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue']);
+const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue','autosave']);
 const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
 const editorSettings = {
     base_url:'tinymce',
@@ -62,6 +62,10 @@ onMounted(() => {
             editorInstance = editor;
             editor.on('change', () => {
                 model.value = editor.getContent();
+            });
+            editor.addShortcut('Ctrl+S','',()=>{
+                emit('autosave',editor.getContent())
+                console.log(5)
             });
         }
     });

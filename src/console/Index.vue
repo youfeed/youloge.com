@@ -77,13 +77,17 @@
 </template>
 
 <script setup>
-import { useDialog } from '../composables/useDialog';
-
 const props = defineProps(['params']),emit = defineEmits(['jump']);
 const state = reactive({
   profile:{},mode:"preview",html:''
 }),{profile,mode,html} = toRefs(state);
 //
+
+setTimeout(()=>{
+  console.log('loadloadloadloadload',load)
+  load.hide()
+},1000)
+
 // 获得用户介绍
 const getReadme = ()=>{
   let {uuid} = state.profile;

@@ -4,14 +4,14 @@
             <template v-if="state.mode == 'preview'">
                 <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
                     <div class="flex items-center gap-5">
-                        <div>文章</div>
-                        <div>草稿</div>
+                        <div @click="loadArticle">文章 <i class="i-tdesign-refresh"></i></div>
+                        <div @click="loadArticle">草稿 <i class="i-tdesign-refresh"></i></div>
                     </div>
                     <div @click="newDraft">新建草稿</div>
                 </div>
                 <div class="panel-body pt-2">
                     <div class="lists">
-                        <template v-for="item in data.data" :key="item.uuid">
+                        <template v-for="item in list" :key="item.uuid">
                             <div class="list border-b-solid border-b border-gray-300 py-4">
                                 <div class="">
                                     <router-link :to="`/article/${item.uuid}`" target="_blank"
@@ -46,7 +46,7 @@
                     <div class="flex items-center gap-5">
                         <div>编辑模式·27 lines (15 loc) · 467 Bytes</div>
                     </div>
-                    <div @click="onSave">保存草稿</div>
+                    <div @click="onSubmit">发布</div>
                 </div>
                 <div class="panel-body pt-2">
                     <form class="flex flex-col gap-4" @submit="onSubmit">
@@ -59,20 +59,21 @@
                             </div>
                             <div class="keywords"></div>
                             <div class="description">
-                                <textarea name="description" id="" cols="30" rows="10" class="w-full" v-model="draft.description" placeholder="描述"></textarea>
+                                <textarea name="description" id="" cols="30" rows="10" class="w-full"
+                                    v-model="draft.description" placeholder="描述"></textarea>
                             </div>
                         </div>
                         <template v-if="draft.content">
-                            <YouEditor name="content" v-model="draft.content"></YouEditor>
+                            <YouEditor name="content" v-model="draft.content" @autosave="autoSave"></YouEditor>
                         </template>
                         <div class="">
-                            <p>记得保存: 文章需要通过审核</p>
+                            <p>Ctrl+S: 可快速保存草稿</p>
                         </div>
                     </form>
                 </div>
             </template>
 
-            <div v-if="data.nextcure" class="">加载更多</div>
+            <div v-if="cursor.next_cursor" class="">加载更多</div>
         </div>
     </div>
 </template>
@@ -80,75 +81,102 @@
 <script setup>
 let params = defineProps(['params']); const emit = defineEmits(['jump']);
 const state = reactive({
-    err: 0, msg: '', data: {}, profile: {},
+    err: 0, msg: '', list: [], profile: {},
     mode: 'preview',// preview draft
+    cursor: {
+        next_cursor:''
+    },
     draft: {
         title: '',
         poster: '',
         content: '',
-        keywords: '',
+        keywords: [],
         description: '',
+        rich_down:'',
+        rich_load:''
     },
-}),{ err, msg, data, profile,draft } = toRefs(state);
+}), { err, msg, list,cursor, profile, draft } = toRefs(state);
 // 加载文章列表
-const loadArticle = ()=>{
-    apiFetch('article/list', { cursor: state.data.next_cursor }).then(res => {
-        Object.assign(state, res);
-    }).catch(err => { });
+const loadArticle = () => {
+    let { next_cursor } = state.cursor;
+    apiFetch('article/list', { cursor: next_cursor, }).then(({data,...cursor}) => {
+        state.cursor = cursor;
+        data.forEach(is=>{
+            let findIndex = state.list.findIndex(it=>it.uuid == is.uuid);
+            findIndex == -1 && state.list.push(is);
+        });
+    }).catch(error => {
+        console.log(error);
+    });
 };
 // 文章预设
 const initDraft = () => {
-    let {uuid} = state.draft;
-    apiFetch('article/draft', { uuid: uuid }).then(res => {
-        Object.assign(state.draft, res.data);
+    let { uuid } = state.draft;
+    apiFetch('article/draft', { uuid: uuid }).then(data => {
+        state.draft = data;
         loadDraft()
     }).catch(err => { });
 }
 // 加载草稿正文
 const loadDraft = () => {
+    let load = useLoading();
+    console.log('loadloadloadloadload',load)
     let { rich_down } = state.draft;
-    fetch(rich_down).then(r => r.text()).then(text => {
+    fetch(`${rich_down}&t=${Date.now()}`).then(r => r.text()).then(text => {
         state.draft.content = text;
-    }).catch(err => { 
+    }).catch(err => {
         state.draft.content = `<p>暂无内容</p>`
+    }).finally(()=>{
+        load.hide();
     });
+    
 }
 // 新建草稿
 const newDraft = () => {
     apiFetch('article/create').then(res => {
+        state.cursor.next_cursor = ''
+        loadArticle();
         console.log(res)
-    }).catch(err => { });
+    }).catch(error => { 
+        useMessage().error(error.message)
+    });
 }
 // 编辑草稿
 const onEditor = (item) => {
     state.mode = 'draft';
     state.draft = item;
     initDraft();
-    console.log(100,item);
 }
-// 保存草稿 1. 保存正文 2. 保存元数据 3. 保存状态
-const onSave = () => {
-    let { uuid, title, content,rich_load } = state.draft;
+// 自动保存草稿 
+const autoSave = (content)=>{
+    let { uuid, title, rich_load } = state.draft;
     let blob = new Blob([content], { type: 'text/plain' });
-    let body = new FormData();
-    body.append('key', uuid);
-    body.append('file', blob,'1.txt');
-    // form.append('token', 'images_upload_token');
-    fetch(rich_load, { method: 'POST', body: body }).then(r => r.json()).then(text => {
-        console.log(text)
-        state.mode = 'preview';
-    }).catch(err => { });
-    // 保存元数据
-    onSubmit()
-    console.log('onSave',state.draft)
+    let formData = new FormData();formData.append('key', uuid);formData.append('file', blob, `${uuid}.txt`);
+    fetch(rich_load, { method: 'POST', body: formData }).then(r => r.json()).then(({error,result}) => {
+        if(error){
+            useMessage().error(error.message)
+        }
+        if(result){
+            // 保存元数据
+            useMessage().success('自动保存成功')
+        }
+    }).catch(err => { 
+        useMessage().error('网络错误')
+    });
 }
 // 提交表单
 const onSubmit = (e) => {
     e?.preventDefault();
-    let { uuid, title, poster,keywords,description } = state.draft;
-    apiFetch('article/update', { uuid, title, poster,keywords,description }).then(res => {
+    let { uuid, title, poster, keywords, description,content } = state.draft;
+    autoSave(content);
+    apiFetch('article/update', { uuid, title, poster, keywords, description }).then((res) => {
         console.log(res)
-    }).catch(err => { });
+        state.mode = 'preview';
+        loadArticle();
+        seMessage().success('更新成功')
+    }).catch(error => { 
+        useMessage().error(error.message)
+    });
 }
 //
 onMounted(() => {

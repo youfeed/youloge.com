@@ -68,19 +68,15 @@ const getDrive = () => {
   let { next_cursor } = state.cursor;
   apiFetch('drive/list', { cursor: next_cursor }).then(res => {
     state.err = 200;
+    let {data,...cursor} = res
     // 去重追加
-    res.data.forEach(is=>{
+    data.forEach(is=>{
       let findIndex = state.list.findIndex(it=>it.uuid == is.uuid);
       if(findIndex == -1){
         state.list.push(is);
       }
-    })
-    state.cursor.next_cursor = res.next_cursor
-    state.cursor.next_page_url = res.next_page_url
-    state.cursor.path = res.path
-    state.cursor.per_page = res.per_page
-    state.cursor.prev_cursor = res.prev_cursor
-    state.cursor.prev_page_url = res.prev_page_url
+    });
+    state.cursor = cursor;
   }).catch(error=>{
     state.msg = error.message;
   });
