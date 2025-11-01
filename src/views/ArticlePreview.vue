@@ -73,8 +73,8 @@ const state = reactive({
   params:{},html:'',
   cursor:Number.MAX_SAFE_INTEGER,
 }),{uuid,err,msg,params,anthor,metadata,html} = toRefs(state);
-// 获取数据
-const getInfo = ()=>{
+// 获取元数据
+const metaData = ()=>{
   let {uuid} = state.params;
   apiFetch('article/info',{uuid:uuid}).then(({account,...metadata})=>{
     console.log(account)
@@ -94,10 +94,6 @@ const getRich = ()=>{
     state.html = text;
   });
 }
-// 获取作者
-const getAnthor = ()=>{
-  let {uuid} = state.params; 
-}
 // 获取评论
 const getComment = ()=>{
   let {uuid} = state.params; 
@@ -105,7 +101,7 @@ const getComment = ()=>{
 
 onMounted(()=>{
   state.params = route.params;
-  getInfo();
+  metaData();
 })
 </script>
 
