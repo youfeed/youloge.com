@@ -1,5 +1,5 @@
 <template>
-  
+  <div>GoodsPreview</div>
 </template>
 
 <script setup>

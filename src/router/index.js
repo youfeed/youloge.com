@@ -26,6 +26,11 @@ import VideoSearch from '@/views/VideoSearch.vue'
 import VideoWatch from '@/views/VideoWatch.vue'
 
 import Goods from '@/views/Goods.vue'
+import GoodsIndex from '@/views/GoodsIndex.vue'
+import GoodsSearch from '@/views/GoodsSearch.vue'
+import GoodsPreview from '@/views/GoodsPreview.vue'
+
+
 import Risk from '@/views/Risk.vue'
 import RiskIndex from '@/views/RiskIndex.vue'
 import RiskHistory from '@/views/RiskHistory.vue'
@@ -80,6 +85,21 @@ const routes = [
       },{
         path: ':uuid',
         component: DrivePreview,
+      }
+    ]
+  },{
+    path: '/goods',
+    component: Goods,
+    children:[
+      {
+        path: '',
+        component: GoodsIndex,
+      },{
+        path: 'search',
+        component: GoodsSearch,
+      },{
+        path: ':uuid',
+        component: GoodsPreview,
       }
     ]
   },{
