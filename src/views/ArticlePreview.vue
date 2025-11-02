@@ -21,13 +21,13 @@
               {{ metadata.created }}
             </div>
             <div>
-              {{ metadata.views }}
+              {{ metadata.views }} 次浏览
             </div>
           </div>
         </div>
         <div class="" v-html="html"></div>
         <div class="m-t-5">
-          最后更新于:{{ metadata.updated }} - {{ metadata.view }} 次浏览
+          最后更新于:{{ metadata.updated }}
         </div>
         <div class="discuss m-t-10">
           <you-discuss mode="article" :code="params.uuid"></you-discuss>

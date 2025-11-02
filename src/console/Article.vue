@@ -20,8 +20,8 @@
                                     </router-link>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <div class="text-sm text-gray-500">{{ item.created }} · {{ item.view }} · {{
-                                        item.uuid }}</div>
+                                    <div class="text-sm text-gray-500">{{ item.created }} · {{ item.views }} · {{
+                                        item.uuid }} · {{ item.status_text }}</div>
                                     <template v-if="item.status == 0">
                                         <div class="text-sm text-gray-500" @click="onEditor(item)">编辑</div>
                                     </template>
