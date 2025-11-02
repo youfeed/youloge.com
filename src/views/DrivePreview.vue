@@ -72,7 +72,7 @@ const youPlus = YouPlus({
 })
 const route = useRoute();
 const { success, warning, error, info } = useMessage();
-const useloading = useLoading();
+
 const state = reactive({
   uuid:0,
   err:0,
@@ -119,7 +119,7 @@ const onBuyDrive = ()=>{
 }
 // 请求下载地址
 const onDownload = ()=>{
-    useLoading().show();
+    let load = useLoading()
     apiFetch('drive/download',{uuid:state.uuid}).then(res=>{
       console.log(res)
       // 原生下载资源
@@ -132,7 +132,7 @@ const onDownload = ()=>{
       info('购买后24小时内无限制下载');
       console.log('err',err)
     }).finally(e=>{
-      useLoading().hide();
+      load.hide();
     });
   
 }
