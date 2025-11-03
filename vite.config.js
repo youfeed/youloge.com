@@ -30,7 +30,6 @@ export default defineConfig({
         // 'tinymce': [['default', 'tinymce']],
         'pako':[['default','pako']],
         'youloge.plus':[['default','YouPlus']]
-        // ['default as tinymce','init']
       }],
       dirs:['src/composables','src/directives','src/stores'],
       dts:'types/auto-imports.d.ts',

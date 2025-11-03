@@ -57,7 +57,7 @@ onMounted(async () => {
     try {
         const tinymceModule = await import('tinymce')
         console.log('++++tinymceModule',tinymce)
-        console.log('----tinymceModule',tinymceModule)
+        // console.log('----tinymceModule',tinymceModule)
     } catch (error) {
         
     }
