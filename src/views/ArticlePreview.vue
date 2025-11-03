@@ -121,8 +121,9 @@ watch(()=>state.prismKey,()=>{
       const preElement = block.parentElement
       // 给 pre 加插件类名（按需启用）
       preElement.classList.add('line-numbers') // 行号
-      // preElement.classList.add('copy-to-clipboard') // 复制按钮
-      // preElement.classList.add('show-language') // 显示语法（可选）
+      preElement.classList.add('copy-to-clipboard') // 复制按钮 
+      preElement.classList.add('show-language') // 显示语法（可选）
+      // preElement.classList.add('command-line') // 显示语法（可选）
       Prism.highlightElement(block)
     })
     // Prism.highlightAll()
