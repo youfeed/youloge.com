@@ -72,10 +72,7 @@
 <script setup>
 import '@/assets/prism/index.css';
 import '@/assets/prism/index.js';
-// import 'prismjs/themes/prism.css';
-// import 'prismjs/themes/prism-twilight.css';
-// import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
-// import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.css';
+
 const route = useRoute()
 const state = reactive({
   uuid: '', err: 0, msg: '',
@@ -121,11 +118,11 @@ watch(()=>state.prismKey,()=>{
   nextTick(()=>{
     const codeBlocks = document.querySelectorAll('.rich pre code');
     codeBlocks.forEach(block=>{
-      const preElement = block.parentElement
+      // const preElement = block.parentElement
       // 给 pre 加插件类名（按需启用）
-      preElement.classList.add('line-numbers') // 行号
-      preElement.classList.add('copy-to-clipboard') // 复制按钮
-      preElement.classList.add('show-language') // 显示语法（可选）
+      // preElement.classList.add('line-numbers') // 行号
+      // preElement.classList.add('copy-to-clipboard') // 复制按钮
+      // preElement.classList.add('show-language') // 显示语法（可选）
       Prism.highlightElement(block)
     })
     // Prism.highlightAll()
