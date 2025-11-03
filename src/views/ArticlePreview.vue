@@ -6,8 +6,8 @@
     </div>
   </template>
   <template v-if="err == 200">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
-      <div class="navbar">navbar</div>
+    <div class="max-w-screen-md mx-auto px-4 sm:px-6 md:px-8">
+      <!-- <div class="navbar">navbar</div> -->
       <div class="article">
         <div class="title">
           <h1>{{ metadata.title }}</h1>
@@ -29,12 +29,12 @@
         <div class="m-t-5">
           最后更新于:{{ metadata.updated }}
         </div>
-        <div class="discuss m-t-10">
+        <!-- <div class="discuss m-t-10">
           <you-discuss mode="article" :code="params.uuid"></you-discuss>
-        </div>
+        </div> -->
       </div>
     </div>
-    <div class="asider">asider</div>
+    <!-- <div class="asider">asider</div> -->
   </template>
   <template v-else>
     <div class="mx-auto px-4 py-16 flex-grow flex flex-col items-center justify-center">
@@ -95,7 +95,7 @@ const metaData = () => {
 // 获取内容
 const getRich = () => {
   let { rich } = state.metadata;
-  fetch(rich).then(r => r.text()).then(text => {
+  fetch(`${rich}&t=${Date.now()}`).then(r => r.text()).then(text => {
     state.html = text;
   });
 }
