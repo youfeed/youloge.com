@@ -1,27 +1,27 @@
 <template>
-  <div>
-    <textarea id="tinymce-editor"></textarea>
-</div>
+    <div>
+        <textarea id="tinymce-editor"></textarea>
+    </div>
 </template>
 <script setup>
 import 'tinymce'
 import 'youloge.custom'
-const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue','autosave']);
-const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
+const props = defineProps(['modelValue']), emit = defineEmits(['update:modelValue', 'autosave']);
+const model = useVmodel(props, 'modelValue', emit); var editorInstance = null;
 const editorSettings = {
-    base_url:'tinymce',
+    base_url: 'tinymce',
     max_height: 500,
     max_width: 500,
     min_height: 100,
     min_width: 400,
-    menubar:false,
+    menubar: false,
     promotion: false,
-    branding:false,
-    paste_webkit_styles:'all',
+    branding: false,
+    paste_webkit_styles: 'all',
     plugins: 'code quickbars preview searchreplace autolink fullscreen image link media codesample table charmap advlist lists wordcount autoresize',
     toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect',
     images_upload_url: 'https://upload.qiniu.com',
-    images_upload_handler: (blobInfo, progress)=>new Promise((resolve, reject) => {
+    images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.withCredentials = false;
         xhr.open('POST', 'https://upload.qiniu.com');
@@ -57,27 +57,27 @@ const editorSettings = {
 onMounted(async () => {
     try {
         // const tinymceModule = await import('tinymce')
-        console.log('++++tinymceModule',tinymce)
+        console.log('++++tinymceModule', tinymce)
         // console.log('----tinymceModule',tinymceModule)
     } catch (error) {
-        
+
     }
     tinymce.init({
         selector: 'textarea#tinymce-editor',
         ...editorSettings,
         // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
-        license_key:'gpl',
-        promotion:false,
-        init_instance_callback:(editor)=>{
-            editor.setContent(props.modelValue||'<p>写点啥...</p>',{format : 'raw'});
+        license_key: 'gpl',
+        promotion: false,
+        init_instance_callback: (editor) => {
+            editor.setContent(props.modelValue || '<p>写点啥...</p>', { format: 'raw' });
         },
         setup: (editor) => {
             editorInstance = editor;
             editor.on('change', () => {
                 model.value = editor.getContent();
             });
-            editor.addShortcut('Ctrl+S','',()=>{
-                emit('autosave',editor.getContent())
+            editor.addShortcut('Ctrl+S', '', () => {
+                emit('autosave', editor.getContent())
                 console.log(5)
             });
         }
@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
 
 <style>
 #tinymce-editor {
-  width: 100%;
-  min-height: 500px;
+    width: 100%;
+    min-height: 500px;
 }
 </style>

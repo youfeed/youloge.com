@@ -130,7 +130,7 @@
                     </div>
                 </div>
                 <div class="p-4 bg-white">
-                    <div v-html="html"></div>
+                    <YouRich v-model="html"></YouRich>
                 </div>
             </div>
         </template>
@@ -162,8 +162,8 @@ const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
     profile: {},
     mode: "preview",
-    html: ''
-}), { profile, mode, html } = toRefs(state);
+    html: '',prismKey:0,
+}), { profile, mode, html,prismKey } = toRefs(state);
 //
 
 // 获得用户介绍
@@ -177,6 +177,7 @@ const getReadme = () => {
         throw new Error();
     }).then(html => {
         state.html = html;
+        state.prismKey += 1;
     }).catch(err => {
         console.log(333)
     })
