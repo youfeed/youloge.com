@@ -4,6 +4,7 @@
 </div>
 </template>
 <script setup>
+import 'tinymce'
 import 'youloge.custom'
 const props = defineProps(['modelValue']),emit = defineEmits(['update:modelValue','autosave']);
 const model =  useVmodel(props,'modelValue',emit);var editorInstance = null;
@@ -55,7 +56,7 @@ const editorSettings = {
 // 异步加载编辑器
 onMounted(async () => {
     try {
-        const tinymceModule = await import('tinymce')
+        // const tinymceModule = await import('tinymce')
         console.log('++++tinymceModule',tinymce)
         // console.log('----tinymceModule',tinymceModule)
     } catch (error) {
