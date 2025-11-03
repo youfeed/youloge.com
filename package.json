@@ -19,7 +19,6 @@
     "youloge.plus": "^2.1.4"
   },
   "devDependencies": {
-    "@arco-design/web-vue": "^2.57.0",
     "@iconify-json/carbon": "^1.2.1",
     "@iconify-json/mdi": "^1.2.0",
     "@vitejs/plugin-vue": "^5.1.4",
