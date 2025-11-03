@@ -52,7 +52,14 @@ const editorSettings = {
         xhr.send(formData);
     }),
 };
-onMounted(() => {
+// 异步加载编辑器
+onMounted(async () => {
+    try {
+        const tinymceModule = await import('tinymce')
+        console.log('++++tinymceModule',tinymce)
+    } catch (error) {
+        
+    }
     tinymce.init({
         selector: 'textarea#tinymce-editor',
         ...editorSettings,
