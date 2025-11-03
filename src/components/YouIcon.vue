@@ -1,8 +1,8 @@
 <!-- 图标加载 图标集:图标名称 -->
 <template>
-    <div :class="classed" :style="styled" v-if="svgContent" v-html="svgContent"></div>
+    <i :class="classed" :style="styled" v-if="svgContent" v-html="svgContent"></i>
     <slot v-else>
-        <div class="animate-pulse bg-gray-200 w-4 h-4 rounded" />
+        <i class="animate-pulse bg-gray-200 w-4 h-4 rounded" />
     </slot>
 </template>
 

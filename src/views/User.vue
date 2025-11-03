@@ -11,7 +11,7 @@
           </router-link>
           <div>/</div>
           <router-link :to="user" class="color-dark-200 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
-            <div>{{user}}</div>
+            <div class="max-w-20 truncate">{{user}}</div>
           </router-link>
         </div>
       </div>

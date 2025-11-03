@@ -56,11 +56,12 @@ const onConut = computed(() => {
     return state.list.filter(item => item.checked).length;
 });
 const onAccept = computed(() => {
-    return ['image', 'audio', 'video'].includes(props.type) ? `${props.type}/*` : '*/*';
-})
+    return ['image', 'audio', 'video','drive'].includes(props.type) ? `${props.type}/*` : '*/*';
+});
 const state = reactive({
     err: 0, msg: '', data: {}, list: [],
     cursor: {
+        limit:10,
         path: '',
         per_page: 10,
         next_cursor: '',
@@ -71,20 +72,19 @@ const state = reactive({
 }), { err, msg, data, list, profile } = toRefs(state);
 
 // 素材列表
-const loadMaterial = (cursor = '') => {
-    let next_cursor = state.cursor;
-    apiFetch(`material/${props.type}`, { cursor: next_cursor, limit: 10 }).then(({data,...cursor}) => {
+const loadMaterial = (isFirst = false) => {
+    isFirst && (state.list = [],state.cursor.next_cursor = '');
+    let {next_cursor,limit} = state.cursor;
+    apiFetch(`material/${props.type}`, { cursor: next_cursor, limit: limit }).then(({data,...cursor}) => {
         state.cursor = cursor;
         // 
         data.forEach(is=>{
-            let Findex = state.data.findIndex(it=>it.uuid == is.uuid);
-            if(Findex == -1){
-                state.list.push(is)
-            }
+            let Findex = state.list.findIndex(it=>it.uuid == is.uuid);
+            Findex == -1 && state.list.push(is);
         });
-        console.log(data)
     }).catch(err=>{
         console.log(err)
+        useMessage().error(err.message)
     });
 }
 // 取消选择
@@ -109,10 +109,11 @@ const onConfirm = () => {
 }
 // 文件上传
 const onFileChange = (e) => {
-    let [file] = e.target.files
-    console.log(1111, file)
-    apiFetch(`material/create`, { type: props.type, size: file.size }).then(res => {
-        onUpload(res.data.url, file);
+    let [file] = e.target.files;
+    apiFetch(`material/create`, { type: props.type, size: file.size }).then(result => {
+        onUpload(result.url, file);
+    }).catch(err=>{
+        useMessage().error(err.message);
     });
 }
 // 上传文件

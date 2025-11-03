@@ -13,7 +13,10 @@ const editorSettings = {
     max_width: 500,
     min_height: 100,
     min_width: 400,
-    menubar: false,
+    menubar:false,
+    promotion: false,
+    branding:false,
+    paste_webkit_styles:'all',
     plugins: 'code quickbars preview searchreplace autolink fullscreen image link media codesample table charmap advlist lists wordcount autoresize',
     toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect',
     images_upload_url: 'https://upload.qiniu.com',
@@ -55,6 +58,7 @@ onMounted(() => {
         ...editorSettings,
         // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
         license_key:'gpl',
+        promotion:false,
         init_instance_callback:(editor)=>{
             editor.setContent(props.modelValue||'<p>写点啥...</p>',{format : 'raw'});
         },
@@ -73,7 +77,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     editorInstance && editorInstance.destroy();
 });
-// defineEmits(['update:modelValue']);
 </script>
 
 <style>
