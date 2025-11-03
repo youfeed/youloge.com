@@ -25,7 +25,7 @@
             </div>
           </div>
         </div>
-        <div class="rich" v-html="html" :key="prismKey"></div>
+        <YouRich v-model="html"></YouRich>
         <div class="m-t-5">
           最后更新于:{{ metadata.updated }}
         </div>
@@ -70,9 +70,6 @@
 </template>
 
 <script setup>
-import '@/assets/prism/index.css';
-import '@/assets/prism/index.js';
-
 const route = useRoute()
 const state = reactive({
   uuid: '', err: 0, msg: '',
@@ -101,7 +98,6 @@ const getRich = () => {
   let { rich } = state.metadata;
   fetch(`${rich}&t=${Date.now()}`).then(r => r.text()).then(text => {
     state.html = text;
-    state.prismKey += 1;
   });
 }
 // 获取评论
@@ -111,25 +107,8 @@ const getComment = () => {
 
 onMounted(() => {
   state.params = route.params;
-  console.log('prismjs',window.Prism)
   metaData();
 });
-watch(()=>state.prismKey,()=>{
-  nextTick(()=>{
-    const codeBlocks = document.querySelectorAll('.rich pre code');
-    codeBlocks.forEach(block=>{
-      const preElement = block.parentElement
-      // 给 pre 加插件类名（按需启用）
-      preElement.classList.add('line-numbers') // 行号
-      preElement.classList.add('copy-to-clipboard') // 复制按钮 
-      preElement.classList.add('show-language') // 显示语法（可选）
-      // preElement.classList.add('command-line') // 显示语法（可选）
-      Prism.highlightElement(block)
-    })
-    // Prism.highlightAll()
-    console.log('codeBlocks',codeBlocks)
-  })
-})
 </script>
 
 <style lang="scss">
