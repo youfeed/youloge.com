@@ -86,6 +86,7 @@ const metaData = () => {
     state.err = 200;
     state.anthor = account;
     state.metadata = metadata;
+    document.title = metadata.title;
     // 加载正文
     getRich();
   }).catch((error) => {
