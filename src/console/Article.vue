@@ -10,36 +10,37 @@
                     <div @click="newDraft">新建草稿</div>
                 </div>
                 <div class="panel-body pt-2">
-                    <div class="lists">
+                    <div class="lists max-h-screen-sm overflow-hidden overflow-y-auto">
                         <template v-for="item in list" :key="item.uuid">
                             <div class="list border-b-solid border-b border-gray-300 py-4">
-                                <div class="">
-                                    <router-link :to="`/article/${item.uuid}`" target="_blank"
-                                        class="text-lg font-bold text-blue-600 hover:text-blue-500">
-                                        {{ item.title }}
-                                    </router-link>
+                                <div class="text-lg font-bold text-gray-600">
+                                    {{ item.title }}
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <div class="text-sm text-gray-500">{{ item.created }} · {{ item.views }} · {{
-                                        item.uuid }} · {{ item.status_text }}</div>
+                                <div class="flex justify-between items-center px-2">
+                                    <div class="text-sm text-gray-500">{{
+                                        item.uuid }} · {{ item.created }} · {{ item.views }} · {{ item.status_text }}</div>
                                     <template v-if="item.status == 0">
-                                        <div class="text-sm text-gray-500" @click="onEditor(item)">编辑</div>
+                                        <div class="text-sm text-green-500 cursor-pointer" @click="onEditor(item)">编辑草稿</div>
                                     </template>
                                     <template v-else-if="item.status == 1">
-                                        <div class="text-sm text-gray-500">浏览</div>
+                                        <div class="text-sm text-gray-500">
+                                        <router-link :to="`/article/${item.uuid}`" target="_blank"
+                                            class="text-blue-600 hover:text-blue-500">
+                                            浏览作品
+                                        </router-link>
+                                        </div>
                                     </template>
                                     <template v-else>
-                                        <div class="text-sm text-gray-500">审核中</div>
+                                        <div class="text-sm text-red-400 cursor-pointer" @click="revokeReview(item)">撤回审核</div>
                                     </template>
                                 </div>
                             </div>
                         </template>
+                        <div v-if="cursor.next_cursor" class="my-10 flex items-center justify-center cursor-pointer text-blue-600 hover:text-blue-500" @click="loadArticle()">加载更多</div>
                     </div>
                 </div>
                 <!-- README -->
-                <div class="README">
-                    README
-                </div>
+                <div class="">文章提交审核通过后将无法在修改</div>
             </template>
             <template v-if="state.mode == 'draft'">
                 <div class="panel-head flex items-center justify-between  h-10 border-b-solid border-b border-gray-200">
@@ -106,8 +107,6 @@
                     <div class="h-40"></div>
                 </div>
             </template>
-
-            <div v-if="cursor.next_cursor" class="">加载更多</div>
         </div>
     </div>
 </template>
@@ -141,14 +140,13 @@ const returnList = ()=>{
 const loadArticle = (isClear = false) => {
     isClear && (state.list = [], state.cursor.next_cursor = '');
     // 
-    apiFetch('article/list', { cursor: state.cursor.next_cursor, }).then(({ data, ...cursor }) => {
+    apiFetch('article/list', { cursor: state.cursor.next_cursor }).then(({ data, ...cursor }) => {
         state.cursor = cursor;
         data.forEach(is => {
             let findIndex = state.list.findIndex(it => it.uuid == is.uuid);
             findIndex == -1 && state.list.push(is);
         });
     }).catch(error => {
-        console.log(error);
         useMessage().error(error.messgae)
     });
 };
@@ -200,6 +198,17 @@ const releaseReview = (e) => {
         setTimeout(()=>{
             returnList()
         },1500)
+    }).catch(error => {
+        useMessage().error(error.message)
+    }).finally(()=>{
+        load.close();
+    });
+}
+// 撤回审核 revokeReview
+const revokeReview = (item)=>{
+    apiFetch('article/status', { uuid:item.uuid, status: 0 }).then((res) => {
+        useMessage().success('状态修改成功');
+        item.status = 0;
     }).catch(error => {
         useMessage().error(error.message)
     }).finally(()=>{

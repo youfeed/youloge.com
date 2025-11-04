@@ -9,7 +9,7 @@
 
       <div class="head flex items-center justify-between h-10" @click="onExpand">
         <div class="text-lg"> {{info.total}} 条点评</div>
-        <div class="flex items-center gap-2 uppercase"> 
+        <div class="flex items-center gap-2 uppercase cursor-pointer" @click="loadReviews(true)"> 
           <span class="i-tdesign:format-horizontal-align-center"></span>
           <span>{{props.mode}}/{{props.code}}</span>
         </div>
@@ -24,7 +24,7 @@
         </template>
         <template v-if="reviews.err == 200">
             <!-- 评论数据 -->
-            <template v-for="item in reviews.data?.data" :key="item.uuid">
+            <template v-for="item in reviews.data" :key="item.uuid">
               <div class="review flex gap-2  my-4">
                 <div class="avatar"><img :src="useImage(item.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
                 <div class="content w-full">
@@ -32,7 +32,11 @@
                     <span class="named">{{item.account.name}}@{{ item.account.user }}</span>
                     <span class="timed">{{useTimeago(item.created)}} - {{useTimeago(item.updated)}}</span>
                   </div>
-                  <div class="rich whitespace-pre-wrap" v-html="item.content"></div>
+                  <div class="rich whitespace-pre-wrap">
+                    <template v-for="(block,index) in item.content" :key="index">
+                        <span v-if="block.type == 'text'">{{block.text}}</span>
+                    </template>
+                  </div>
                   <div class="feedback flex gap-2 items-center">
                     <div class="cursor-pointer flex gap-2 items-center">
                       <div class="i-tdesign:thumb-up-2"></div> <span>{{ item.liked }}</span>
@@ -40,20 +44,24 @@
                     <div class="cursor-pointer flex gap-2 items-center">
                       <div class="i-tdesign:chat-bubble-1"></div> <span>{{ item.reply }} </span>
                     </div>
-                    <div class="cursor-pointer flex gap-2 items-center" @click="atReply(item)">
+                    <div class="cursor-pointer flex gap-2 items-center" @click="onReply(item)">
                       回复
                     </div>
                   </div>
-                  <div class="replys  my-2" v-if="item.reply > 0">
-                    <template v-for="items in item.data?.data" :key="items.uuid">
+                  <div class="replys  my-2" v-if="item.reply_count > 0">
+                    <template v-for="items in item.replys" :key="items.uuid">
                       <div class="reply flex gap-2 my-2">
                         <div class="avatar"><img :src="useImage(items.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
                         <div class="content w-full">
                           <div class="user flex items-center justify-between">
-                            <span class="named">{{items.account.name}}@({{ items.account.user }})回复{{items.quote.name}}@({{ items.quote.user }})</span>
+                            <span class="named">{{items.account.name}} 回复 {{items.quote.name}}</span>
                             <span class="timed">{{useTimeago(items.created)}} - {{useTimeago(items.updated)}}</span>
                           </div>
-                          <div class="rich">{{items.content}}</div>
+                          <div class="rich">
+                            <template v-for="(block,index) in items.content" :key="index">
+                              <span v-if="block.type == 'text'">{{block.text}}</span>
+                            </template>
+                          </div>
                           <div class="feedback flex gap-2 items-center">
                             <div>
                               <div class="i-tdesign:thumb-up-2"></div> <span>{{ items.liked }}</span>
@@ -61,7 +69,7 @@
                             <div>
                               <div class="i-tdesign:chat-bubble-1"></div> 
                             </div>
-                            <div @click="atQuote(items)">
+                            <div @click="onReply(items)">
                               <span> 回复 </span>
                             </div>
                           </div>
@@ -69,14 +77,14 @@
                       </div>
                     </template>
                     
-                    <div class="loadreply" @click="loadReply(item)" v-if="item.reply - (item.data?.data.length || 0) > 0">加载 余下{{(item.count || item.reply) - (item?.data?.length || 0)}} 条回复 </div>
+                    <div class="loadreply cursor-pointer" @click="loadReply(item)" v-if="item.reply_count - (item.replys.length || 0) > 0">加载 余下{{item.reply_count - (item.replys.length || 0)}} 条回复 </div>
                     
                   </div>
                 </div>
               </div>
             </template>
             <!-- 评论数据 -->
-            <template v-if="reviews.data.data.length == 0">
+            <template v-if="reviews.data.length == 0">
               <div class="flex items-center justify-center">
                 <div class="font-size-2xl color-gray-400">暂无评论</div>
               </div>
@@ -98,13 +106,13 @@
             <div class="flex gap-2 items-center justify-between my-1">
               <div class="max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
                 <span>
-                  {{ stateProfile.name }}@{{ stateProfile.user }}
+                  {{ stateProfile.name }} 
                 </span>
               </div>
               <div class="">
-                <span class="color-blue-500" v-if="!toggled.account">发表点评</span>
-                <span class="color-blue-500" v-else-if="profile.uuid == toggled.account?.uuid">编辑点评</span>
-                <span class="color-blue-500" v-else>回复点评</span>
+                <span class="color-blue-500" v-if="!comment">发表点评</span>
+                <span class="color-blue-500" v-else-if="stateProfile.uuid == comment.account?.uuid">编辑点评</span>
+                <span class="color-blue-500" v-else>回复评论</span>
               </div>
             </div>
             <form action="" @submit.prevent="onSubmit" @reset.prevent="onReset">
@@ -145,6 +153,7 @@
 const stateProfile = storeProfile();
 const props = defineProps(['mode','code']);
 const state = reactive({
+  // 元数据
   info:{
     total:0,
   },
@@ -153,35 +162,33 @@ const state = reactive({
   limit:10,
   // 评论数据
   reviews:{
+    err:200,msg:'',
     data:[],
     cursor:{
       next_cursor:''
     }
   },
   mask:false,
-  next:'',
-  reply:'',
-  method:'review',
-  content:'',
-  toggled:{},
-  sticker:[],
-  discuss:{
-    chosen: 0,
-    verify: 0,
-    review: 0,
-    uuid: "PLCuUJD4erSUbdLbm5PbYPPLoiig8",
-    ukey: "j2vTktHzMQM4aeYx3Y9zbBJRxrgUV",
-    owner: "PVD5xhMEisCxpmzFusooSfpAtJvBB",
-    updated: "2023-03-20 06:25:52",
-    created: "2023-03-20 06:25:52",
+  
+  parmas:{
+    content:''
   },
-  profile:{
-    uuid:'',
-    name:'',
-    avatar:'',
-    signer:'',
+  content:'',
+  sticker:[],
+  // 评论数据
+  discuss:{
+    cursor: {
+
+    },
+    data:[],
+  },
+  // 评论内容
+  comment:null,
+  method:'review',
+  parmas:{
+    content:[],
   }
-}),{err,msg,data,mode,code,info,profile,reviews,toggled,content} = toRefs(state);
+}),{err,msg,data,mode,code,info,profile,reviews,comment,content} = toRefs(state);
 // 加载评论元数据
 const loadInfo = ()=>{
   let {mode,code} = props;
@@ -197,10 +204,12 @@ const loadInfo = ()=>{
 const loadMine = ()=>{
   let {mode,code} = props;
   apiFetch('discuss/mine',{mode:mode,code:code}).then(result=>{
-    console.log(result)
+    result.account = stateProfile;
+    state.comment = result
+    onReview()
   }).catch(err=>{
     console.log(err.message)
-  })
+  });
 }
 // 获取评论 - 分页 
 const loadReviews = (isfirst=false)=>{
@@ -214,6 +223,7 @@ const loadReviews = (isfirst=false)=>{
     state.reviews.cursor = cursor;
     data.forEach(is=>{
       let Findex = state.reviews.data.findIndex(it=>it.uuid == is.uuid);
+      is.cursor = {};is.replys = []; // 回复预设
       Findex == -1 && state.reviews.data.push(is);
     });
   }).catch(err=>{
@@ -222,13 +232,13 @@ const loadReviews = (isfirst=false)=>{
 }
 // 获取回复 - 分页
 const loadReply = (item)=>{
-  let {mode,code} = props;
-  let {uuid,cursor} = item.reply;
+  let {uuid,cursor} = item;
+  console.log(item)
   apiFetch('discuss/reply',{review:uuid,cursor:cursor?.next_cursor}).then(({data,...cursor})=>{
     item.cursor = cursor;
     data.forEach(is=>{
-      let Findex = item.reply.data.findeIndex(it=>it.uuid == is.uuid);
-      Findex == -1 && item.reply.data.push(is);
+      let Findex = item.replys.findIndex(it=>it.uuid == is.uuid);
+      Findex == -1 && item.replys.push(is);
     })
   })
 }
@@ -236,67 +246,51 @@ const loadReply = (item)=>{
  * 发表评论
  * atReview: type mode content signatrue 
  * atReply: review:uuid content signature
- * atQuote: review:uuid quote content signature
  */
-const atReview = (item)=>{
+const onReview = ()=>{
+  let {mode,code} = props;
   state.method ='review';
-  state.toggled = item;
-  console.log(item)
-}
-const atReply = (item)=>{
-  state.method ='reply';
-  state.toggled = item;
+  state.params = {
+    mode:mode,
+    code:code,
+  };
   state.content = '';
-  console.log(item)
 }
-const atQuote = (item)=>{
-  state.method ='quote';
-  state.toggled = item;
+const onReply = (item)=>{
+  state.method ='reply';
+  state.params = {
+    review:item.uuid,
+    quote:item.account.uuid,
+  };
+  state.comment = item;
   state.content = '';
   console.log(item)
 }
 
-// 发表评论 mode atReview atReply atQuote
+
+// 发表评论 mode atReview atReply
 const onSubmit = ()=>{
-  let {mode,code} = props;
-  let {content,method} = state;
-  let body = {};
-  if(method == 'review'){
-    body = {mode:mode,code:code,content}
-  }
-  if(method == 'reply'){
-    body = {review:uuid,quote:account.uuid,content}
-  }
-  if(method == 'quote'){
-    body = {review:uuid,quote:account.uuid,content}
-  }
+  let {method,params,content} = state;
+  let contents = [
+    {
+      type:'text',
+      text:content
+    }
+  ]
+  const form = {...params,...{type:method,content:contents}}
+  console.log(666666666666666666666,form)
   // 发布评论
-  apiFetch(`discuss/create`,{
-    type:'review',
-    mode:mode,
-    code:code,
-    content:[
-      {
-        type:'text',
-        text:content
-      }
-    ]
-  }).then(res=>{
-    console.log(res)
-    // err ? item.data.push(...res.data) : Object.assign(item,res);
+  apiFetch(`discuss/create`,form).then(result=>{
+    let find = state.reviews.data.find(is=>is.uuid == result.uuid);
+    find ? find = result : loadReply(state.comment,true);
   });
 }
 // 登录
 const onLogin = ()=>{
-  // usePlus('login').then(profile=>{
-  //   useStorage('profile',profile);
-  //   state.profile = profile;state.logged = true;
-  //   console.log(99999,profile)
-  // });
+
 }
 
 onMounted(()=>{
-  // state.profile = useAuth();
   console.log(999,stateProfile)
   loadInfo();
 });
