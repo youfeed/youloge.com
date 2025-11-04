@@ -17,7 +17,7 @@ const editorSettings = {
     menubar: false,
     promotion: false,
     branding: false,
-    paste_webkit_styles: 'all',
+    // paste_webkit_styles: 'all',
     plugins: 'code quickbars preview searchreplace autolink fullscreen image link media codesample table charmap advlist lists wordcount autoresize',
     toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect',
     images_upload_url: 'https://upload.qiniu.com',
