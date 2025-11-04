@@ -22,6 +22,7 @@ export default defineStore('profile',()=>{
     const logout = ()=>{
         // localStorage.removeItem('profile');
         $reset();
+        location.reload();
         // state.user = 'unknown';
         console.log('logout',state)
     }

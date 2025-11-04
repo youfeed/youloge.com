@@ -1,28 +1,44 @@
 <template>
-  <header class="fixed h-12 w-full bg-gray-100 border-b border-gray-200">
+  <header class="sticky top-0 h-15 md:h-10 w-full bg-gray-100 border-b border-gray-200">
     <div class="flex h-full items-center justify-between px-3">
       <div class="flex items-center " @click="toggleSidebar">
+        <YouIcon name="mdi-light:menu" size="32"></YouIcon>
         <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
           <img src="/loge.svg" alt="" class="w-5 h-5">
-          <div class="font-bold text-gray-900 pl-1">Youloge</div>
+          <div class="font-bold text-5 text-gray-900 pl-1">Youloge</div>
         </button>
       </div>
-      <div>
-        <a-dropdown>
-          <a-avatar :image-url="useImage(stateProfile.avatar,'80')" :size="35"></a-avatar>
-          <template #content>
-            <a-doption>
-              <div>
-                <div>{{ stateProfile.name }}<span class="font-2 ">@({{ stateProfile.user }})</span></div>
+      <div class="flex items-center gap-1">
+        <div class="hidden md:flex  items-center gap-2">
+          <a>视频</a>
+          <a>视频</a>
+          <a>视频</a>
+          <a>视频</a>
+        </div>
+        <you-dropdown>
+          <img :src="useImage(stateProfile.avatar,'80')" width="35" class="rounded-full" />
+          <template #panel>
+            <div class="p-2 flex flex-col gap-2 w-40">
+              <div class="bg-gray-50">
+                <div>{{ stateProfile.name }}</div>
+                <div class="font-2">@{{ stateProfile.user }}</div>
                 <div>{{ stateProfile.mail }}</div>
               </div>
-            </a-doption>
-            <a-doption @click="onLogout">
-              <span class="i-tdesign:logout"></span>
-              退出登录  
-            </a-doption>
+              <div>
+                <span class="i-tdesign:logout"></span>
+                钱包零钱  
+              </div>
+              <div>
+                <span class="i-tdesign:logout"></span>
+                切换账号  
+              </div>
+              <div @click="onLogout">
+                <span class="i-tdesign:logout"></span>
+                退出登录  
+              </div>
+            </div>
           </template>
-        </a-dropdown>
+        </you-dropdown>
       </div>
     </div>
   </header>
@@ -62,7 +78,7 @@
         </div>
       </div>
   </aside>
-  <main class="fixed w-full h-full overflow-y-auto transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'lg:pl16' : 'md:pl-37'" @click="closeSidebar">
+  <main class="fixed z--1 w-full h-full overflow-y-auto transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'lg:pl-16' : 'md:pl-37'" @click="closeSidebar">
     <transition mode="out-in">
       <keep-alive max="100">
         <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
@@ -82,7 +98,9 @@ console.log('components',components)
 const stateMenu = storeMenu()//,{} = storeToRefs(stateMenu);
 const stateProfile = storeProfile()//,{} = storeToRefs(stateProfile);
 const state = reactive({
-  profile:{},menuItems:[],sidebarCollapsed:false,current:''
+  profile:{},menuItems:[],
+  current:'',
+  sidebarCollapsed:false,
 }),{profile,current,menuItems,sidebarCollapsed} = toRefs(state);
 // 动态路由
 const currentParams = shallowRef({});
@@ -123,6 +141,15 @@ onMounted(()=>{
   console.log('useMenu',useMenu)
   console.log('storeProfile',stateProfile)
   console.log('storeMenu',stateMenu)
+  console.log('sidebarCollapsed',sidebarCollapsed)
+  //
+  useDrawer({
+    visible:false
+  }).then(res=>{
+
+  }).catch(err=>{
+
+  });
 });
 </script>
 

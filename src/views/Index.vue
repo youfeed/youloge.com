@@ -10,12 +10,11 @@ import IndexConsole from './IndexConsole.vue'
 //
 const stateProfile = storeProfile();
 const currentComponent = computed(() => {
-  let {uuid} = useAuth()
-  return uuid ? IndexConsole : IndexHome;
+  return stateProfile.uuid ? IndexConsole : IndexHome;
 });
 
 onMounted(()=>{
-  console.log('import.youloge.custom',stateProfile)
+  console.log('import.youloge.custom',stateProfile.uuid)
 })
 </script>
 

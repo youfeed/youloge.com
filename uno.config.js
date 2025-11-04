@@ -1,11 +1,10 @@
-import { defineConfig,presetUno,presetMini,presetTypography,presetAttributify,presetIcons } from 'unocss'
+import { defineConfig,presetUno,presetTypography,presetAttributify,presetIcons } from 'unocss'
 
 export default defineConfig({
   presets:[
-    // presetMini(),
     presetUno(),
     presetAttributify(),
-    presetTypography(),
+    // presetTypography(),
     presetIcons({
       autoInstall: false,
       cdn: 'https://esm.sh/',
@@ -17,8 +16,19 @@ export default defineConfig({
   ],
   preflights:[{
     getCSS:()=>`
-      a{text-decoration: unset !;user-select:none;}
-      *{box-sizing:border-box;padding:0;margin: 0;}
+      a{
+        text-decoration: unset !important;
+        user-select:none;
+        color: #24292e;
+        transition: color 0.2s ease;
+      }
+      a:hover { 
+        color: #0969da; 
+      }
+      *{
+        box-sizing:border-box;
+        padding:0;margin: 0;
+      }
     `
   }]
 })

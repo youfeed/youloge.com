@@ -79,6 +79,7 @@ declare global {
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDialog: typeof import('../src/composables/useDialog.js')['useDialog']
+  const useDrawer: typeof import('../src/composables/useDrawer.js')['useDrawer']
   const useDuration: typeof import('../src/composables/useDuration.js')['default']
   const useId: typeof import('vue')['useId']
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
@@ -193,6 +194,7 @@ declare module 'vue' {
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useDialog: UnwrapRef<typeof import('../src/composables/useDialog.js')['useDialog']>
+    readonly useDrawer: UnwrapRef<typeof import('../src/composables/useDrawer.js')['useDrawer']>
     readonly useDuration: UnwrapRef<typeof import('../src/composables/useDuration.js')['default']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
