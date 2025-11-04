@@ -277,6 +277,7 @@ const onSubmit = ()=>{
     code:code,
     content:[
       {
+        type:'text',
         text:content
       }
     ]
