@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="font-sans bg-gray-100">
     <component :is="currentComponent"></component>
   </div>
 </template>
