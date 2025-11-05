@@ -113,6 +113,9 @@
     "watchEffect": true,
     "watchPostEffect": true,
     "watchSyncEffect": true,
-    "useDrawer": true
+    "useDrawer": true,
+    "storeSubscribe": true,
+    "vDom": true,
+    "usePrompt": true
   }
 }

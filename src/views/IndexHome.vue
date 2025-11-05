@@ -145,13 +145,6 @@ const onLogin = () => {
     });
 };
 const getBind = {
-    // mousedown:onStart,
-    // mousedown:preventDefault(onStart),
-    // mousemove:preventDefault(onMove),
-    // mouseup:preventDefault(onEnd),
-    // mouseleave:preventDefault(onEnd),
-    // wheel:preventDefault(onWheel),
-    // contextmenu:preventDefault(),
 
 };
 </script>

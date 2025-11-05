@@ -4,6 +4,7 @@
  **/
 export default defineStore('profile',()=>{
     const draft = {
+        uuid:'',
         user: 'unknown',
         name: 'No Login',
         expire:0,
@@ -15,21 +16,21 @@ export default defineStore('profile',()=>{
     const $reset = ()=>{
         Object.assign(state,draft)
     }
-    const logged = ()=>{
-        let {access_token,expire} = state;
-        return  access_token && expire > (Date.now() / 1000 >> 0) ? state : false;
+    const login = (profile)=>{
+        useStorage('profile',profile);
+        reload();
     }
     const logout = ()=>{
-        // localStorage.removeItem('profile');
+        localStorage.setItem('profile','{}');
         $reset();
         location.reload();
-        // state.user = 'unknown';
         console.log('logout',state)
     }
     const reload = ()=>{
-        const savedData = localStorage.getItem('profile');
-        savedData && (Object.assign(state,JSON.parse(savedData)));
+        const profile = useStorage('profile');
+        const {access_token,expire} = profile;
+        access_token && expire > (Date.now() / 1000 >> 0) ? Object.assign(state,profile) : false;
     }
     reload();
-    return {...toRefs(state),logged,logout,$reset};
+    return {...toRefs(state),login,logout,$reset};
 });

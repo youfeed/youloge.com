@@ -24,6 +24,8 @@ declare module 'vue' {
     YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
     YouPayment: typeof import('./../src/components/YouPayment.vue')['default']
     YouProfile: typeof import('./../src/components/YouProfile.vue')['default']
+    YouProm: typeof import('./../src/components/YouProm.vue')['default']
+    YouPrompt: typeof import('./../src/components/YouPrompt.vue')['default']
     YouRich: typeof import('./../src/components/YouRich.vue')['default']
     YouSearch: typeof import('./../src/components/YouSearch.vue')['default']
     YouWatch: typeof import('./../src/components/YouWatch.vue')['default']

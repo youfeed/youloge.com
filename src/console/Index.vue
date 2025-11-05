@@ -61,9 +61,12 @@
         </template>
         <div class="h-40"></div>
     </div>
+    <!-- 修改你车过 -->
 </template>
 
 <script setup>
+import { usePrompt } from '../composables/usePrompt';
+
 const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
     profile: {},
@@ -127,16 +130,22 @@ const chooseAvatar = () => {
 // 修改别称
 const changeUser = ()=>{
     let {user} = state.profile;
-    var userInput = prompt("修改别称(字母+数字组合)", user);
-    if(userInput){
-        apiFetch('account/user', { user: userInput }).then(res => {
-            state.profile.user = userInput
+    usePrompt({
+        title:'修改别称',
+        placeholder:'字母+数字组合',
+        name:'user',
+        pattern:'[A-Za-z0-9]{2,12}'
+    }).then(({user})=>{
+        apiFetch('account/user', { user: user }).then(result => {
+            state.profile.user = user
             useMessage().success('修改成功');
-            useStorage('profile', { user: userInput });
+            useStorage('profile', { user: user });
         }).catch(err=>{
             useMessage().error(err.message);
         });
-    }
+    }).catch(err=>{
+        useMessage().info('取消输入')
+    });
 }
 // 修改昵称
 const changeName = () => {

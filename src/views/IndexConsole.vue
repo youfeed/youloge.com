@@ -97,6 +97,7 @@ console.log('components',components)
 // 
 const stateMenu = storeMenu()//,{} = storeToRefs(stateMenu);
 const stateProfile = storeProfile()//,{} = storeToRefs(stateProfile);
+const stateSubscribe = storeSubscribe()//,{} = storeToRefs(stateProfile);
 const state = reactive({
   profile:{},menuItems:[],
   current:'',
@@ -143,13 +144,13 @@ onMounted(()=>{
   console.log('storeMenu',stateMenu)
   console.log('sidebarCollapsed',sidebarCollapsed)
   //
-  useDrawer({
-    visible:false
-  }).then(res=>{
+  // useDrawer({
+  //   visible:false
+  // }).then(res=>{
 
-  }).catch(err=>{
+  // }).catch(err=>{
 
-  });
+  // });
 });
 </script>
 

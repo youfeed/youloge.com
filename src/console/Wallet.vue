@@ -26,7 +26,7 @@
             </div>
         </div>
         <!-- 支付抽屉 -->
-        <YouDrawer v-model:visible="state.visible" title="账户充值" confirm="充值下单" size="mini" @confirm="onConfirm">
+        <YouDialog v-model:visible="state.visible" title="账户充值" confirm="充值下单" size="mini" @confirm="onConfirm">
             <div class="p-4">
                 <div class="text-xl font-bold">充值金额：<span class="text-red-500">￥{{charge.money}}</span></div>
                 <div class="flex flex-wrap justify-between gap-2 my-2 mwx-w-50">
@@ -38,11 +38,13 @@
                     充值说明 1:1比例充值为 # RGB
                 </div>
             </div>
-        </YouDrawer>
+        </YouDialog>
     </div>
 </template>
 
 <script setup>
+import useQrcode from '../composables/useQrcode';
+
 const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
     err: 0, msg: '', data: {},
@@ -63,10 +65,8 @@ const state = reactive({
 const loadOverage = () => {
     let load = useLoading();
     apiFetch('wallet/overage', {}).then(result => {
-        console.log(44444444)
         state.overage = result
     }).catch(err=>{
-        console.log(err)
         useMessage().error(err.message);
     }).finally(()=>{
         console.log(666666666)
@@ -80,9 +80,7 @@ const reFresh = () => {
 }
 // 账户充值
 const onCharge = () => {
-    console.log('账户充值', state.visible)
     state.visible = true;
-    console.log('账户充值')
 }
 // 确认下单
 const onConfirm = () => {
@@ -93,21 +91,27 @@ const onConfirm = () => {
     }).then(result => {
         console.log(result)
         showQrcode(result.href)
+    }).catch(err=>{
+        useMessage().error(err.message)
     })
 }
 // 显示支付
 const showQrcode = (href) => {
     let data = encodeURIComponent(href);
-    useDialog({
-        title: '账户充值',
-        content: `<div><img src="https://qun.qq.com/qrcode/index?data=${data}"/></div>`,
-        confirm: '我已充值',
-    }).then(res => {
-        loadOverage()
-        console.log(res)
-    }).catch(err => {
-        console.log(err)
-    });
+    useQrcode(href).then(canvas=>{
+        console.log(href)
+        canvas.style = `width:150px`
+        useDialog({
+            title: '账户充值(扫码)',
+            content: canvas,
+            confirm: '我已充值',
+        }).then(res => {
+            loadOverage()
+            console.log(res)
+        }).catch(err => {
+            console.log(err)
+        });
+    })
 }
 
 onMounted(() => {

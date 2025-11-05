@@ -14,8 +14,9 @@ const storage = {
 sessionStorage.setItem('youloge',JSON.stringify(storage))
 const app = createApp(App), pinia = createPinia();
 app.use(pinia);
-app.directive('login', vLogin);
+app.directive('dom', vDom);
 app.directive('copy', vCopy);
+app.directive('login', vLogin);
 app.directive('ripple', vRipple);
 setupRouter(app)
 app.mount('#app')

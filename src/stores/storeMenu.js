@@ -3,6 +3,7 @@
  * @author Micateam@20250603
  **/
 export default defineStore('menu', ()=>{
+    const stateProfile = storeProfile()
     const state = reactive({
         active:{},
         list:[
@@ -15,25 +16,29 @@ export default defineStore('menu', ()=>{
                     icon:'UserOutlined'
                 }
             }
-        ]
+        ],
+        // 订阅列表
+        subscribe:[]
     });
-    const load = ()=>{
-        fetch('ss').then(res=>{
-            if(res.ok){
-                state.active = {name:'用户管理'};
-                console.log('defineStoredefineStoredefineStoredefineStoredefineStore',state)
-            }
-        })
-    }
+
+    
     const change = (path)=>{
         let find = state.list.find(item=>item.path==path);
         if(find){
             state.active = find;
-
         }
         console.log('change',state)
     }
-    load();
+    //
+    const load = ()=>{
+        let {uuid} = stateProfile;
+        fetch(`https://cdn.youloge.com/subscribe/${uuid}`).then(r=>r.json()).then(res=>{
+            console.log(res)
+            state.subscribe = res.result;
+        }).catch(err=>{
+            state.subscribe = []
+        });
+    };load();
     onMounted(()=>{
         console.log('onMounted',state)
     })

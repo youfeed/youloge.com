@@ -65,6 +65,7 @@ declare global {
   const shallowRef: typeof import('vue')['shallowRef']
   const storeMenu: typeof import('../src/stores/storeMenu.js')['default']
   const storeProfile: typeof import('../src/stores/storeProfile.js')['default']
+  const storeSubscribe: typeof import('../src/stores/storeSubscribe.js')['default']
   const storeToRefs: typeof import('pinia')['storeToRefs']
   const toRaw: typeof import('vue')['toRaw']
   const toRef: typeof import('vue')['toRef']
@@ -90,6 +91,7 @@ declare global {
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
   const usePlus: typeof import('../src/composables/usePlus.js')['default']
+  const usePrompt: typeof import('../src/composables/usePrompt.js')['usePrompt']
   const useQrcode: typeof import('../src/composables/useQrcode.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
@@ -102,6 +104,7 @@ declare global {
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
   const vCopy: typeof import('../src/directives/vCopy.js')['default']
+  const vDom: typeof import('../src/directives/vDom.js')['default']
   const vLogin: typeof import('../src/directives/vLogin.js')['default']
   const vRipple: typeof import('../src/directives/vRipple.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
@@ -180,6 +183,7 @@ declare module 'vue' {
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeMenu: UnwrapRef<typeof import('../src/stores/storeMenu.js')['default']>
     readonly storeProfile: UnwrapRef<typeof import('../src/stores/storeProfile.js')['default']>
+    readonly storeSubscribe: UnwrapRef<typeof import('../src/stores/storeSubscribe.js')['default']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
@@ -205,6 +209,7 @@ declare module 'vue' {
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePlus: UnwrapRef<typeof import('../src/composables/usePlus.js')['default']>
+    readonly usePrompt: UnwrapRef<typeof import('../src/composables/usePrompt.js')['usePrompt']>
     readonly useQrcode: UnwrapRef<typeof import('../src/composables/useQrcode.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
@@ -217,6 +222,7 @@ declare module 'vue' {
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
+    readonly vDom: UnwrapRef<typeof import('../src/directives/vDom.js')['default']>
     readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>
     readonly vRipple: UnwrapRef<typeof import('../src/directives/vRipple.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
