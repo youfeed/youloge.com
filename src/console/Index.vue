@@ -150,16 +150,22 @@ const changeUser = ()=>{
 // 修改昵称
 const changeName = () => {
     let {name} = state.profile;
-    var nameInput = prompt("修改昵称(2-12个字)", name);
-    if(nameInput){
-        apiFetch('account/name', { name: nameInput }).then(res => {
-            state.profile.name = nameInput
+    usePrompt({
+        title:'修改昵称',
+        placeholder:'2-12个字',
+        name:'name',
+        pattern:'.{2,12}'
+    }).then(({name})=>{
+        apiFetch('account/name', { name: name }).then(result => {
+            state.profile.name = name
             useMessage().success('修改成功');
-            useStorage('profile', { name: nameInput });
+            useStorage('profile', { name: name });
         }).catch(err=>{
             useMessage().error(err.message);
         });
-    }
+    }).catch(err=>{
+        useMessage().info('取消输入')
+    });
 }
 //
 onMounted(() => {
