@@ -53,6 +53,16 @@ export default [
           }
         ]
     },{
+        title: '开发密钥',
+        name: 'apikey',
+        icon:'tdesign:wallet',
+        children: [
+          {
+            title: '密钥列表',
+            name: 'apikey'
+          }
+        ]
+    },{
         title: '钱包余额',
         name: 'wallet',
         icon:'tdesign:wallet',

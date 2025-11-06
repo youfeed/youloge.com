@@ -18,7 +18,13 @@
 
 <script setup>
 import { computed } from 'vue';
-
+// height: 100%;
+// max-height: unset;
+// min-width: 192px;
+// inset: 0px 0px 0px auto;
+// border: 0px;
+// outline: 0px;
+// border-radius: 20px 0px 0px 20px;
 const dialogRef = useTemplateRef('dialog')
 const props = defineProps({
     visible: Boolean,

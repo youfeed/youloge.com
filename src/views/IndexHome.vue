@@ -131,9 +131,6 @@ const state = reactive({
     mouseY: 0,
 }), { canvas, color, width, height, hover } = toRefs(state);
 
-onMounted(() => {
-
-})
 const onLogin = () => {
     useYouPlus.useLogin().then(profile => {
         console.log(profile)
@@ -144,9 +141,9 @@ const onLogin = () => {
         warning(err.msg)
     });
 };
-const getBind = {
+onMounted(() => {
 
-};
+})
 </script>
 
 <style>

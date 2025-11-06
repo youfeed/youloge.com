@@ -43,8 +43,6 @@
 </template>
 
 <script setup>
-import useQrcode from '../composables/useQrcode';
-
 const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
     err: 0, msg: '', data: {},
@@ -117,11 +115,7 @@ const showQrcode = (href) => {
 onMounted(() => {
     state.profile = useAuth();
     loadOverage();
-})
-// 路由跳转(动态组件内部跳转)
-const navigateTo = (path, params = '') => {
-    emit('jump', path, params);
-}
+});
 </script>
 
 <style></style>

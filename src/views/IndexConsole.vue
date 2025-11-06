@@ -9,11 +9,11 @@
         </button>
       </div>
       <div class="flex items-center gap-1">
-        <div class="hidden md:flex  items-center gap-2">
-          <a>视频</a>
-          <a>视频</a>
-          <a>视频</a>
-          <a>视频</a>
+        <div class="hidden md:flex  items-center gap-3">
+          <router-link to="/article">新闻</router-link>
+          <router-link to="/video">视频</router-link>
+          <router-link to="/drive">云盘</router-link>
+          <router-link to="/goods">购物</router-link>
         </div>
         <you-dropdown>
           <img :src="useImage(stateProfile.avatar,'80')" width="35" class="rounded-full" />
@@ -73,17 +73,17 @@
         </div>
         <div class="absolute bottom-0 left-0 w-full">
           <div v-ripple class="cursor-pointer inline-flex w-full items-center p-2 text-sm select-none text-gray-900 rounded-lg hover:bg-gray-200 group">
-            <div class="ml-2" @click="navigateTo('logout')"><span class="i-tdesign:login"></span>退出登录</div>
+            <div class="ml-2" @click="onLogout()"><span class="i-tdesign:login"></span>退出登录</div>
           </div>
         </div>
       </div>
   </aside>
   <main class="fixed z--1 w-full h-full overflow-y-auto transition-transform duration-200 ease-in-out mt-12 pt-5 bg-gray-50" :class="sidebarCollapsed ? 'lg:pl-16' : 'md:pl-37'" @click="closeSidebar">
-    <transition mode="out-in">
-      <keep-alive max="100">
-        <component :is="currentComponent" :params="currentParams" @jump="navigateTo"></component>
-      </keep-alive>
-    </transition>
+    <keep-alive :include="Object.keys(components)" max="1000">
+      <transition>
+        <component :is="currentComponent" :name="current" :key="current" :params="currentParams" @jump="navigateTo"></component>
+      </transition>
+    </keep-alive>
   </main>
 </template>
 <script setup>
@@ -92,19 +92,18 @@ const modules = import.meta.glob('@/console/*.vue');
 Object.entries(modules).forEach(([path, module]) => {
 	let name = path.replace('/src/console/','').replace('.vue','').toLowerCase();
 	components[name] = defineAsyncComponent(module);
+  console.log('组件注册：', name, path,module);
 })
 console.log('components',components)
 // 
-const stateMenu = storeMenu()//,{} = storeToRefs(stateMenu);
 const stateProfile = storeProfile()//,{} = storeToRefs(stateProfile);
-const stateSubscribe = storeSubscribe()//,{} = storeToRefs(stateProfile);
 const state = reactive({
   profile:{},menuItems:[],
-  current:'',
+  current:'index',
   sidebarCollapsed:false,
-}),{profile,current,menuItems,sidebarCollapsed} = toRefs(state);
+}),{current,menuItems,sidebarCollapsed} = toRefs(state);
 // 动态路由
-const currentParams = shallowRef({});
+const currentParams = ref({});
 const currentComponent = shallowRef(components['index']);
 // 展开收缩菜单
 const toggleSidebar = () => {
@@ -112,7 +111,6 @@ const toggleSidebar = () => {
 };
 // 关闭收缩菜单
 const closeSidebar = () => {
-  console.log('closeSidebar')
   sidebarCollapsed.value = true;
 };
 // 展开收缩子菜单
@@ -124,33 +122,21 @@ const toggleSubMenu = (item) => {
 const navigateTo = (name,params={})=>{
   if(name in components){
     state.current = name;
-    currentComponent.value = components[name];
     currentParams.value = params;
+    currentComponent.value = components[name];
+    console.log('navigateTo: ',components[name])
+    console.log('navigateTo: ',name,name in components,components[name])
   }
-  console.log('navigateTo: console/',name,state.current,params)
 }
 // 退出登录
 const onLogout = ()=>{
   stateProfile.logout();
-  stateMenu.change()
-  // navigateTo('login');
 }
 //
 onMounted(()=>{
   state.menuItems = useMenu;
-  state.profile = useAuth();
   console.log('useMenu',useMenu)
-  console.log('storeProfile',stateProfile)
-  console.log('storeMenu',stateMenu)
   console.log('sidebarCollapsed',sidebarCollapsed)
-  //
-  // useDrawer({
-  //   visible:false
-  // }).then(res=>{
-
-  // }).catch(err=>{
-
-  // });
 });
 </script>
 

@@ -48,6 +48,7 @@ const loadIcon = async(iconname) => {
 const styled = computed(()=>({
     width: `${props.size}px`,
     height: `${props.size}px`,
+    verticalAlign:'text-bottom',
 }))
 const classed = computed(()=>({
   'inline-flex items-center justify-center': true,

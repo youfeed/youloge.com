@@ -10,7 +10,8 @@ import IndexConsole from './IndexConsole.vue'
 //
 const stateProfile = storeProfile();
 const currentComponent = computed(() => {
-  return stateProfile.uuid ? IndexConsole : IndexHome;
+  let uuid = stateProfile.uuid;
+  return uuid ? IndexConsole : IndexHome;
 });
 
 onMounted(()=>{

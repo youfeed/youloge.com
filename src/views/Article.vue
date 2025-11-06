@@ -33,7 +33,7 @@
     </div>
   </header>
   <main class="article">
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
   </main>
 </template>
 
@@ -43,23 +43,17 @@ const route = useRoute();
 const state = reactive({
   err:0,msg:'',data:[],
   user:'',
-  query:{},profile:{},
-}),{user,query,profile} = toRefs(state)
+  query:{}
+}),{user,query} = toRefs(state)
 //
-const onLayout = ()=>{
-  stateProfile.logout();
-} 
 //
 onMounted(()=>{
-  state.query = route.query;
-  state.user = route.params.user
-  state.profile = useStorage('profile');
-  console.log(6666,stateProfile)
-  onStorage('profile',(res)=>{
-    console.log(res)
-    state.profile = res;
-  });
+  // state.query = route.query;
 });
+// 监听参数变化
+watch(()=>route.query,(e)=>{
+  state.query = route.query
+},{ immediate: true })
 </script>
 
 <style>
