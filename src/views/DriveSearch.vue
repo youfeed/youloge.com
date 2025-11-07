@@ -6,18 +6,33 @@
     </template>
     <template v-if="err == 200">
         <div class="max-w-screen-md mx-auto px-4 sm:px-6 md:px-8 mt-10">
+            <div class="block md:hidden">
+                <div class="max-w-full">
+                    <form action="/drive/search" method="get" class="relative">
+                        <input type="search" name="q" v-model="query.q" placeholder="搜索云盘资源" class="border rounded px-4 py-2 w-full"/>
+                        <button type="submit" class="absolute top-2 right-1 border-0 outline-0 bg-transparent">
+                            <YouIcon name="mdi-light:magnify"></YouIcon>
+                            搜索
+                        </button>
+                    </form>
+                </div>
+            </div>
             <div>约有 1 条结果</div>
             <div class="lists border-gray-200 border-1 mt-5">
                 <template v-for="item in list" :key="item.uuid">
                     <div v-ripple
                         class="list border-b-1 border-gray-200 p-4 border-width-1 border-style-solid rounded-sm">
                         <router-link :to="`/drive/${item.uuid}`"
-                            class="text-current decoration-none  hover:opacity-80 hover:text-blue-500">
-                            <div>{{ item.title }}</div>
+                            class="text-current decoration-none flex items-center justify-between  hover:opacity-80 hover:text-blue-500">
+                            <div class="max-w-3/5 truncate">{{ item.title }}<sup>{{ item.ext }}</sup></div>
+                            <div class="text-red-4"><sub>#</sub> {{ item.cost }} RGB</div>
                         </router-link>
-                        <div class="text-sm text-gray-800">{{ item.intro }}</div>
+                        <div class="text-sm text-gray-800">{{ item.description }}</div>
+                        <div class="text-sm text-gray-800">
+                            {{ useTimeago(item.created) }} - {{ useBytes(item.size) }} - {{ item.mime }}
+                        </div>
                         <div title="keywords">
-                            <span v-for="tag in item.label" :key="tag">#{{ tag }} </span>
+                            <span v-for="tag in item.keywords" :key="tag">#{{ tag }} </span>
                         </div>
                     </div>
                 </template>
@@ -66,4 +81,8 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+input[type="search"]::-webkit-search-cancel-button {
+    appearance:none 
+}
+</style>

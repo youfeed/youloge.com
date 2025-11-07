@@ -14,7 +14,7 @@
               <span>{{ data.account?.name }}@{{ data.account?.user }}</span>
             </router-link>
           </div>
-          <div class="text-gray-600">{{ data.created }}</div>
+          <div class="text-gray-600 text-sm">{{ data.created }}</div>
         </div>
         <div class="body p-2">
   
@@ -49,8 +49,8 @@
         </div>
         
         <div class="foot flex justify-between items-center border-t-solid border-t-1 text-gray-600 border-gray-300 p-t-2">
-          <div>{{ data.etag }}</div>
-          <div>{{ data.updated }}</div>
+          <div class="max-w-1/2 truncate text-sm">{{ data.etag }}</div>
+          <div class="max-w-1/2 truncate text-sm">{{ data.updated }}</div>
         </div>
       </div>
   
@@ -70,6 +70,7 @@
 const youPlus = YouPlus({
   // debug:'http://localhost:4173/'
 })
+const stateProfile = storeProfile();
 const route = useRoute();
 const { success, warning, error, info } = useMessage();
 
@@ -98,24 +99,27 @@ const loadMetadata = ()=>{
 // 购买权限
 const onBuyDrive = ()=>{
   const {uuid} = state;
+  const local = crypto.randomUUID();
+  const payee_uuid = state.uuid;
+  const payer_uuid = stateProfile.uuid;
   youPlus.usePayment({
-    local:'123456',
-    attach:'',
-    notify:'https://test.youloge.com/drive/notify',
+    local:local,
+    attach:`drive.${payee_uuid}.${payer_uuid}`,
+    notify:'https://admin.youloge.com/payment/drive',
     payer:{
-      uuid:useAuth().uuid,
+      uuid:payer_uuid,
     },
     payee:{
-      uuid:uuid,
+      uuid:payee_uuid,
       type:'drive',
     }
   }).then(res=>{
-    console.log(res)
     success('购买成功');
     onDownload();
+    console.log(res)
   }).catch(err=>{
-    error(err.msg)
-  })
+    useMessage().info('支付失败')
+  });
 }
 // 请求下载地址
 const onDownload = ()=>{
@@ -126,11 +130,8 @@ const onDownload = ()=>{
       let a = document.createElement('a');document.body.appendChild(a);
       a.href = res.data.link;a.click();a.remove();
     }).catch(err=>{
+      useMessage().info(err.message)
       onBuyDrive();
-      info(err.msg);
-      info('使用余额快捷购买');
-      info('购买后24小时内无限制下载');
-      console.log('err',err)
     }).finally(e=>{
       load.hide();
     });
