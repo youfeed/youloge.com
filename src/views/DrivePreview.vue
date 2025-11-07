@@ -72,7 +72,6 @@ const youPlus = YouPlus({
 })
 const stateProfile = storeProfile();
 const route = useRoute();
-const { success, warning, error, info } = useMessage();
 
 const state = reactive({
   uuid:0,
@@ -85,15 +84,12 @@ const state = reactive({
 //
 const loadMetadata = ()=>{
   const {uuid} = state;
-  // apiBatch('drive/info',[{uuid:uuid},{uuid:uuid}]).then(data=>{
   apiFetch('drive/info',{uuid:uuid}).then(data=>{
     state.err = 200;
     state.data = data;
-    console.log(6666,data);
-    // Object.assign(state,res)
   }).catch((err)=>{
-    console.log(7777,err)
-    Object.assign(state,err)
+    state.err = 404;
+    state.msg = err.message
   });
 }
 // 购买权限
@@ -114,7 +110,7 @@ const onBuyDrive = ()=>{
       type:'drive',
     }
   }).then(res=>{
-    success('购买成功');
+    useMessage().success('购买成功');
     onDownload();
     console.log(res)
   }).catch(err=>{
@@ -138,10 +134,7 @@ const onDownload = ()=>{
   
 }
 onMounted(()=>{
-  console.log(20000)  
   state.uuid =  route.params.uuid
-  const useImages = useImage("image/x-icon",360);
-  console.log(useImages,state.uuid)
   // usePlus('captcha')
   loadMetadata();
   // 生成二维码
