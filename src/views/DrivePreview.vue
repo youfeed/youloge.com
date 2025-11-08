@@ -106,15 +106,15 @@ const onBuyDrive = ()=>{
       uuid:payer_uuid,
     },
     payee:{
-      uuid:payee_uuid,
       type:'drive',
+      uuid:payee_uuid,
     }
   }).then(res=>{
+    console.log('购买成功',res)
     useMessage().success('购买成功');
     onDownload();
-    console.log(res)
   }).catch(err=>{
-    useMessage().info('支付失败')
+    useMessage().error(err.message)
   });
 }
 // 请求下载地址

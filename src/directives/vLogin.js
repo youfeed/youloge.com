@@ -4,6 +4,7 @@
 export default {
     name:'login',
     mounted(el, binding){
+        const stateProfile = storeProfile();
         let {arg,value,modifiers} = binding,app = null,instance = null;
         let eventName = arg||'click';
         // 处理函数
@@ -12,7 +13,7 @@ export default {
             let {uuid} = useAuth();
             console.log(200,uuid,useAuth());
             uuid ? value() : usePlus('login').then(profile=>{
-                useStorage('profile',profile);
+                stateProfile.login(profile);
                 value();
             }).catch(err=>{
                 useMessage().error(err.msg)
