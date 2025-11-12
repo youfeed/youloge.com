@@ -25,7 +25,7 @@
                         <router-link :to="`/drive/${item.uuid}`"
                             class="text-current decoration-none flex items-center justify-between  hover:opacity-80 hover:text-blue-500">
                             <div class="max-w-3/5 truncate">{{ item.title }}<sup>{{ item.ext }}</sup></div>
-                            <div class="text-red-4"><sub>#</sub> {{ item.cost }} RGB</div>
+                            <div class="text-red-4"><sub>#</sub> {{ item.amount }} RGB</div>
                         </router-link>
                         <div class="text-sm text-gray-800">{{ item.description }}</div>
                         <div class="text-sm text-gray-800">

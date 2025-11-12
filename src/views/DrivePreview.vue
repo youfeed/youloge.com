@@ -42,7 +42,7 @@
               <div class="text-blue-500 cursor-pointer hover:opacity-80" v-copy="onShare">复制分享文件</div>
             </div>
             <button v-login:click="onDownload" v-ripple class="border-0 px-1 py-2 bg-blue-500 text-white rounded-md hover:opacity-80 cursor-pointer">
-              <div>立即下载(#{{ data.cost }}RGB)</div>
+              <div>立即下载(#{{ data.amount }}RGB)</div>
               <div>购买后24小时内 无限制下载</div>
             </button>
           </div>
@@ -124,7 +124,7 @@ const onDownload = ()=>{
       console.log(res)
       // 原生下载资源
       let a = document.createElement('a');document.body.appendChild(a);
-      a.href = res.data.link;a.click();a.remove();
+      a.href = res.link;a.click();a.remove();
     }).catch(err=>{
       useMessage().info(err.message)
       onBuyDrive();

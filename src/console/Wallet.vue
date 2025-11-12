@@ -82,9 +82,13 @@ const onCharge = () => {
 }
 // 确认下单
 const onConfirm = () => {
+    let {money} = state.charge
     apiFetch('wallet/charge', {
         type: 'wechat',
-        money: '100',
+        money: {
+            symbol:'RGB',
+            amount:money
+        },
         remark: '账户充值'
     }).then(result => {
         console.log(result)

@@ -33,12 +33,12 @@
         </div>
       </div>
       <div id="description" class="bg-true-gray-100 p-2 rounded-lg">
-        <div>{{ data.view }} · {{data.created }}</div>
+        <div>{{ data.views }} · {{data.created }}</div>
         <div class="description">{{ data.description }}</div>
       </div>
       <div id="discuss">
         <div class="comments">
-          <YouDiscuss mode="video" :code="params.uuid">9999</YouDiscuss>
+          <YouDiscuss mode="video" :code="uuid"></YouDiscuss>
         </div>
       </div>
     </div>
@@ -60,36 +60,38 @@
 
 <script setup>
 const state = reactive({
-  err:0,msg:'',data:{},params:{},query:{},
-  uuid:'',
-  title:'一口氣看完西班牙高分犯罪驚悚爽劇《紙鈔屋》（1～5季合集版）| 抓馬',
-  description:'descriptiondescriptiondescription',
-  label:['西班牙','悚爽劇','紙鈔屋'],
-  index:0,
-  account:{},
-}),{err,msg,data,params,query} = toRefs(state),route = useRoute();
+  uuid:'',err:0,msg:'',
+  data:{},params:{},query:{},
+}),{err,msg,uuid,data,params,query} = toRefs(state),route = useRoute();
 
 // 分享文本
 const sharetext = computed(()=>{
   let {uuid,title} = state.data;
-  return `视频：${title} \r\n网址：https://youloge.com/video/${uuid}`
+  let text = [
+    `视频: ${title}`,
+    `网址: https://youloge.com/video/${uuid}`
+  ].join(`\r\n`);
+  return text
 })
 const onLabel = (keyword)=>{
   
 }
 const getmetadata = ()=>{
-  const {uuid} = state.params
-  apiFetch('video/info',{uuid:uuid}).then((res)=>{
-    console.log(res)
-    Object.assign(state,res);
+  const {uuid} = state
+  apiFetch('video/info',{uuid:uuid}).then(data=>{
+    state.err = 200;
+    state.data = data
+  }).catch(err=>{
+    state.err = err.code;
+    state.msg = err.message;
   })
 }
 
 onMounted(()=>{
   state.query = route.query;
   state.params = route.params;
+  state.uuid = route.params.uuid;
   getmetadata()
-  console.log(state)
 })
 </script>
 
