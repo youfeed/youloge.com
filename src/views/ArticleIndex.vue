@@ -1,58 +1,92 @@
 <template>
-  <div class="flex flex-row gap-4 max-w-8xl mx-auto mt-8 px-4 sm:px-6 md:px-8">
-    <!-- 左侧边栏 -->
-    <div class="navbar hidden lg:block lg:w-1/5 order-1">
-      <div class="bg-white rounded-xl p-6 shadow-md h-full">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-            <i class="fa fa-list-ul mr-2 text-secondary"></i>navbar
-        </h2>
-      </div>
+    <!-- 顶部菜单栏 -->
+    <div class="navbar flex items-center justify-center gap-4 mt-2">
+        <template v-for="(item, index) in navigation" :key="index">
+            <div class="text-sm px-4 py-1 cursor-pointer hover:bg-light-500" :class="[{ 'text-blue': item.active }]"
+                @click="item.active = !item.active">{{ item.name }}</div>
+        </template>
     </div>
     <!-- 主内容区 -->
-    <div class="article w-full md:w-3/4 lg:w-3/5 order-1 md:order-2">
-      <div class="bg-white rounded-xl p-6 shadow-md h-full">
-        <template v-for="item in data" :key="item.uuid">
-          <div class="">
-            <div>{{ item.title }}</div>
-            <div>
-              <div>poster</div>
-              <div>desc</div>
-            </div>
-          </div>
-        </template>
-      </div>
+    <div class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 md:px-8">
+        <div class="bg-white rounded-xl p-6 shadow-md  flex flex-col gap-2">
+            <template v-for="item in list" :key="item.uuid">
+                <div class="article flex w-full">
+                    <div v-if="item.poster" class="mr-2">
+                        <img :src="useImage(item.poster, '80')" :alt="item.title" class="rounded-sm w-14 h-14">
+                    </div>
+                    <div class="">
+                        <div class="line-clamp-1">
+                            <router-link class=" text-gray-900" :to="`/article/${item.uuid}`">{{ item.title }}</router-link>
+                        </div>
+                        <div class=" line-clamp-2">
+                            <div class="text-sm text-gray-600">
+                                <router-link class=" text-gray-900" :to="`/article/${item.uuid}`">{{ item.description }}</router-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
-    <!-- 右侧边栏 (md:隐藏) -->
+    <!-- 右侧边栏 (md:隐藏)
     <div class="asider hidden md:block md:w-1/4 lg:w-1/5 order-3 wing-transition">
-      <div class="bg-white rounded-xl p-6 shadow-md h-full">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-            <i class="fa fa-bullhorn mr-2 text-accent"></i>asider
-          </h2>
-      </div>
-      
-    </div>
-  </div>
+        <div class="bg-white rounded-xl p-6 shadow-md h-full">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fa fa-bullhorn mr-2 text-accent"></i>asider
+            </h2>
+        </div>
+
+    </div> -->
 </template>
 
 <script setup>
 const state = reactive({
-  err:0,
-  msg:'',
-  cursor:0,
-  data:{},
-}),{err,msg,data} = toRefs(state);
+    err: 0,
+    msg: '',
+    cursor: {
+        offset: 0,
+        limit: 10,
+        filter:[
+            "keywords IN [自签证书,推荐]"
+        ]
+    },
+    list: [],
+    navigation: [
+        {
+            name: '推荐',
+            active: true
+        }, {
+            name: '科技',
+            active: false
+        }, {
+            name: '生活',
+            active: false
+        }, {
+            name: '国际',
+            active: false
+        }
+    ]
+}), { err, msg, navigation, list } = toRefs(state);
 // 
-const onSearch = ()=>{
-  let {cursor} = state;
-  apiFetch('search/article',{q:'',cursor:cursor,limit:20}).then(res=>Object.assign(state,res)).catch((err)=>{ 
-    console.log('err',state,err)
-  });
+const onSearch = (isFirst = false) => {
+    isFirst && (state.list = [], state.cursor.limit = 10, state.cursor.offset = 0);
+    let { offset, limit,filter } = state.cursor;
+    apiFetch('search/article', { 
+        q: '*', 
+        offset: offset, 
+        limit: limit,
+        // filter:filter 
+    }).then(({ hits, ...cursor }) => {
+        state.cursor = cursor;
+        state.list = hits
+    }).catch((err) => {
+        console.log('err', state, err)
+    });
 }
-onMounted(()=>{
-  onSearch();
+
+onMounted(() => {
+    onSearch();
 })
 </script>
 
-<style>
-
-</style>
+<style></style>

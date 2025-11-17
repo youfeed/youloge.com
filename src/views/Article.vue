@@ -16,18 +16,15 @@
         </div>
       </div>
       <div class="search" >
-        <div class="h-8 max-w-30 sm:max-w-60 border-1 border-gray-500 border-solid rounded px-2 py-1 hover:border-blue-700">
-          <form action="/article/search" method="get">
-            <input type="search" name="q" placeholder="搜索文章" v-model="query.q" autocomplete="off" class="border-0 outline-0 w-full h-full bg-transparent"/>
+        <div class="h-10 max-w-30 sm:max-w-60 border-1 border-gray-500 border-solid rounded hover:border-blue-700">
+          <form action="/article/search" method="get" class="w-full h-full">
+            <input type="search" name="q" placeholder="搜索文章" v-model="query.q" autocomplete="off" class="px-2 py-1 border-0 outline-0 w-full h-full bg-transparent"/>
           </form>
         </div>
       </div>
       <div class="">
-        <div v-if="stateProfile.logged" @click="onLayout">
-          <img :src="useImage(stateProfile.avatar,'80')" alt="stateProfile.name" class="rounded-full w-8 h-8">
-        </div>
-        <div v-else>
-          <button class="">登录</button>
+        <div v-login="onLayout">
+          <img :src="useImage(stateProfile.avatar,'80')" :alt="stateProfile.name" class="rounded-full w-8 h-8">
         </div>
       </div>
     </div>
@@ -48,6 +45,7 @@ const state = reactive({
 //
 //
 onMounted(()=>{
+  console.log(2333,stateProfile)
   // state.query = route.query;
 });
 // 监听参数变化
