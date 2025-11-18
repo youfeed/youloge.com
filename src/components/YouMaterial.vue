@@ -3,7 +3,7 @@
         <div class="">
             <div class="head flex justify-between items-center border-b">
                 <div>素材选择({{ onConut }}/{{ props.limit }})</div>
-                <label class="" for="file">上传素材</label>
+                <label class="bg-blue-600 text-sm rounded-sm px-2 py-1 border-none text-white cursor-pointer" for="file">上传素材</label>
             </div>
             <div class="body py-4">
                 <div class="flow grid grid-cols-6 gap-2">
