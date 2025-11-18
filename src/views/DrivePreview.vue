@@ -149,9 +149,9 @@ onMounted(()=>{
 
 // 复制分享文本
 const onShare = (e)=>{
-  let {uuid,title,ext,size,mime,updated} = state.data;
+  let {uuid,title,kind,size,mime,updated} = state.data;
   let text = [
-    `文件：${title}${ext}`,
+    `文件：${title}${kind}`,
     `大小：${useBytes(size)}`,
     `类型：${mime}`,
     `时间：${updated}`,
