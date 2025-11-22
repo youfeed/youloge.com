@@ -1,5 +1,6 @@
 <template>
   <header class="h-14 px-2 border-b border-slate-900/10 border-b-solid sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
+    <!-- 侧边按钮 Loge 用户/内容 --- 搜索 用户 -->
     <div class="w-full flex justify-between items-center h-full">
       <div class="left flex  items-center justify-start gap-2">
         <div class="flex justify-between items-center ">
@@ -35,6 +36,7 @@
 </template>
 
 <script setup>
+
 const stateProfile = storeProfile();
 const route = useRoute();
 const state = reactive({

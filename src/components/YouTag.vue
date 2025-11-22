@@ -25,13 +25,14 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-
-const emit = defineEmits(['update:modelValue'])
+const model = defineModel({
+    type:Array,
+    required:true
+});
 const props = defineProps({
-    modelValue: {
-        type: Array,
-        required: true
+    closeable : {
+        type: Boolean,
+        default: false
     },
     min: {
         type: [Number,String],
@@ -46,7 +47,8 @@ const state = reactive({
     text: '',
     list: []
 }), { text, list } = toRefs(state);
-const model = useVmodel(props, 'modelValue', emit);
+
+// const model = useVmodel(props, 'modelValue', emit);
 //
 const currentMin = computed(() => Number(props.min));
 const currentMax = computed(() => Number(props.max));
@@ -67,14 +69,6 @@ const onSubmit = () => {
     }
 }
 
-watch(() => props.modelValue, (newVal) => {
-    console.log('newVal',newVal)
-    // 确保标签不超过最大值
-    if (newVal.length > currentMax.value) {
-        emit('update:modelValue', newVal.slice(0, currentMax.value));
-        emit('overflow', `标签数量已达上限（最多${currentMax.value}个）`);
-    }
-},{deep: true});
 onMounted(()=>{
     state.list = props.modelValue;
 })

@@ -165,9 +165,8 @@ export const setupRouter = (app) => {
   router.beforeEach((to, from, next) => {
     // console.log(to, from)
     // whitelist.includes(to.name) || useAuth() ? next() : next({ name: 'login' });
-    if (to.meta.title) {
-      document.title = to.meta.title
-    };next();
+    document.title = to.meta.title ? to.meta.title : 'Youloge.com';
+    next();
   })
   app.use(router)
 }
