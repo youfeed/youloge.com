@@ -71,7 +71,6 @@ defineExpose({ onPush });
 .y-message-info {
     background-color: #f0f7ff;
     color: #1890ff; // 文字色与竖线色一致
-
     &::before {
         background-color: #1890ff;
     }
