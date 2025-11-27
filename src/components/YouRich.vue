@@ -9,8 +9,8 @@ import '@/assets/prism/index.css';
 import '@/assets/prism/index.js';
 import { nextTick } from 'vue';
 import 'youloge.custom';
-const props = defineProps(['modelValue']), emit = defineEmits(['update:modelValue']);
-const model = useVmodel(props, 'modelValue', emit);
+const props = defineProps(['modelValue'])
+const model = defineModel();
 
 onMounted(()=>{
     

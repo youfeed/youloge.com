@@ -84,8 +84,8 @@ const props = defineProps({
         default: '确认'
     }
 });
-const emit = defineEmits(['update:visible', 'confirm', 'cancel']);
-const modelVisible = useVmodel(props, 'visible', emit);
+const emit = defineEmits(['confirm', 'cancel']);
+const visibleModel = defineModel('visible');
 // 辅助方法
 const isDomContent = computed(() => {
     return !!props.content && props.content instanceof HTMLElement;
@@ -107,12 +107,12 @@ const checkValidity = ()=>{
 const onConfirm = () => {
     let checked = checkValidity();
     if(checked){
-        modelVisible.value = false;
+        visibleModel.value = false;
         emit('confirm', checked);
     }
 }
 const onCancel = () => {
-    modelVisible.value = false
+    visibleModel.value = false
     emit('cancel', []);
 };
 

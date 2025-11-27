@@ -86,6 +86,7 @@ declare global {
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useLink: typeof import('vue-router')['useLink']
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
+  const useLogo: typeof import('../src/composables/useLogo.js')['default']
   const useMaterial: typeof import('../src/composables/useMaterial.js')['useMaterial']
   const useMenu: typeof import('../src/composables/useMenu.js')['default']
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
@@ -95,6 +96,7 @@ declare global {
   const useQrcode: typeof import('../src/composables/useQrcode.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
+  const useSetup: typeof import('../src/composables/useSetup.js')['default']
   const useSingle: typeof import('../src/composables/useSingle.js')['default']
   const useSlots: typeof import('vue')['useSlots']
   const useStorage: typeof import('../src/composables/useStorage.js')['default']
@@ -204,6 +206,7 @@ declare module 'vue' {
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
+    readonly useLogo: UnwrapRef<typeof import('../src/composables/useLogo.js')['default']>
     readonly useMaterial: UnwrapRef<typeof import('../src/composables/useMaterial.js')['useMaterial']>
     readonly useMenu: UnwrapRef<typeof import('../src/composables/useMenu.js')['default']>
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
@@ -213,6 +216,7 @@ declare module 'vue' {
     readonly useQrcode: UnwrapRef<typeof import('../src/composables/useQrcode.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
+    readonly useSetup: UnwrapRef<typeof import('../src/composables/useSetup.js')['default']>
     readonly useSingle: UnwrapRef<typeof import('../src/composables/useSingle.js')['default']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useStorage: UnwrapRef<typeof import('../src/composables/useStorage.js')['default']>

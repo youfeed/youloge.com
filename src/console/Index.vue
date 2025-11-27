@@ -66,6 +66,7 @@
 
 <script setup>
 import { usePrompt } from '../composables/usePrompt';
+import useSetup from '../composables/useSetup';
 
 const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
@@ -150,6 +151,9 @@ const changeUser = ()=>{
 // 修改昵称
 const changeName = () => {
     let {name} = state.profile;
+    useSetup('setupBilling').then(res=>{
+        console.log(res)
+    })
     usePrompt({
         title:'修改昵称',
         placeholder:'2-12个字',

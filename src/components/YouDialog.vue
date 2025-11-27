@@ -42,8 +42,8 @@ const props = defineProps({
         default:'确认'
     }
 });
-const emit = defineEmits(['update:visible','confirm','cancel']);
-const modelVisible = useVmodel(props, 'visible', emit);
+const emit = defineEmits(['confirm','cancel']);
+const visibleModel = defineModel('visible');
 // 辅助方法
 const isDomContent = computed(() => {
   return !!props.content && props.content instanceof HTMLElement;
@@ -51,16 +51,15 @@ const isDomContent = computed(() => {
 
 // 暴漏方法
 const onConfirm = ()=>{
-    modelVisible.value = false
+    visibleModel.value = false
     emit('confirm',[]);
 }
 const onCancel = ()=>{
-    modelVisible.value = false
+    visibleModel.value = false
     emit('cancel',[]);
 };
 // 监听变化
 watch(()=>props.visible,(newVal)=>{
-    console.log('watch.props.visible',newVal,dialogRef.value)
     newVal ? dialogRef.value?.showModal() : dialogRef.value?.close();
 },{ immediate: true });
 // 

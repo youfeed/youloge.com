@@ -26,6 +26,7 @@ declare module 'vue' {
     YouPrompt: typeof import('./../src/components/YouPrompt.vue')['default']
     YouRich: typeof import('./../src/components/YouRich.vue')['default']
     YouSearch: typeof import('./../src/components/YouSearch.vue')['default']
+    YouSetup: typeof import('./../src/components/YouSetup.vue')['default']
     YouTag: typeof import('./../src/components/YouTag.vue')['default']
     YouWatch: typeof import('./../src/components/YouWatch.vue')['default']
   }

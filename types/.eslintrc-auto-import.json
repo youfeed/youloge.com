@@ -116,6 +116,8 @@
     "useDrawer": true,
     "storeSubscribe": true,
     "vDom": true,
-    "usePrompt": true
+    "usePrompt": true,
+    "useLogo": true,
+    "useSetup": true
   }
 }

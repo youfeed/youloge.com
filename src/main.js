@@ -13,6 +13,21 @@ const storage = {
   VIPURL:'https://www.youloge.com',
 }
 sessionStorage.setItem('youloge',JSON.stringify(storage))
+// 
+const components = {};
+const asyncRoutes = [];
+const modules = import.meta.glob('@/console/*.vue');
+Object.entries(modules).forEach(([path, module]) => {
+	let name = path.replace('/src/console/','').replace('.vue','').toLowerCase();
+	components[name] = module;
+  asyncRoutes.push({
+    name:name,
+    component:module
+  });
+	// components[name] = defineAsyncComponent(module);
+});
+console.log('组件注册2333：', asyncRoutes);
+//
 const app = createApp(App), pinia = createPinia();
 app.use(pinia);
 app.directive('dom', vDom);
@@ -20,4 +35,6 @@ app.directive('copy', vCopy);
 app.directive('login', vLogin);
 app.directive('ripple', vRipple);
 setupRouter(app)
+app.provide('getRoutes',asyncRoutes);
+app.provide('aaa','123456');
 app.mount('#app')

@@ -48,8 +48,6 @@ const state = reactive({
     list: []
 }), { text, list } = toRefs(state);
 
-// const model = useVmodel(props, 'modelValue', emit);
-//
 const currentMin = computed(() => Number(props.min));
 const currentMax = computed(() => Number(props.max));
 // 删除标签

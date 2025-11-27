@@ -1,13 +1,14 @@
 <template>
-    <div>
+    <div class="y-tinymce">
         <textarea id="tinymce-editor"></textarea>
     </div>
 </template>
 <script setup>
 import 'tinymce'
 import 'youloge.custom'
-const props = defineProps(['modelValue']), emit = defineEmits(['update:modelValue', 'autosave']);
-const model = useVmodel(props, 'modelValue', emit); var editorInstance = null;
+const props = defineProps(), emit = defineEmits(['autosave']);
+const model = defineModel(); 
+var editorInstance = null;
 const editorSettings = {
     base_url: 'tinymce',
     max_height: 500,

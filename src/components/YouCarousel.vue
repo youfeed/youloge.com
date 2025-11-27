@@ -13,11 +13,9 @@
   </div>
 </template>
 <script setup>
-const emit = defineEmits(['update:modelValue'])
-const props = defineProps({
-  'modelValue':{type:Array,required:true}
-});
-const model =  useVmodel(props,'modelValue',emit)
+
+const props = defineProps();
+const model = defineModel()
 console.log(10,model.value.length,model,props.modelValue)
 //
 const state = reactive({

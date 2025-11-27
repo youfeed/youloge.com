@@ -19,12 +19,6 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  'modelValue':{type:Object,required:true}
-})
-const emit = defineEmits(['update:modelValue'])
-const model =  useVmodel(props,'modelValue',emit)
-
 
 </script>
 
