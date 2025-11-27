@@ -55,7 +55,9 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-
+.y-setup{
+    border: 0;
+}
 .y-setup-capsule {
     position: fixed;
     right: 10px;
