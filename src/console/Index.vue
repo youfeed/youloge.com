@@ -9,13 +9,13 @@
                     <div class="flex items-center ">
                         <div class="name">{{ profile.name }} </div>
                         <div class="flex items-center cursor-pointer" @click="changeName">
-                            <YouIcon name="tdesign:edit"  color="#2196F3"/>
+                            <YouIcon name="tdesign:edit" color="#2196F3" />
                         </div>
                     </div>
-                    <div class="flex items-center" >
+                    <div class="flex items-center">
                         <div class="user max-w-40 truncate">@{{ profile.user }} </div>
                         <span class="flex items-center cursor-pointer" @click="changeUser">
-                            <YouIcon name="tdesign:edit" color="#2196F3"  />
+                            <YouIcon name="tdesign:edit" color="#2196F3" />
                         </span>
                     </div>
                 </div>
@@ -61,7 +61,22 @@
         </template>
         <div class="h-40"></div>
     </div>
-    <!-- 修改你车过 -->
+    <!-- 修改 -->
+    <div class="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4">
+        <div class="flex animate-pulse space-x-4">
+            <div class="size-10 rounded-full bg-gray-200"></div>
+            <div class="flex-1 space-y-6 py-1">
+                <div class="h-2 rounded bg-gray-200"></div>
+                <div class="space-y-3">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="col-span-2 h-2 rounded bg-gray-200"></div>
+                        <div class="col-span-1 h-2 rounded bg-gray-200"></div>
+                    </div>
+                    <div class="h-2 rounded bg-gray-200"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -72,8 +87,8 @@ const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
     profile: {},
     mode: "preview",
-    html: '',prismKey:0,
-}), { profile, mode, html,prismKey } = toRefs(state);
+    html: '', prismKey: 0,
+}), { profile, mode, html, prismKey } = toRefs(state);
 //
 
 // 获得用户介绍
@@ -123,51 +138,51 @@ const chooseAvatar = () => {
             state.profile.avatar = item.etag;
             useMessage().success('保存成功');
             useStorage('profile', { avatar: item.etag });
-        }).catch(err=>{
+        }).catch(err => {
             useMessage().error(err.message);
         });
     })
 }
 // 修改别称
-const changeUser = ()=>{
-    let {user} = state.profile;
+const changeUser = () => {
+    let { user } = state.profile;
     usePrompt({
-        title:'修改别称',
-        placeholder:'字母+数字组合',
-        name:'user',
-        pattern:'[A-Za-z0-9]{2,12}'
-    }).then(({user})=>{
+        title: '修改别称',
+        placeholder: '字母+数字组合',
+        name: 'user',
+        pattern: '[A-Za-z0-9]{2,12}'
+    }).then(({ user }) => {
         apiFetch('account/user', { user: user }).then(result => {
             state.profile.user = user
             useMessage().success('修改成功');
             useStorage('profile', { user: user });
-        }).catch(err=>{
+        }).catch(err => {
             useMessage().error(err.message);
         });
-    }).catch(err=>{
+    }).catch(err => {
         useMessage().info('取消输入')
     });
 }
 // 修改昵称
 const changeName = () => {
-    let {name} = state.profile;
-    useSetup('setupBilling').then(res=>{
+    let { name } = state.profile;
+    useSetup('setupBilling').then(res => {
         console.log(res)
     })
     usePrompt({
-        title:'修改昵称',
-        placeholder:'2-12个字',
-        name:'name',
-        pattern:'.{2,12}'
-    }).then(({name})=>{
+        title: '修改昵称',
+        placeholder: '2-12个字',
+        name: 'name',
+        pattern: '.{2,12}'
+    }).then(({ name }) => {
         apiFetch('account/name', { name: name }).then(result => {
             state.profile.name = name
             useMessage().success('修改成功');
             useStorage('profile', { name: name });
-        }).catch(err=>{
+        }).catch(err => {
             useMessage().error(err.message);
         });
-    }).catch(err=>{
+    }).catch(err => {
         useMessage().info('取消输入')
     });
 }

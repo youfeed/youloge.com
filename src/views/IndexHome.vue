@@ -18,7 +18,8 @@
                 <!-- 主导航 - 桌面端 -->
                 <nav class="hidden md:flex items-center space-x-8">
                     <router-link to="video" class="text-gray-600 hover:text-primary transition-colors">视频</router-link>
-                    <router-link to="article" class="text-gray-600 hover:text-primary transition-colors">新闻</router-link>
+                    <router-link to="article"
+                        class="text-gray-600 hover:text-primary transition-colors">新闻</router-link>
                     <router-link to="goods" class="text-gray-600 hover:text-primary transition-colors">购物</router-link>
                     <router-link to="drive" class="text-gray-600 hover:text-primary transition-colors">网盘</router-link>
                 </nav>
@@ -141,9 +142,112 @@ const onLogin = () => {
         warning(err.msg)
     });
 };
-onMounted(() => {
+// 验证公钥
 
-})
+onMounted(async () => {
+  try {
+    // 1. 公钥配置（已验证合规，无需修改）
+    const spkiPem = `-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEpB+tjwLwqjah7+yANiIh8+mklWsD
+/isdEN6ovVa2O77+OSG76XMbuL/gGEuzUw6nLQoCF8tfkaMdHIzlH4BVSw==
+-----END PUBLIC KEY-----`;
+
+    // 2. 待加密明文
+    const plaintext = "这是一段需要加密的敏感文字：123456";
+
+    // 3. 清理并解码公钥（逻辑不变）
+    const pemClean = spkiPem
+      .replace(/-----BEGIN PUBLIC KEY-----/, '')
+      .replace(/-----END PUBLIC KEY-----/, '')
+      .replace(/\s+/g, '');
+    const uint8Array = new Uint8Array(atob(pemClean).split('').map(c => c.charCodeAt(0)));
+
+    // 4. 导入公钥（严格按规范配置）
+    const publicKey = await crypto.subtle.importKey(
+      'spki',
+      uint8Array.buffer,
+      { name: 'ECDH', namedCurve: 'P-256' },
+      false,
+      [] // 公钥仅用于密钥交换，用途为空
+    );
+    console.log('✅ 公钥导入成功');
+
+    // 5. 生成临时 ECDH 密钥对（用途仅 deriveBits）
+    const tempKeyPair = await crypto.subtle.generateKey(
+      { name: 'ECDH', namedCurve: 'P-256' },
+      false, // 不可提取，避免校验错误
+      ['deriveBits'] // 用途：仅派生原始共享密钥（bits）
+    );
+    console.log('✅ 临时 ECDH 密钥对生成成功');
+
+    // 🔥 核心修正 Step 1：ECDH 派生原始共享密钥（bits，所有浏览器支持）
+    const sharedBits = await crypto.subtle.deriveBits(
+      { name: 'ECDH', public: publicKey },
+      tempKeyPair.privateKey,
+      256 // 共享密钥长度：256位（与 P-256 曲线匹配）
+    );
+    console.log('✅ 原始共享密钥（bits）生成成功');
+
+    // 🔥 核心修正 Step 2：将共享密钥（bits）导入为「原始密钥」（用于 HKDF 派生）
+    const rawSharedKey = await crypto.subtle.importKey(
+      'raw', // 密钥格式：原始二进制
+      sharedBits,
+      { name: 'HKDF' }, // 算法：HKDF（用于后续派生）
+      false, // 不可提取
+      ['deriveKey'] // 用途：仅用于派生 AES 密钥
+    );
+    console.log('✅ 原始共享密钥导入成功');
+
+    // 🔥 核心修正 Step 3：HKDF 派生 AES-256-GCM 密钥（用途完全匹配）
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const info = new TextEncoder().encode('AES-GCM-Encryption-Context');
+    const aesKey = await crypto.subtle.deriveKey(
+      {
+        name: 'HKDF',
+        salt: salt,
+        info: info,
+        hash: 'SHA-256'
+      },
+      rawSharedKey, // 导入后的原始共享密钥
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt'] // AES 密钥用途：加密+解密（完全匹配）
+    );
+    console.log('✅ AES-256-GCM 密钥生成成功');
+
+    // 6. AES-GCM 加密明文（逻辑不变）
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plaintext);
+    const iv = crypto.getRandomValues(new Uint8Array(12)); // 12字节 IV（推荐）
+
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv: iv },
+      aesKey,
+      data
+    );
+
+    // 7. 处理加密结果（后端解密必需）
+    const encryptedArray = new Uint8Array(encrypted);
+    const ciphertext = encryptedArray.slice(0, encryptedArray.length - 16);
+    const authTag = encryptedArray.slice(encryptedArray.length - 16);
+    const tempPublicKeyRaw = await crypto.subtle.exportKey('spki', tempKeyPair.publicKey);
+
+    const encryptResult = {
+      ciphertext: btoa(String.fromCharCode(...ciphertext)),
+      iv: btoa(String.fromCharCode(...iv)),
+      authTag: btoa(String.fromCharCode(...authTag)),
+      tempPublicKey: btoa(String.fromCharCode(...new Uint8Array(tempPublicKeyRaw))),
+      salt: btoa(String.fromCharCode(...salt))
+    };
+
+    console.log('🎉 加密完全成功！传递给后端的数据：', encryptResult);
+    // 发送给后端：await axios.post('/api/decrypt', encryptResult);
+
+  } catch (err) {
+    console.error('❌ 加密流程失败：', err.message || err);
+    console.error('❌ 错误详情：', err.stack);
+  }
+});
 </script>
 
 <style>

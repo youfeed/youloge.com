@@ -1,5 +1,6 @@
-import 'virtual:uno.css'
-import 'virtual:unocss-devtools'
+import "./style.css";
+// import 'virtual:uno.css'
+// import 'virtual:unocss-devtools'
 import App from './App.vue'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -26,7 +27,7 @@ Object.entries(modules).forEach(([path, module]) => {
   });
 	// components[name] = defineAsyncComponent(module);
 });
-console.log('组件注册2333：', asyncRoutes);
+console.log('组件注册', asyncRoutes);
 //
 const app = createApp(App), pinia = createPinia();
 app.use(pinia);

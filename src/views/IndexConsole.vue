@@ -1,11 +1,15 @@
 <template>
-  <header class="sticky top-0 h-15 md:h-10 w-full bg-gray-100 border-b border-gray-200">
+  <header class="sticky top-0 h-15 md:h-14 w-full bg-gray-100 border-b border-gray-200">
     <div class="flex h-full items-center justify-between px-3">
       <div class="flex items-center " @click="toggleSidebar">
         <YouIcon name="mdi-light:menu" size="32"></YouIcon>
         <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
           <img :src="useLogo()" class="w-5 h-5" />
           <div class="font-bold text-5 text-gray-900 pl-1">Youloge</div>
+          <!-- <button class="bg-white text-pink-600 hover:bg-pink-600 hover:text-white ...">
+            <you-svg name="ep:upload-filled" class="size-16 stroke-current"></you-svg>
+          Download file
+        </button> -->
         </button>
       </div>
       <div class="flex items-center gap-1">

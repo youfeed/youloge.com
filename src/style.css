@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme{
+
+}
+
+/* 命名空间	实用类
+--color-*	颜色实用程序，例如bg-red-500，text-sky-300以及更多
+--font-*	字体系列实用程序font-sans
+--text-*	字体大小实用程序text-xl
+--font-weight-*	字体粗细实用程序font-bold
+--tracking-*	字母间距工具，例如tracking-wide
+--leading-*	行高实用程序leading-tight
+--breakpoint-*	响应式断点变体，例如sm:*
+--container-*	容器查询变体@sm:*和大小实用程序max-w-md
+--spacing-*	间距和尺寸调整工具，例如px-4，max-h-16以及更多
+--radius-*	边框半径实用程序rounded-sm
+--shadow-*	类似 Box shadow 的工具shadow-md
+--inset-shadow-*	类似 Inset box shadow 实用程序inset-shadow-xs
+--drop-shadow-*	阴影滤镜工具，例如drop-shadow-md
+--blur-*	模糊滤镜工具blur-md
+--perspective-*	透视工具perspective-near
+--aspect-*	宽高比实用程序aspect-video
+--ease-*	转换定时函数实用程序ease-out
+--animate-*	动画工具类animate-spin */
