@@ -1,11 +1,10 @@
 <template>
-    <div class="max-w-screen-md mx-auto p-4 border-solid border-1 rounded border-gray-300">
+    <div class="max-w-screen-md mx-auto p-2.5 border-solid border-1 rounded border-gray-300">
         <template v-if="mode == 'preview'">
-            <div class="flex justify-between items-center mb-4 border-b-solid border-b-1 border-gray-300 p-b-2">
+            <div class="sticky top-0 bg-gray-100 safe-capsule flex justify-between items-center pb-4 border-b-solid border-b-1 border-gray-300 p-b-2">
                 <div class="flex gap-2">
                     <div class="navbar">
-                        <span>云盘文件</span>
-                        <span>已购文件</span>
+                        <span class=" cursor-pointer text-blue-500 hover:opacity-80">云盘文件列表</span>
                     </div>
                     <button @click="reFresh"
                         class="p-1 bg-transparent border-none rounded-sm ml-2 cursor-pointer hover:bg-gray-200">
@@ -16,7 +15,7 @@
                     class="bg-blue-600 rounded-sm px-2 py-1 border-none text-white ml-2 cursor-pointer"><span
                         class="i-tdesign:arrow-up-circle"></span>上传</button>
             </div>
-            <div>
+            <div class="overflow-y-auto">
                 <template v-for="item in list" :key="item.id">
                     <div class="mb-4 hover:bg-gray-100 p-2">
                         <div class="font-medium">
@@ -32,8 +31,7 @@
 
                         <div class="flex justify-between">
                             <div>
-                                <div class="text-sm ">售价:<span class="text-red-500">#<sup>{{ item.amount
-                                }}</sup>RGB</span>
+                                <div class="text-sm ">售价:<span class="text-red-500"># {{ item.amount }} RGB</span>
                                 </div>
                             </div>
                             <div class="flex gap-2">
@@ -265,4 +263,8 @@ onMounted(() => {
 });
 </script>
 
-<style></style>
+<style>
+.safe-capsule{
+    padding-right: var(--capsule-area-left);
+}
+</style>
