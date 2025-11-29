@@ -86,6 +86,7 @@ declare global {
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useLink: typeof import('vue-router')['useLink']
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
+  const useLoge: typeof import('../src/composables/useLoge.js')['default']
   const useLogo: typeof import('../src/composables/useLogo.js')['default']
   const useMaterial: typeof import('../src/composables/useMaterial.js')['useMaterial']
   const useMenu: typeof import('../src/composables/useMenu.js')['default']
@@ -206,6 +207,7 @@ declare module 'vue' {
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
+    readonly useLoge: UnwrapRef<typeof import('../src/composables/useLoge.js')['default']>
     readonly useLogo: UnwrapRef<typeof import('../src/composables/useLogo.js')['default']>
     readonly useMaterial: UnwrapRef<typeof import('../src/composables/useMaterial.js')['useMaterial']>
     readonly useMenu: UnwrapRef<typeof import('../src/composables/useMenu.js')['default']>

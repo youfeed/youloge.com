@@ -1,17 +1,11 @@
 <template>
-  <header class="h-14 px-2 flex  items-center sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
+  <header class="h-14 px-2 flex  items-center border-b border-slate-900/10 border-b-solid sticky top-0" style="backdrop-filter: saturate(50%) blur(4px);">
     <div class="w-full flex justify-between items-center h-10">
       <div class="left flex  items-center justify-start gap-2">
-        <div class="w-8 h-8 p-1 hover:bg-gray-200 rounded-full cursor-pointer flex justify-center items-center" @click="asideRef?.onShow()">
-          <you-icon name="tdesign:view-list"></you-icon>
-        </div>
         <div class="flex justify-between items-center ">
-          <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
-            <div class="flex items-center gap-1">
-              <img src="/logo.svg" alt="" class="w-4 h-4">
-              <span>Youloge</span>
-            </div>
-          </router-link>
+          <you-guide icon="ic:sharp-apps">
+            <div>Youloge</div>
+          </you-guide>
           <div>/</div>
           <router-link to="/goods" class="color-dark-500 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
             <div>Goods</div>
@@ -25,15 +19,12 @@
           </form>
         </div>
       </div>
-      <div class="flex">
-        <!-- <div class="w-4 h-4">
-          <div class="i-tdesign:add"></div>
-        </div> -->
-        <div class="w-8 h-8">
-          <div @click="profileRef?.open()">
-            <img :src="useImage(profile.avatar,'80')" alt="" class="w-full h-full rounded-full">
-          </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 hover:bg-gray-300 rounded-full px-2 py-1 cursor-pointer">
+          <you-svg name="tdesign:add" size="12"></you-svg>
+          我的订单
         </div>
+        <you-profile></you-profile>
       </div>
     </div>
   </header>
@@ -41,8 +32,6 @@
     <router-view></router-view>
   </main>
   <!-- 通用侧栏 -->
-  <you-aside ref="asideRef"></you-aside>
-  <you-profile ref="profileRef"></you-profile>
 </template>
 
 <script setup>

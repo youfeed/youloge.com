@@ -1,14 +1,11 @@
 <template>
-  <header class="h-14 px-2 flex  items-center">
+  <header class="h-14 px-2 flex  items-center border-b border-slate-900/10 border-b-solid sticky top-0">
     <div class="w-full flex justify-between items-center h-10">
       <div class="left flex  items-center justify-start gap-2">
         <div class="flex justify-between items-center ">
-          <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
-            <div class="flex items-center gap-1" >
-              <img src="/logo.svg" alt="" class="w-5 h-5">
-              <span>Youloge</span>
-            </div>
-          </router-link>
+          <you-guide icon="ic:sharp-apps">
+            <div>Youloge</div>
+          </you-guide>
           <div>/</div>
           <router-link to="/video" class="color-dark-500 no-underline font-bold px-2 py-1 rounded hover:bg-light-500 ">
             <div >Video</div>
@@ -49,10 +46,7 @@ const state = reactive({
 onMounted(()=>{
   state.query = route.query;
   state.profile = useStorage('profile');
-  onStorage('profile',(res)=>{
-    state.profile = res;
-    console.log('onStorage.profile',res)
-  });
+
 });
 </script>
 

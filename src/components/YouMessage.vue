@@ -1,28 +1,44 @@
 <template>
-    <TransitionGroup tag="div" mode="out-in">
-        <div v-for="item in messaged" :key="item.uuid" :class="['y-message', `y-message-${item.method}`]"
-            @click="onClose(item)">
-            <div v-html="item.params || 'unknown'"></div>
+    <Teleport :to="targetRef">
+        <div class="y-message-container">
+            <TransitionGroup tag="div" mode="out-in">
+                <div v-for="item in messages" :key="item.uuid" :class="['y-message', `y-message-${item.type}`]"
+                    @click="close(item.uuid)">
+                    <div v-html="item.content || ' '"></div>
+                </div>
+            </TransitionGroup>
         </div>
-    </TransitionGroup>
+    </Teleport>
 </template>
 
 <script setup>
-const state = reactive({ 'message': [] })
-const messaged = computed(() => state.message.filter(item => item.active));
+import { toRefs } from 'vue';
 
-const onClose = ({ timer, uuid }) => (clearTimeout(timer), onDestroy(uuid));
-const onDestroy = (uuid) => {
-    state.message.find(item => item.uuid == uuid).active = false;
-    state.message = state.message.filter(item => item.active);
-}
-// 暴漏方法
-const onPush = (method, params, duration) => {
-    let uuid = Math.random().toString(32);
-    let timer = setTimeout(() => { onDestroy(uuid) }, duration)
-    state.message.push({ uuid, method, params, timer, duration, active: true })
+const state = reactive({ 
+    targetRef:'body',
+    messages: [] 
+}),{targetRef,messages} = toRefs(state);
+
+
+const close = (uuid) => {
+    let findIndex = state.messages.findIndex(is=>is.uuid == uuid);
+    findIndex == -1 || state.messages.splice(findIndex,1);
 };
-defineExpose({ onPush });
+const destroy = () => {
+    state.messages = [];
+}
+// 暴漏方法 兼容YouSetup
+const create = (options) => {
+    let uuid = crypto.randomUUID();
+    options.uuid = uuid;
+    options.timer = setTimeout(() => close(uuid), options.duration);
+    state.messages.push(options)
+    state.targetRef = options.target;
+
+    return uuid;
+};
+
+defineExpose({ create,close,destroy });
 </script>
 <style lang="scss">
 .y-message-container {

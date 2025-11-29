@@ -1,5 +1,5 @@
 <template>
-    <dialog class="y-setup" ref="dialog">
+    <dialog id="top-layer" class="y-setup" ref="dialog">
         <div class="y-setup-capsule">
             <div @click="reFresh" class="y-setup-capsule__fresh">刷新</div>
             <div>|</div>
@@ -48,9 +48,6 @@ const asyncComponent = computed(() => {
 onMounted(() => {
     dialogRef.value.showModal();
     props.ready({ name: 9999 })
-    console.log('onMounted', props.routes)
-    
-
 });
 </script>
 

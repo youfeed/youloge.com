@@ -17,12 +17,12 @@
                         <template v-else-if="props.type == 'drive'">
                             <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
                                 <img :src="useImage(`mime/${item.mime}`, 80)" alt="">
-                                <div class="">{{ item.title }}</div>
+                                <div class="truncate">{{ item.title }}</div>
                             </div>
                         </template>
                         <template v-else>
                             <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
-                                <div class="">{{ item.title }}</div>
+                                <div class="truncate">{{ item.title }}</div>
                             </div>
                         </template>
                     </div>
@@ -156,7 +156,7 @@ onMounted(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 999999999;
+    z-index: 1000; /* 降低z-index值，确保不会覆盖消息提示 */
 
     // background-color: rgba(0, 0, 0, .5);
     .y-material {
@@ -164,7 +164,7 @@ onMounted(() => {
         top: 40px;
         left: 50%;
         transform: translate(-50%);
-        z-index: 999999999;
+        z-index: 1000;
         background-color: #fff;
         width: 600px;
         // height: 100%;

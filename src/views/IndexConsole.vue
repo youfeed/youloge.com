@@ -51,8 +51,8 @@
       :class="sidebarCollapsed ? '-translate-x-full' : ''"
     >
       <div class="flex-1 mb-2 relative w-full">
-        <div>
-          <div v-for="item in menuItems" :key="item.title" class="menu-item relative">
+        <div class="flex flex-col gap-2">
+          <div v-for="item in menuItems" :key="item.title" class="relative">
             <div
               v-ripple
               class="cursor-pointer inline-flex w-full items-center p-2 text-sm select-none text-gray-900 rounded-lg hover:bg-gray-200 group"

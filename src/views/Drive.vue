@@ -1,16 +1,11 @@
 <template>
-  <header class="h-14 px-2 flex  items-center sticky top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
+  <header class="h-14 px-2 flex items-center border-b border-slate-900/10 border-b-solid top-0 bg-[length:4px_4px]" style="backdrop-filter: saturate(50%) blur(4px);">
     <div class="w-full flex justify-between items-center h-10">
       <div class="left flex  items-center justify-start gap-2">
         <div class="flex justify-center items-center">
-          <div class="hover:bg-blue-1 flex justify-between items-center rounded-full cursor-pointer w-8 h-8 p-1">
-            <YouIcon name="tdesign:view-list" size="20" ></YouIcon>
-          </div>
-          <router-link to="/" class="color-dark-500 font-bold no-underline px-1 py-1 rounded hover:bg-light-500 ">
-            <div class="flex items-center gap-1">
-              <span>Youloge</span>
-            </div>
-          </router-link>
+          <you-guide icon="ic:sharp-apps">
+            <div>Youloge</div>
+          </you-guide>
           <div class="text-sm text-gray-200">/</div>
           <router-link to="/drive" class="color-dark-500 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
             <div>Drive</div>
@@ -30,9 +25,12 @@
             <YouIcon name="mdi-light:magnify" size="24"></YouIcon>
           </router-link>
         </div>
-        <div class="w-8 h-8">
-          <div v-login="showProfile">
-            <img :src="useImage(stateProfile.avatar,'80')" alt="" class="w-full h-full rounded-full">
+        <div class="flex gap-2">
+          <div class="" @click="useSetup('setupDrive')">
+            +创建
+          </div>
+          <div>
+            <you-profile></you-profile>
           </div>
         </div>
       </div>
@@ -41,9 +39,6 @@
   <main class="drive">
     <router-view :key="$route.fullPath"></router-view>
   </main>
-  <!-- 通用侧栏 -->
-  <you-aside ref="aside"></you-aside>
-  <you-profile ref="profile"></you-profile>
 </template>
 
 <script setup>
@@ -51,7 +46,6 @@ import { useTemplateRef } from 'vue';
 
 const stateProfile = storeProfile();
 const route = useRoute();
-const asideRef = useTemplateRef('aside')
 const profileRef = useTemplateRef('profile')
 
 const state = reactive({

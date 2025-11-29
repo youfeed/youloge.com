@@ -118,6 +118,7 @@
     "vDom": true,
     "usePrompt": true,
     "useLogo": true,
-    "useSetup": true
+    "useSetup": true,
+    "useLoge": true
   }
 }
