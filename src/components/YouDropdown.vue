@@ -1,217 +1,351 @@
 <template>
-  <div class="y-dropdown" ref="dropdownRef">
-    <div 
-      class="y-dropdown-trigger" 
-      ref="triggerRef" 
-      @click="toggleDropdown"
-      :disabled="props.disabled"
-    >
-      <slot></slot>
+    <div class="y-dropdown" ref="dropdownRef">
+        <div 
+            class="y-dropdown-trigger" 
+            ref="triggerRef" 
+            @click="handleClick"
+            @contextmenu="handleContextMenu"
+            @mouseenter="handleMouseEnter"
+            @mouseleave="handleMouseLeave"
+        >
+            <slot></slot>
+        </div>
+        <teleport to="body">
+            <div 
+                v-show="isOpen" 
+                v-size="sizePanelChange"  
+                ref="panelRef" 
+                class="y-dropdown-panel" 
+                :style="panelStyle"
+            >
+                <slot name="dropdown"></slot>
+            </div>
+        </teleport>
     </div>
-    <div 
-      v-if="isOpen"
-      class="y-dropdown-panel" 
-      ref="panelRef" 
-      :style="panelStyle"
-    >
-      <slot name="panel"></slot>
-    </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick, useTemplateRef, watch } from 'vue';
+import { useScreen } from '../composables/useScreen';
 
-const props = defineProps({
-  gap: { type: Number, default: 4 }, // 间距（数字更精准）
-  panelWidth: { type: Number, default: 0 }, // 0=自动匹配trigger宽度
-  disabled: { type: Boolean, default: false }
-});
+const { vw, vh } = useScreen();
+const dropdownRef = useTemplateRef('dropdownRef');
+const triggerRef = useTemplateRef('triggerRef');
+const panelRef = useTemplateRef('panelRef');
 
 const emit = defineEmits(['open', 'close', 'select']);
+const props = defineProps({
+    trigger: { 
+        type: String, 
+        default: 'click',
+        validator: (val) => ['click', 'hover', 'contextmenu'].includes(val)
+    },
+    placement: { 
+        type: String, 
+        default: 'bottom',
+        validator: (val) => ['top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end'].includes(val)
+    },
+    gap: { type: Number, default: 4 },
+    panelWidth: { type: Number, default: 0 },
+    disabled: { type: Boolean, default: false },
+    hideOnClick: { type: Boolean, default: true }
+});
 
 // 核心状态
 const isOpen = ref(false);
-const dropdownRef = ref(null);
-const triggerRef = ref(null);
-const panelRef = ref(null);
-const panelPos = ref({}); // 存储定位属性（top/bottom/left/right）
+const panelPos = ref({ top: '0px', left: '0px' });
+const panelSize = ref({ width: 0, height: 0 });
+const timer = ref(null);
 
-/** 1. 切换面板显示 */
-const toggleDropdown = () => {
-  if (props.disabled) return;
-  isOpen.value = !isOpen.value;
-  isOpen.value ? emit('open') : emit('close');
-  if (isOpen.value) nextTick(calcPanelPos);
-};
-
-/** 2. 核心：判断 trigger 中心点偏向哪个角落（左上/右上/左下/右下） */
-const getCornerDirection = () => {
-  const trigger = triggerRef.value;
-  if (!trigger) return '左上';
-
-  const triggerRect = trigger.getBoundingClientRect();
-  const viewportW = window.innerWidth;
-  const viewportH = window.innerHeight;
-
-  // 计算 trigger 中心点坐标
-  const triggerCenterX = triggerRect.left + triggerRect.width / 2;
-  const triggerCenterY = triggerRect.top + triggerRect.height / 2;
-
-  // 计算视口中心点坐标
-  const viewportCenterX = viewportW / 2;
-  const viewportCenterY = viewportH / 2;
-
-  // 判断偏向：左右 + 上下
-  const isLeft = triggerCenterX < viewportCenterX; // 偏向视口左侧
-  const isTop = triggerCenterY < viewportCenterY; // 偏向视口上方
-
-  // 组合成 4 个角落方向
-  if (isLeft && isTop) return '左上';
-  if (!isLeft && isTop) return '右上';
-  if (isLeft && !isTop) return '左下';
-  return '右下'; // 最后兜底
-};
-
-/** 3. 按角落方向计算面板定位（完全按你的规则实现） */
+// 参考 Element Plus 的计算算法
 const calcPanelPos = () => {
-  const trigger = triggerRef.value;
-  const panel = panelRef.value;
-  if (!trigger || !panel) return;
+    const trigger = triggerRef.value;
+    if (!trigger) return;
 
-  const triggerRect = trigger.getBoundingClientRect();
-  const panelW = props.panelWidth || triggerRect.width; // 面板宽度
-  const panelH = panel.offsetHeight; // 面板实际高度
-  const gap = props.gap;
-  const corner = getCornerDirection();
-  const viewportW = window.innerWidth;
-  const viewportH = window.innerHeight;
-  const pos = {};
-
-  // 完全按你的规则实现定位，灵活使用 top/bottom/left/right
-  switch (corner) {
-    // 2. 左上 → top=trigger.bottom+gap，left=trigger.left（面板在trigger右下方，左对齐）
-    case '左上':
-      pos.top = `${triggerRect.bottom + gap}px`;
-      pos.left = `${triggerRect.left}px`;
-      break;
-    // 3. 右上 → top=trigger.bottom+gap，right=视口宽度 - trigger.right（面板在trigger左下方，右对齐）
-    case '右上':
-      pos.top = `${triggerRect.bottom + gap}px`;
-      pos.right = `${viewportW - triggerRect.right}px`; // 右对齐trigger右侧
-      break;
-    // 4. 左下 → bottom=视口高度 - (trigger.top - panelH - gap)，left=trigger.left（面板在trigger右上方，左对齐）
-    case '左下':
-      pos.bottom = `${viewportH - (triggerRect.top - panelH - gap)}px`;
-      pos.left = `${triggerRect.left}px`;
-      break;
-    // 5. 右下 → bottom=视口高度 - (trigger.top - panelH - gap)，right=视口宽度 - trigger.right（面板在trigger左上方，右对齐）
-    case '右下':
-      pos.bottom = `${viewportH - (triggerRect.top - panelH - gap)}px`;
-      pos.right = `${viewportW - triggerRect.right}px`;
-      break;
-  }
-
-  // 兜底：避免面板超出视口边界（可选，增强稳定性）
-  if (pos.left) pos.left = `${Math.max(parseInt(pos.left), 8)}px`;
-  if (pos.right) pos.right = `${Math.max(parseInt(pos.right), 8)}px`;
-
-  panelPos.value = pos;
+    const triggerRect = trigger.getBoundingClientRect();
+    console.log('triggerRect', triggerRect)
+    const { gap, placement } = props;
+    
+    // 使用响应式的视口尺寸
+    const viewportW = vw.value;
+    const viewportH = vh.value;
+    
+    // 优先使用 v-size 指令提供的响应式尺寸，回退到 props 或触发器尺寸
+    const panelW = panelSize.value.width || props.panelWidth || triggerRect.width;
+    const panelH = panelSize.value.height || 0;
+    
+    let top, left;
+    
+    // 根据 placement 属性确定位置
+    switch (placement) {
+        case 'top':
+            top = triggerRect.top - panelH - gap;
+            left = triggerRect.left + (triggerRect.width - panelW) / 2;
+            break;
+        case 'top-start':
+            top = triggerRect.top - panelH - gap;
+            left = triggerRect.left;
+            break;
+        case 'top-end':
+            top = triggerRect.top - panelH - gap;
+            left = triggerRect.right - panelW;
+            break;
+        case 'bottom':
+            top = triggerRect.bottom + gap;
+            left = triggerRect.left + (triggerRect.width - panelW) / 2;
+            break;
+        case 'bottom-start':
+            top = triggerRect.bottom + gap;
+            left = triggerRect.left;
+            break;
+        case 'bottom-end':
+            top = triggerRect.bottom + gap;
+            left = triggerRect.right - panelW;
+            break;
+    }
+    
+    // 边界检测和调整
+    // 水平边界调整
+    if (left < 8) {
+        left = 8;
+    } else if (left + panelW > viewportW - 8) {
+        left = viewportW - panelW - 8;
+    }
+    
+    // 垂直边界调整
+    if (top < 8) {
+        // 如果上方空间不足，尝试放在下方
+        top = triggerRect.bottom + gap;
+    } else if (top + panelH > viewportH - 8) {
+        // 如果下方空间不足，尝试放在上方
+        top = triggerRect.top - panelH - gap;
+    }
+    
+    console.log('计算面板位置:', { 
+        viewportW, viewportH, 
+        panelW, panelH,
+        placement,
+        最终位置: { top, left }
+    });
+    
+    panelPos.value = { top: `${top}px`, left: `${left}px` };
 };
 
-/** 4. 面板样式（合并定位和基础样式） */
+// 面板尺寸变化回调
+const sizePanelChange = (size) => {
+    console.log('面板尺寸变化:', size);
+    
+    // 更新面板尺寸 - 触发 watch 监听器自动重新计算位置
+    panelSize.value = {
+        width: size.width || size.inlineSize || 0,
+        height: size.height || size.blockSize || 0
+    };
+};
+
+// 只处理响应式数据，非变动值抽到样式里
 const panelStyle = computed(() => ({
-  width: 'auto',
-  minWidth: '120px',
-//   maxWidth: '300px',
-  backgroundColor: '#fff',
-  border: '1px solid #e1e4e8',
-  borderRadius: '6px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-  padding: '4px 0',
-  boxSizing: 'border-box',
-  position: 'fixed', // 脱离父元素，适配fixed header
-  zIndex: 9999, // 置顶不被覆盖
-  ...panelPos.value, // 动态定位属性（top/bottom/left/right）
-  opacity: 1,
-  transform: 'scale(1)',
-  transition: 'opacity 0.2s ease, transform 0.2s ease'
+    top: panelPos.value.top,
+    left: panelPos.value.left,
+    width: props.panelWidth > 0 ? `${props.panelWidth}px` : undefined,
+    opacity: isOpen.value ? 1 : 0,
+    transform: isOpen.value ? 'scale(1)' : 'scale(0.95)'
 }));
 
-/** 5. 点击外部关闭 */
-const handleClickOutside = (e) => {
-  if (isOpen.value && !dropdownRef.value?.contains(e.target)) {
-    isOpen.value = false;
-    emit('close');
-  }
+// 打开面板
+const openDropdown = () => {
+    if (props.disabled || isOpen.value) return;
+    
+    // 1. 确认 triggerRef 的位置中心
+    const trigger = triggerRef.value;
+    if (!trigger) return;
+    
+    const triggerRect = trigger.getBoundingClientRect();
+    const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+    const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+    
+    // 2. panelRef 初始点为 triggerRef 的位置中心
+    // 设置初始位置为中心对齐
+    panelPos.value = { 
+        top: `${triggerRect.bottom + props.gap}px`, 
+        left: `${triggerCenterX - 100}px` // 临时宽度，后续会被实际宽度替换
+    };
+    
+    // 3. isOpen = true
+    isOpen.value = true;
+    emit('open');
+    
+    // 4. 计算 panelRef 的精确位置
+    nextTick(() => {
+        nextTick(calcPanelPos);
+    });
 };
 
-/** 6. 窗口resize时更新位置 */
-const handleResize = () => {
-  if (isOpen.value) calcPanelPos();
+// 关闭面板
+const closeDropdown = () => {
+    if (!isOpen.value) return;
+    
+    isOpen.value = false;
+    emit('close');
+};
+
+// 切换面板状态
+const toggleDropdown = () => {
+    isOpen.value ? closeDropdown() : openDropdown();
+};
+
+// 事件处理器
+const handleClick = () => {
+    if (props.trigger === 'click') {
+        toggleDropdown();
+    }
+};
+
+const handleContextMenu = (e) => {
+    if (props.trigger === 'contextmenu') {
+        e.preventDefault();
+        toggleDropdown();
+    }
+};
+
+const handleMouseEnter = () => {
+    if (props.trigger !== 'hover') return;
+    
+    if (timer.value) {
+        clearTimeout(timer.value);
+        timer.value = null;
+    }
+    
+    timer.value = setTimeout(openDropdown, 100);
+};
+
+const handleMouseLeave = () => {
+    if (props.trigger !== 'hover') return;
+    
+    if (timer.value) {
+        clearTimeout(timer.value);
+        timer.value = null;
+    }
+    
+    timer.value = setTimeout(() => {
+        if (!panelRef.value?.contains(document.activeElement)) {
+            closeDropdown();
+        }
+    }, 200);
+};
+
+// 处理选项点击
+const handleItemClick = (value) => {
+    emit('select', value);
+    if (props.hideOnClick) {
+        closeDropdown();
+    }
+};
+
+// 点击外部关闭
+const handleClickOutside = (e) => {
+    if (isOpen.value && !dropdownRef.value?.contains(e.target) && !panelRef.value?.contains(e.target)) {
+        closeDropdown();
+    }
 };
 
 // 生命周期
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-  window.addEventListener('resize', handleResize);
+    document.addEventListener('click', handleClickOutside);
+    window.addEventListener('resize', isOpen.value ? calcPanelPos : null);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-  window.removeEventListener('resize', handleResize);
+    document.removeEventListener('click', handleClickOutside);
+    window.removeEventListener('resize', calcPanelPos);
+    
+    if (timer.value) {
+        clearTimeout(timer.value);
+        timer.value = null;
+    }
 });
+
+// 监听props变化
+watch(() => props.disabled, (newVal) => {
+    if (newVal && isOpen.value) {
+        closeDropdown();
+    }
+});
+
+watch(() => props.placement, () => {
+    if (isOpen.value) {
+        nextTick(calcPanelPos);
+    }
+});
+
+// 监听视口尺寸变化，当视口尺寸变化时重新计算面板位置
+watch([vw, vh], () => {
+    if (isOpen.value) {
+        nextTick(calcPanelPos);
+    }
+}, { flush: 'post' });
+
+// 监听面板尺寸变化，当面板尺寸变化时重新计算位置
+watch(() => [panelSize.value.width, panelSize.value.height], () => {
+    if (isOpen.value && (panelSize.value.width > 0 || panelSize.value.height > 0)) {
+        nextTick(calcPanelPos);
+    }
+}, { flush: 'post' });
 
 // 对外暴露方法
 defineExpose({
-  open: () => !props.disabled && (isOpen.value = true),
-  close: () => (isOpen.value = false),
-  toggle: toggleDropdown
+    open: openDropdown,
+    close: closeDropdown,
+    toggle: toggleDropdown,
+    recalcPosition: calcPanelPos,
+    handleItemClick
 });
 </script>
 
 <style lang="scss" scoped>
 .y-dropdown {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  outline: none;
-  height: 100%; // 适配header高度
-  z-index: auto;
-
-  .y-dropdown-trigger {
-    // display: inline-flex;
-    // align-items: center;
-    // padding: 6px 12px;
-    // background: #f6f8fa;
-    // border: 1px solid #e1e4e8;
-    // border-radius: 6px;
-    // font-size: 14px;
-    // color: #24292e;
-    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
     height: 100%;
-    box-sizing: border-box;
-    gap: 6px;
 
-    &:focus-visible {
-      outline: 2px solid #0969da;
-      outline-offset: 2px;
+    .y-dropdown-trigger {
+        cursor: pointer;
+        height: 100%;
+        box-sizing: border-box;
+
+        &:focus-visible {
+            outline: 2px solid #0969da;
+            outline-offset: 2px;
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+}
+    .y-dropdown-panel {
+        position: fixed;
+        width: auto;
+        min-width: 120px;
+        max-width: 300px;
+        background-color: #fff;
+        border: 1px solid #e1e4e8;
+        border-radius: 8px;
+        // 阴影盒子效果
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        padding: 8px;
+        box-sizing: border-box;
+        z-index: 9999;
+        list-style: none;
+        overflow: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        
+        .y-dropdown-divider {
+            height: 1px;
+            margin: 4px 0;
+            background: #e1e4e8;
+        }
     }
-  }
-
-  .y-dropdown-panel {
-    list-style: none;
-    overflow: hidden;
-
-    .y-dropdown-divider {
-      height: 1px;
-      margin: 4px 0;
-      background: #e1e4e8;
-    }
-  }}
 </style>

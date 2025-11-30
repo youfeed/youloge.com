@@ -119,6 +119,8 @@
     "usePrompt": true,
     "useLogo": true,
     "useSetup": true,
-    "useLoge": true
+    "useLoge": true,
+    "useScreen": true,
+    "vSize": true
   }
 }

@@ -97,6 +97,7 @@ declare global {
   const useQrcode: typeof import('../src/composables/useQrcode.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
+  const useScreen: typeof import('../src/composables/useScreen.js')['useScreen']
   const useSetup: typeof import('../src/composables/useSetup.js')['default']
   const useSingle: typeof import('../src/composables/useSingle.js')['default']
   const useSlots: typeof import('vue')['useSlots']
@@ -110,6 +111,7 @@ declare global {
   const vDom: typeof import('../src/directives/vDom.js')['default']
   const vLogin: typeof import('../src/directives/vLogin.js')['default']
   const vRipple: typeof import('../src/directives/vRipple.js')['default']
+  const vSize: typeof import('../src/directives/vSize.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
@@ -218,6 +220,7 @@ declare module 'vue' {
     readonly useQrcode: UnwrapRef<typeof import('../src/composables/useQrcode.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
+    readonly useScreen: UnwrapRef<typeof import('../src/composables/useScreen.js')['useScreen']>
     readonly useSetup: UnwrapRef<typeof import('../src/composables/useSetup.js')['default']>
     readonly useSingle: UnwrapRef<typeof import('../src/composables/useSingle.js')['default']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
@@ -231,6 +234,7 @@ declare module 'vue' {
     readonly vDom: UnwrapRef<typeof import('../src/directives/vDom.js')['default']>
     readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>
     readonly vRipple: UnwrapRef<typeof import('../src/directives/vRipple.js')['default']>
+    readonly vSize: UnwrapRef<typeof import('../src/directives/vSize.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

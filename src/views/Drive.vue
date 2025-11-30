@@ -26,6 +26,12 @@
           </router-link>
         </div>
         <div class="flex gap-2">
+          <you-dropdown>
+            66666
+            <template #dropdown>
+              66669888
+            </template>
+          </you-dropdown>
           <div class="" @click="useSetup('setupDrive')">
             +创建
           </div>
