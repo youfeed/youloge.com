@@ -13,17 +13,18 @@
           </router-link>
         </div>
       </div>
-      <div class="search" >
-        <div class="h-10 max-w-30 sm:max-w-60 border-1 border-gray-500 border-solid rounded hover:border-blue-700">
+      <div class="search hidden md:block" >
+        <div class="h-8 max-w-30 sm:max-w-60 border-1 border-gray-500 border-solid rounded hover:border-blue-700">
           <form action="/article/search" method="get" class="w-full h-full">
             <input type="search" name="q" placeholder="搜索文章" v-model="query.q" autocomplete="off" class="px-2 py-1 border-0 outline-0 w-full h-full bg-transparent"/>
           </form>
         </div>
       </div>
-      <div class="">
-        <div v-login="onLayout">
-          <img :src="useImage(stateProfile.avatar,'80')" :alt="stateProfile.name" class="rounded-full w-8 h-8">
-        </div>
+      <div class="flex items-center gap-2">
+        <router-link to="/drive/search?q=*" class="md:hidden">
+            <you-svg name="carbon:search" size="24"></you-svg>
+        </router-link>
+        <you-profile></you-profile>
       </div>
     </div>
   </header>

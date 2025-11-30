@@ -8,36 +8,29 @@
           </you-guide>
           <div class="text-sm text-gray-200">/</div>
           <router-link to="/drive" class="color-dark-500 no-underline font-bold px-1 py-1 rounded hover:bg-light-500 ">
-            <div>Drive</div>
+            <div>Drive</div> 
           </router-link>
         </div>
       </div>
       <div class="search hidden md:block">
         <div class="max-w-40">
-          <form action="/drive/search" method="get" class="max-w-80">
-            <input type="search" name="q" v-model="query.q" placeholder="搜索云盘资源" class="border rounded px-4 py-2 w-full"/>
+          <form action="/drive/search" method="get" class="max-w-80 border rounded-full flex items-center gap-2">
+            <input type="search" name="q" v-model="query.q" placeholder="搜索云盘资源" class="border-none outline-none bg-transparent px-2 py-1 w-full"/>
           </form>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <div class="hover:bg-gray-2  md:hidden rounded-full flex items-center justify-center p-1">
           <router-link to="/drive/search?q=*">
-            <YouIcon name="mdi-light:magnify" size="24"></YouIcon>
+            <YouIcon name="carbon:search" size="24"></YouIcon>
           </router-link>
         </div>
         <div class="flex gap-2">
-          <you-dropdown>
-            66666
-            <template #dropdown>
-              66669888
-            </template>
-          </you-dropdown>
-          <div class="" @click="useSetup('setupDrive')">
-            +创建
+          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" @click="useSetup('setupDrive')">
+            <you-svg name="ic:sharp-add" size="24"></you-svg>
+            <span class="hidden md:block">创建</span>
           </div>
-          <div>
-            <you-profile></you-profile>
-          </div>
+          <you-profile></you-profile>
         </div>
       </div>
     </div>

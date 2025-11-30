@@ -63,6 +63,7 @@ defineExpose({ create,close,destroy });
         margin: 5px;
         padding: 10px;
         box-shadow: 0 0 2px 1px #e1e1e1;
+        border-radius: 4px;
         // 左侧状态竖线（核心：通过伪元素实现，不增加DOM）
         &::before {
             content: '';

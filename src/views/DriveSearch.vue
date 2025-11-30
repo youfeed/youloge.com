@@ -17,8 +17,8 @@
                     </form>
                 </div>
             </div>
-            <div>约有 1 条结果</div>
-            <div class="lists border-gray-200 border-1 mt-5">
+            <div>约有 {{search.estimatedTotalHits}} 条结果</div>
+            <div class="lists border-gray-200 rounded-sm border-1 mt-5">
                 <template v-for="item in list" :key="item.uuid">
                     <div v-ripple
                         class="list border-b-1 border-gray-200 p-4 border-width-1 border-style-solid rounded-sm">

@@ -1,23 +1,11 @@
 <template>
     <div class="y-dropdown" ref="dropdownRef">
-        <div 
-            class="y-dropdown-trigger" 
-            ref="triggerRef" 
-            @click="handleClick"
-            @contextmenu="handleContextMenu"
-            @mouseenter="handleMouseEnter"
-            @mouseleave="handleMouseLeave"
-        >
+        <div class="y-dropdown-trigger" ref="triggerRef" @click="handleClick" @contextmenu="handleContextMenu"
+            @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
             <slot></slot>
         </div>
         <teleport to="body">
-            <div 
-                v-show="isOpen" 
-                v-size="sizePanelChange"  
-                ref="panelRef" 
-                class="y-dropdown-panel" 
-                :style="panelStyle"
-            >
+            <div v-show="isOpen" v-size="sizePanelChange" ref="panelRef" class="y-dropdown-panel" :style="panelStyle">
                 <slot name="dropdown"></slot>
             </div>
         </teleport>
@@ -35,13 +23,13 @@ const panelRef = useTemplateRef('panelRef');
 
 const emit = defineEmits(['open', 'close', 'select']);
 const props = defineProps({
-    trigger: { 
-        type: String, 
+    trigger: {
+        type: String,
         default: 'click',
         validator: (val) => ['click', 'hover', 'contextmenu'].includes(val)
     },
-    placement: { 
-        type: String, 
+    placement: {
+        type: String,
         default: 'bottom',
         validator: (val) => ['top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end'].includes(val)
     },
@@ -65,17 +53,17 @@ const calcPanelPos = () => {
     const triggerRect = trigger.getBoundingClientRect();
     console.log('triggerRect', triggerRect)
     const { gap, placement } = props;
-    
+
     // 使用响应式的视口尺寸
     const viewportW = vw.value;
     const viewportH = vh.value;
-    
+
     // 优先使用 v-size 指令提供的响应式尺寸，回退到 props 或触发器尺寸
     const panelW = panelSize.value.width || props.panelWidth || triggerRect.width;
     const panelH = panelSize.value.height || 0;
-    
+
     let top, left;
-    
+
     // 根据 placement 属性确定位置
     switch (placement) {
         case 'top':
@@ -103,7 +91,7 @@ const calcPanelPos = () => {
             left = triggerRect.right - panelW;
             break;
     }
-    
+
     // 边界检测和调整
     // 水平边界调整
     if (left < 8) {
@@ -111,7 +99,7 @@ const calcPanelPos = () => {
     } else if (left + panelW > viewportW - 8) {
         left = viewportW - panelW - 8;
     }
-    
+
     // 垂直边界调整
     if (top < 8) {
         // 如果上方空间不足，尝试放在下方
@@ -120,21 +108,21 @@ const calcPanelPos = () => {
         // 如果下方空间不足，尝试放在上方
         top = triggerRect.top - panelH - gap;
     }
-    
-    console.log('计算面板位置:', { 
-        viewportW, viewportH, 
+
+    console.log('计算面板位置:', {
+        viewportW, viewportH,
         panelW, panelH,
         placement,
         最终位置: { top, left }
     });
-    
+
     panelPos.value = { top: `${top}px`, left: `${left}px` };
 };
 
 // 面板尺寸变化回调
 const sizePanelChange = (size) => {
     console.log('面板尺寸变化:', size);
-    
+
     // 更新面板尺寸 - 触发 watch 监听器自动重新计算位置
     panelSize.value = {
         width: size.width || size.inlineSize || 0,
@@ -154,26 +142,26 @@ const panelStyle = computed(() => ({
 // 打开面板
 const openDropdown = () => {
     if (props.disabled || isOpen.value) return;
-    
+
     // 1. 确认 triggerRef 的位置中心
     const trigger = triggerRef.value;
     if (!trigger) return;
-    
+
     const triggerRect = trigger.getBoundingClientRect();
     const triggerCenterX = triggerRect.left + triggerRect.width / 2;
     const triggerCenterY = triggerRect.top + triggerRect.height / 2;
-    
+
     // 2. panelRef 初始点为 triggerRef 的位置中心
     // 设置初始位置为中心对齐
-    panelPos.value = { 
-        top: `${triggerRect.bottom + props.gap}px`, 
+    panelPos.value = {
+        top: `${triggerRect.bottom + props.gap}px`,
         left: `${triggerCenterX - 100}px` // 临时宽度，后续会被实际宽度替换
     };
-    
+
     // 3. isOpen = true
     isOpen.value = true;
     emit('open');
-    
+
     // 4. 计算 panelRef 的精确位置
     nextTick(() => {
         nextTick(calcPanelPos);
@@ -183,7 +171,7 @@ const openDropdown = () => {
 // 关闭面板
 const closeDropdown = () => {
     if (!isOpen.value) return;
-    
+
     isOpen.value = false;
     emit('close');
 };
@@ -209,23 +197,23 @@ const handleContextMenu = (e) => {
 
 const handleMouseEnter = () => {
     if (props.trigger !== 'hover') return;
-    
+
     if (timer.value) {
         clearTimeout(timer.value);
         timer.value = null;
     }
-    
+
     timer.value = setTimeout(openDropdown, 100);
 };
 
 const handleMouseLeave = () => {
     if (props.trigger !== 'hover') return;
-    
+
     if (timer.value) {
         clearTimeout(timer.value);
         timer.value = null;
     }
-    
+
     timer.value = setTimeout(() => {
         if (!panelRef.value?.contains(document.activeElement)) {
             closeDropdown();
@@ -257,7 +245,7 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
     window.removeEventListener('resize', calcPanelPos);
-    
+
     if (timer.value) {
         clearTimeout(timer.value);
         timer.value = null;
@@ -325,27 +313,28 @@ defineExpose({
     }
 
 }
-    .y-dropdown-panel {
-        position: fixed;
-        width: auto;
-        min-width: 120px;
-        max-width: 300px;
-        background-color: #fff;
-        border: 1px solid #e1e4e8;
-        border-radius: 8px;
-        // 阴影盒子效果
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
-        padding: 8px;
-        box-sizing: border-box;
-        z-index: 9999;
-        list-style: none;
-        overflow: hidden;
-        transition: opacity 0.2s ease, transform 0.2s ease;
-        
-        .y-dropdown-divider {
-            height: 1px;
-            margin: 4px 0;
-            background: #e1e4e8;
-        }
+
+.y-dropdown-panel {
+    position: fixed;
+    width: auto;
+    min-width: 120px;
+    max-width: 300px;
+    background-color: #fff;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    // 阴影盒子效果
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    padding: 8px;
+    box-sizing: border-box;
+    z-index: 9999;
+    list-style: none;
+    overflow: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    .y-dropdown-divider {
+        height: 1px;
+        margin: 4px 0;
+        background: #e1e4e8;
     }
+}
 </style>

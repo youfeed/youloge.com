@@ -5,7 +5,7 @@
     </div>
   </template>
   <template v-if="err == 200">
-    <div class="p2">
+    <div class="p-2">
       <div class="mx-auto mt-6 max-w-2xl border-solid border-1 rounded border-gray-300 p-2">
         <div class="head flex justify-between items-center border-b-solid border-b-1 border-gray-300 p-b-2">
           <div class="flex items-center gap-1">
@@ -61,8 +61,8 @@
     
   </template>
   <template v-else>
-    <div class="flex items-center justify-center h-screen-sm">
-      <div class="font-size-2xl  w-40 h-40 color-gray-400">{{ msg }}</div>
+    <div class="flex items-center justify-center h-screen-sm mt-10">
+      <h1 class="text-lg w-40 h-40 text-gray-400">{{ msg }}</h1>
     </div>
   </template>
 </template>

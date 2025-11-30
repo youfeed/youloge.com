@@ -1,91 +1,93 @@
 <template>
     <!-- 菜单触发按钮 -->
     <div class="menu-trigger" @click="onShow">
-        <you-svg :name="props.icon" size="12" class="text-sm"></you-svg>
+        <you-svg :name="props.icon" size="16" class="text-sm mr-1"></you-svg>
         <slot></slot>
     </div>
 
     <!-- 侧边栏容器 -->
-    <dialog ref="dialog" class="you-guide-container" :style="styled" @click="onBackdropClick" @touchstart="onBackdropClick">
-        <div ref="content" class="you-guide-content flex flex-col" >
-            <div class="aside-header flex items-center justify-between h-14 p-2">
-                <div class="font-bold text-gray-800 text-shadow">Youloge.com</div>
-                <button class="i-carbon:close hover:bg-gray-100 p-1 rounded cursor-pointer w-4 h-4"@click="onClose">
-                    <!-- <you-svg name="carbon:close" size="16"></you-svg> -->
-                     X
-                </button>
-            </div>
+    <teleport to="body">
+        <dialog ref="dialog" class="you-guide-container" :style="styled" @click="onBackdropClick" @touchstart="onBackdropClick">
+            <div ref="content" class="you-guide-content flex flex-col" >
+                <div class="aside-header flex items-center justify-between h-14 p-2">
+                    <div class="font-bold text-gray-800 text-shadow">Youloge.com</div>
+                    <button class="i-carbon:close hover:bg-gray-100 p-1 rounded cursor-pointer w-4 h-4"@click="onClose">
+                        <!-- <you-svg name="carbon:close" size="16"></you-svg> -->
+                        X
+                    </button>
+                </div>
 
-            <div class="aside-body p-4 flex-1">
-                <div class="menu-section">
-                    <h3 class="text-gray-600 text-sm font-medium mb-2">导航</h3>
-                    <ul class="menu-list">
-                        <router-link to="/" class="menu-item">
-                            <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>首页
-                        </router-link>
-                        <router-link to="/video" class="menu-item">
-                            <you-svg name="carbon:video-player" size="10" class="mr-2"></you-svg>视频
-                        </router-link>
-                        <router-link to="/goods" class="menu-item">
-                            <you-svg name="carbon:shopping-cart" size="10" class="mr-2"></you-svg>购物
-                        </router-link>
-                        <router-link to="/article" class="menu-item">
-                            <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>文章
-                        </router-link>
-                        <router-link to="/drive" class="menu-item">
-                            <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>云盘
-                        </router-link>
-                    </ul>
-                </div>
-                <hr class="my-4 text-gray-200" />
-                <div class="menu-section">
-                    <h3 class="text-gray-600 text-sm font-medium mb-2">订阅</h3>
-                    <ul class="menu-list">
-                        <li class="menu-item" @click="onMenuClick('my-personal')">
-                            <you-svg name="carbon:user-avatar" size="10" class="mr-2"></you-svg>个人中心
-                        </li>
-                    </ul>
-                </div>
-                <hr class="my-4 text-gray-200" />
+                <div class="aside-body p-4 flex-1">
+                    <div class="menu-section">
+                        <h3 class="text-gray-600 text-sm font-medium mb-2">导航</h3>
+                        <ul class="menu-list">
+                            <router-link to="/" class="menu-item">
+                                <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>首页
+                            </router-link>
+                            <router-link to="/video" class="menu-item">
+                                <you-svg name="carbon:video-player" size="10" class="mr-2"></you-svg>视频
+                            </router-link>
+                            <router-link to="/goods" class="menu-item">
+                                <you-svg name="carbon:shopping-cart" size="10" class="mr-2"></you-svg>购物
+                            </router-link>
+                            <router-link to="/article" class="menu-item">
+                                <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>文章
+                            </router-link>
+                            <router-link to="/drive" class="menu-item">
+                                <you-svg name="carbon:home" size="10" class="mr-2"></you-svg>云盘
+                            </router-link>
+                        </ul>
+                    </div>
+                    <hr class="my-4 text-gray-200" />
+                    <div class="menu-section">
+                        <h3 class="text-gray-600 text-sm font-medium mb-2">订阅</h3>
+                        <ul class="menu-list">
+                            <li class="menu-item" @click="onMenuClick('my-personal')">
+                                <you-svg name="carbon:user-avatar" size="10" class="mr-2"></you-svg>个人中心
+                            </li>
+                        </ul>
+                    </div>
+                    <hr class="my-4 text-gray-200" />
 
-                <div class="menu-section">
-                    <h3 class="text-gray-600 text-sm font-medium mb-2">我的</h3>
-                    <ul class="menu-list">
-                        <li class="menu-item" @click="onMenuClick('my-personal')">
-                            <you-svg name="carbon:user-avatar" size="10" class="mr-2"></you-svg>个人中心
-                        </li>
-                        <li class="menu-item" @click="onMenuClick('my-video')">
-                            <you-svg name="carbon:video-player" size="10" class="mr-2"></you-svg>钱包余额
-                        </li>
-                        <li class="menu-item" @click="onMenuClick('my-shopping')">
-                            <you-svg name="carbon:shopping-cart" size="10" class="mr-2"></you-svg>商品购物
-                        </li>
-                        <li class="menu-item" @click="onMenuClick('my-articles')">
-                            <you-svg name="carbon:document" size="10" class="mr-2"></you-svg>资讯文章
-                        </li>
-                    </ul>
+                    <div class="menu-section">
+                        <h3 class="text-gray-600 text-sm font-medium mb-2">我的</h3>
+                        <ul class="menu-list">
+                            <li class="menu-item" @click="onMenuClick('my-personal')">
+                                <you-svg name="carbon:user-avatar" size="10" class="mr-2"></you-svg>个人中心
+                            </li>
+                            <li class="menu-item" @click="onMenuClick('my-video')">
+                                <you-svg name="carbon:video-player" size="10" class="mr-2"></you-svg>钱包余额
+                            </li>
+                            <li class="menu-item" @click="onMenuClick('my-shopping')">
+                                <you-svg name="carbon:shopping-cart" size="10" class="mr-2"></you-svg>商品购物
+                            </li>
+                            <li class="menu-item" @click="onMenuClick('my-articles')">
+                                <you-svg name="carbon:document" size="10" class="mr-2"></you-svg>资讯文章
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="aside-footer p-4 border-t">
+                    <div class="text-xs text-gray-500">
+                        @2025 Jakebuda,Inc.
+                    </div>
+                    <div class="flex gap-2 mt-2">
+                        <!-- 社交媒体或链接图标 -->
+                        <a href="#" class="text-gray-400 hover:text-gray-600">
+                            <you-svg name="carbon:logo-github" size="12"></you-svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-600">
+                            <you-svg name="carbon:logo-twitter" size="12"></you-svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-600">
+                            <you-svg name="carbon:logo-wechat" size="12"></you-svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <div class="aside-footer p-4 border-t">
-                <div class="text-xs text-gray-500">
-                    @2025 Jakebuda,Inc.
-                </div>
-                <div class="flex gap-2 mt-2">
-                    <!-- 社交媒体或链接图标 -->
-                    <a href="#" class="text-gray-400 hover:text-gray-600">
-                        <you-svg name="carbon:logo-github" size="12"></you-svg>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-gray-600">
-                        <you-svg name="carbon:logo-twitter" size="12"></you-svg>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-gray-600">
-                        <you-svg name="carbon:logo-wechat" size="12"></you-svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </dialog>
+        </dialog>
+    </teleport>
 </template>
 <!-- guide -->
 <script setup>
