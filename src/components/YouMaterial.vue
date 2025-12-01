@@ -14,6 +14,12 @@
                                 <div class="name">{{ item.checked }}</div>
                             </div>
                         </template>
+                        <template v-else-if="props.type == 'video'">
+                            <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
+                                <img :src="useImage(`${item.etag}`, 80)" alt="">
+                                <div class="truncate">{{ item.title }}</div>
+                            </div>
+                        </template>
                         <template v-else-if="props.type == 'drive'">
                             <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
                                 <img :src="useImage(`mime/${item.mime}`, 80)" alt="">
@@ -44,7 +50,8 @@
 const props = defineProps({
     'type': {
         type: String,
-        default: 'image'
+        default: 'image',
+        validator: (value) => ['image', 'audio', 'video','drive'].includes(value)
     },
     'limit': {
         type: Number,
