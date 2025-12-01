@@ -10,11 +10,11 @@
     <div class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 md:px-8">
         <div class="bg-white rounded-xl p-6 shadow-md  flex flex-col gap-2">
             <template v-for="item in list" :key="item.uuid">
-                <div class="article flex w-full">
-                    <div v-if="item.poster" class="mr-2">
+                <div class="article flex w-full border-b-solid border-b border-gray-200 py-4">
+                    <div v-if="item.poster" class="mr-2 w-14 h-14">
                         <img :src="useImage(item.poster, '80')" :alt="item.title" class="rounded-sm w-14 h-14">
                     </div>
-                    <div class="">
+                    <div class="flex-1">
                         <div class="line-clamp-1">
                             <router-link class=" text-gray-900" :to="`/article/${item.uuid}`">{{ item.title }}</router-link>
                         </div>
