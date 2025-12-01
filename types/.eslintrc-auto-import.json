@@ -121,6 +121,7 @@
     "useSetup": true,
     "useLoge": true,
     "useScreen": true,
-    "vSize": true
+    "vSize": true,
+    "tinymce": true
   }
 }

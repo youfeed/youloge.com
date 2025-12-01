@@ -67,6 +67,7 @@ declare global {
   const storeProfile: typeof import('../src/stores/storeProfile.js')['default']
   const storeSubscribe: typeof import('../src/stores/storeSubscribe.js')['default']
   const storeToRefs: typeof import('pinia')['storeToRefs']
+  const tinymce: typeof import('tinymce')['default']
   const toRaw: typeof import('vue')['toRaw']
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
@@ -190,6 +191,7 @@ declare module 'vue' {
     readonly storeProfile: UnwrapRef<typeof import('../src/stores/storeProfile.js')['default']>
     readonly storeSubscribe: UnwrapRef<typeof import('../src/stores/storeSubscribe.js')['default']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
+    readonly tinymce: UnwrapRef<typeof import('tinymce')['default']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>

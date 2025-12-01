@@ -5,7 +5,7 @@
             <div>|</div>
             <div @click="onClose" class="y-setup-capsule__close">关闭</div>
         </div>
-        <div class="y-setup-container">
+        <div class="y-setup-transition">
             <transition name="fade" mode="out-in" appear>
                 <div class="y-setup-component">
                     <component :is="asyncComponent" :key="keyComponent"></component>
@@ -127,10 +127,20 @@ onUnmounted(() => {
         --capsule-padding: 4px;
     }
 }
+.safe-capsule{
+    padding-right: var(--capsule-area-left);
+}
 
 .y-setup{
     border: 0;
+    outline: 0;
+    max-width: unset;
+    max-height: unset;
 }
+.y-setup::backdrop {
+    backdrop-filter: blur(10px);
+}
+
 .y-setup-capsule {
     position: fixed;
     right: 10px;
@@ -144,15 +154,14 @@ onUnmounted(() => {
     border: 1px solid;
 }
 
-.y-setup::backdrop {
-    backdrop-filter: blur(10px);
-}
-
-.y-setup-container {
-    min-width: 500px;
-    min-height: 600px;
-    max-width: 680px;
-    max-height: 700px;
+// 自适应
+.y-setup-transition {
+    width: 768px;
+    max-height: 100%;
+    margin: auto;
+    // width: 100vh;
+    // height: 100vw;
+    overflow-x: hidden;
     overflow-y: auto;
     background-color: #f1f1f1;
     border-radius: 8px;
@@ -164,16 +173,16 @@ onUnmounted(() => {
 }
 /* 小屏样式：当屏幕宽度小于680px时 */
 @media (max-width: 680px) {
-    .y-setup-container {
-        width: 100%;
-        height: 100%;
-        max-width: none;
-        max-height: none;
-        border-radius: 0;
-        padding: 0;
-        top: 0;
-        left: 0;
-        transform: none;
+    .y-setup-transition {
+        width: 100% !important;
+        height: 100% !important;
+        // max-width: none;
+        // max-height: none;
+        // border-radius: 0;
+        // padding: 0;
+        // top: 0;
+        // left: 0;
+        // transform: none;
     }
 }
 .y-setup-capsule__fresh,.y-setup-capsule__close{

@@ -4,13 +4,16 @@
     </div>
 </template>
 <script setup>
-import 'tinymce'
 import 'youloge.custom'
 const props = defineProps(), emit = defineEmits(['autosave']);
-const model = defineModel(); 
+const model = defineModel({
+    type: String,
+    default: ''
+}); 
+
 var editorInstance = null;
 const editorSettings = {
-    base_url: 'tinymce',
+    base_url: '/tinymce',
     max_height: 500,
     max_width: 500,
     min_height: 100,
@@ -18,6 +21,8 @@ const editorSettings = {
     menubar: false,
     promotion: false,
     branding: false,
+    theme: 'silver',
+    skin_url: '/tinymce/skins/ui/oxide',
     // paste_webkit_styles: 'all',
     plugins: 'code quickbars preview searchreplace autolink fullscreen image link media codesample table charmap advlist lists wordcount autoresize',
     toolbar: 'code undo redo | forecolor backcolor bold italic underline strikethrough | indent2em alignleft aligncenter alignright alignjustify outdent indent | link bullist numlist image table codesample | formatselect fontselect fontsizeselect',
@@ -57,32 +62,33 @@ const editorSettings = {
 // 异步加载编辑器
 onMounted(async () => {
     try {
+        tinymce.init({
+            selector: 'textarea#tinymce-editor',
+            ...editorSettings,
+            // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
+            license_key: 'gpl',
+            promotion: false,
+            init_instance_callback: (editor) => {
+                console.log('init_instance_callback', editor)
+                editor.setContent(model.value || '<p>写点啥...</p>', { format: 'raw' });
+            },
+            setup: (editor) => {
+                editorInstance = editor;
+                editor.on('change', () => {
+                    model.value = editor.getContent();
+                });
+                editor.addShortcut('Ctrl+S', '', () => {
+                    emit('autosave', editor.getContent())
+                    console.log(5)
+                });
+            }
+        });
         // const tinymceModule = await import('tinymce')
         console.log('++++tinymceModule', tinymce)
         // console.log('----tinymceModule',tinymceModule)
     } catch (error) {
-
+        console.log('onMounted.catch', error)
     }
-    tinymce.init({
-        selector: 'textarea#tinymce-editor',
-        ...editorSettings,
-        // license_key:'nmvcfr69cp0oorg5l2g7mxybxaysnx83fvgugrt5ss5tcarg',
-        license_key: 'gpl',
-        promotion: false,
-        init_instance_callback: (editor) => {
-            editor.setContent(props.modelValue || '<p>写点啥...</p>', { format: 'raw' });
-        },
-        setup: (editor) => {
-            editorInstance = editor;
-            editor.on('change', () => {
-                model.value = editor.getContent();
-            });
-            editor.addShortcut('Ctrl+S', '', () => {
-                emit('autosave', editor.getContent())
-                console.log(5)
-            });
-        }
-    });
 });
 onBeforeUnmount(() => {
     editorInstance && editorInstance.destroy();

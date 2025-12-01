@@ -7,17 +7,28 @@
     <template v-if="err == 200">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
             <template v-for="item in list" :key="item.uuid">
-                <div class="border my-4">
-                    <router-link :to="`/article/${item.uuid}`">
-                        <div class="font-bold text-blue-400">{{ item.title }}</div>
-                    </router-link>
-                    <div class="line-clamp-2">{{ item.description }}</div>
-                    <template v-for="keyword in item.keywords" :key="keyword">
-                        <router-link :to="`/article/search?q=${keyword}`">
-                            <div>#{{ keyword }}</div>
-                        </router-link>
-                    </template>
-                    <div>{{ item.created }} · {{ item.views }}</div>
+                <div class="border-b my-4">
+                    <div class="flex items-start gap-2">
+                        <div class="flex-1">
+                            <router-link :to="`/article/${item.uuid}`">
+                                <div class="font-bold text-blue-400">{{ item.title }}</div>
+                            </router-link>
+                            <div class="line-clamp-2">{{ item.description }}</div>
+                        </div>
+                        <div v-if="item.poster" class="mr-2 w-14 h-14">
+                            <img :src="useImage(item.poster, '120')" :alt="item.title" class="rounded-sm w-14 h-14">
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div>{{ useTimeago(item.created) }} · {{ item.views }} 次浏览</div>
+                        <div class="flex items-center gap-2">
+                            <template v-for="keyword in item.keywords" :key="keyword">
+                                <router-link :to="`/article/search?q=${keyword}`" class="bg-gray-100 rounded-sm px-2 py-1">
+                                    <div>#{{ keyword }}</div>
+                                </router-link>
+                            </template>
+                        </div>
+                    </div>
                 </div>
             </template>
         </div>

@@ -9,20 +9,20 @@
     <div class="max-w-screen-md mx-auto px-4 sm:px-6 md:px-8">
       <!-- <div class="navbar">navbar</div> -->
       <div class="article py-10">
-        <div class="title sticky top-14 z-10 bg-white">
+        <div class="titlez-10 bg-white">
           <h1 class="text-2xl font-bold text-gray-800 mb-4 text-shadow">{{ metadata.title }}</h1>
         </div>
         <div class="meta mb-10">
-          <div class="flex items-center gap-2 text-gray-500">
-            <div>
+          <div class="inline-block text-gray-500 break-keep">
+            <span class="break-keep mr-2">
               <router-link :to="`/${anthor.user}`" class="no-underline text-blue-200">{{ anthor.name }}</router-link>
-            </div>
-            <div>
-              {{ metadata.created }}
-            </div>
-            <div>
+            </span>
+            <span class="break-keep mr-2">
+              {{ useTimeago(metadata.created) }}
+            </span>
+            <span>
               {{ metadata.views }} 次浏览
-            </div>
+            </span>
           </div>
         </div>
         <YouRich v-model="html"></YouRich>

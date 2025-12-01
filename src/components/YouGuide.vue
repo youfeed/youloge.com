@@ -312,14 +312,14 @@ defineExpose({
 @media (max-width: 768px) {
     .you-guide-content {
         width: 80vw !important;
-        max-width: 280px;
+        max-width: 100%;
     }
 }
 
 @media (max-width: 480px) {
     .you-guide-content {
-        width: 85vw !important;
-        max-width: none;
+        width: 100vw !important;
+        max-width: 100%;
     }
 }
 </style>
