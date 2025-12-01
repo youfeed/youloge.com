@@ -24,7 +24,7 @@
 const state = reactive({
 	err: 0, msg: '', list: {}, query: {},
 	search: {
-		q: '1',
+		q: '',
 		offset: 0,
 		limit: 20,
 		estimatedTotalHits: 0
@@ -35,7 +35,7 @@ const onSearch = (isfirst = false) => {
 	isfirst && (state.list = [],state.search.offset = 0,state.search.limit = 20);
 	let { q, offset,limit } = state.search;
 	apiFetch('search/video', {
-		q: q,
+		q: q ?? '*',
 		offset: offset,
 		limit: limit
 	}).then(({hits,...search}) => {

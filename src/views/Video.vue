@@ -12,15 +12,26 @@
           </router-link>
         </div>
       </div>
-      <div class="search">
+      <div class="search hidden md:block">
         <div class="max-w-40">
           <form action="/video/search" method="get">
             <input type="search" name="q" v-model="query.q" placeholder="搜索视频资源" class="border rounded px-2 py-1 w-full"/>
           </form>
         </div>
       </div>
-      <div class="hidden sm:block">
-        <div class="i-tdesign:setting-1 w-6 h-6"></div>
+      <div class="flex items-center gap-2">
+        <div class="hover:bg-gray-2  md:hidden rounded-full flex items-center justify-center p-1">
+          <router-link to="/video/search">
+            <YouIcon name="carbon:search" size="24"></YouIcon>
+          </router-link>
+        </div>
+        <div class="flex gap-2">
+          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" @click="useSetup('setupVideo')">
+            <you-svg name="ic:sharp-add" size="24"></you-svg>
+            <span class="hidden md:block">创建</span>
+          </div>
+          <you-profile></you-profile>
+        </div>
       </div>
     </div>
   </header>

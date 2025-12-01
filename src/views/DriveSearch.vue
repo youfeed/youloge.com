@@ -4,7 +4,7 @@
             <div class="i-line-md:loading-twotone-loop font-size-2xl  w-20 h-20 color-gray-400"></div>
         </div>
     </template>
-    <template v-if="err == 200">
+    <template v-else-if="err == 200">
         <div class="max-w-screen-md mx-auto px-4 sm:px-6 md:px-8 mt-10">
             <div class="block md:hidden">
                 <div class="max-w-full">
@@ -61,7 +61,7 @@ const state = reactive({
 const onSearch = (isClern= false) => {
     isClern && (state.list = [],state.search.offset = 0,state.search.limit = 20);
     let { q, offset,limit } = state.search;
-    apiFetch('search/drive', { q: q, offset: offset, limit: limit }).then(({hits,...search}) => {
+    apiFetch('search/drive', { q: q ?? '*', offset: offset, limit: limit }).then(({hits,...search}) => {
         state.search = search;
         hits.forEach(is=>{
             let findIndex = state.list.findIndex(it=>it.uuid == is.uuid);

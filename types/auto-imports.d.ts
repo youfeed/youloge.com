@@ -85,6 +85,7 @@ declare global {
   const useDuration: typeof import('../src/composables/useDuration.js')['default']
   const useId: typeof import('vue')['useId']
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
+  const useKeyboard: typeof import('../src/composables/useKeyboard.js')['default']
   const useLink: typeof import('vue-router')['useLink']
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
   const useLoge: typeof import('../src/composables/useLoge.js')['default']
@@ -209,6 +210,7 @@ declare module 'vue' {
     readonly useDuration: UnwrapRef<typeof import('../src/composables/useDuration.js')['default']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
+    readonly useKeyboard: UnwrapRef<typeof import('../src/composables/useKeyboard.js')['default']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
     readonly useLoge: UnwrapRef<typeof import('../src/composables/useLoge.js')['default']>

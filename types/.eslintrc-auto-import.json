@@ -122,6 +122,7 @@
     "useLoge": true,
     "useScreen": true,
     "vSize": true,
-    "tinymce": true
+    "tinymce": true,
+    "useKeyboard": true
   }
 }

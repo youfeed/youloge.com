@@ -19,7 +19,7 @@
           </p>
           <!-- 快速统计 -->
           <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-gray-500">
-            <div><span class="font-semibold text-secondary">100M+</span> 分享视频</div>
+            <div @click="useKeyboard({type:'letter',prefix:'XYZ'}).then(res=>console.log(res))"><span class="font-semibold text-secondary">100M+</span> 分享视频</div>
           </div>
         </div>
       </div>

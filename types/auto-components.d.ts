@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VirtualKeyboard: typeof import('./../src/components/VirtualKeyboard.vue')['default']
     YouCarousel: typeof import('./../src/components/YouCarousel.vue')['default']
     YouDialog: typeof import('./../src/components/YouDialog.vue')['default']
     YouDiscuss: typeof import('./../src/components/YouDiscuss.vue')['default']
@@ -18,6 +19,7 @@ declare module 'vue' {
     YouGuide: typeof import('./../src/components/YouGuide.vue')['default']
     YouIcon: typeof import('./../src/components/YouIcon.vue')['default']
     YouImage: typeof import('./../src/components/YouImage.vue')['default']
+    YouKeyboard: typeof import('./../src/components/YouKeyboard.vue')['default']
     YouLoading: typeof import('./../src/components/YouLoading.vue')['default']
     YouMaterial: typeof import('./../src/components/YouMaterial.vue')['default']
     YouMessage: typeof import('./../src/components/YouMessage.vue')['default']
