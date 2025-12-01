@@ -33,10 +33,9 @@ const app = createApp(App), pinia = createPinia();
 app.use(pinia);
 app.directive('dom', vDom);
 app.directive('copy', vCopy);
+app.directive('size', vSize);
 app.directive('login', vLogin);
 app.directive('ripple', vRipple);
-app.directive('size', vSize);
 setupRouter(app)
 app.provide('getRoutes',asyncRoutes);
-app.provide('aaa','123456');
 app.mount('#app')

@@ -165,7 +165,7 @@ onMounted(() => {
     padding: 10px;
     border-radius: 10px;
 }
-y-keyboard::backdrop{
+.y-keyboard::backdrop{
     backdrop-filter: blur(4px);
 }
 .key-item{

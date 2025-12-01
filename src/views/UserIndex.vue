@@ -13,7 +13,7 @@
             </div>
             <div class="">
               <div class="flex ">
-                <div class="font-bold max-w-40 truncate">{{ profile.name }}</div>
+                <div class="font-bold max-w-40 truncate" @click="xyz">{{ profile.name }}</div>
                 <div class="max-w-20 truncate">@{{ profile.user }}</div>
               </div>
               <div class="mt-1"><span class="hidden sm:inline">{{ profile.uuid }} · </span>{{ profile.mail }}<span class="hidden sm:inline"> · {{ profile.created }}</span></div>
@@ -21,7 +21,7 @@
           </div>
           <div class="ml-2">
             <div class="font-size-sm color-gray-400" title="对方不知道你的关注，但你可以获取他的最新动态">
-              <div class="i-tdesign:usergroup-add w-6 h-6"></div>添加好友
+              <you-follow type="account" :uuid="profile.uuid" v-slot="{status}"></you-follow>
             </div>
           </div>
         </div>
@@ -71,6 +71,11 @@ const loadReadme = ()=>{
   }).catch(err=>{
     console.log(err)
   });
+}
+// 
+const stateSubscribe = storeSubscribe();
+const xyz = ()=>{
+  stateSubscribe.update('account')
 }
 onMounted(()=>{
   state.params = route.params;

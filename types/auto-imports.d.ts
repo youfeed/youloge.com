@@ -63,6 +63,7 @@ declare global {
   const shallowReactive: typeof import('vue')['shallowReactive']
   const shallowReadonly: typeof import('vue')['shallowReadonly']
   const shallowRef: typeof import('vue')['shallowRef']
+  const storeFollow: typeof import('../src/stores/storeFollow.js')['default']
   const storeMenu: typeof import('../src/stores/storeMenu.js')['default']
   const storeProfile: typeof import('../src/stores/storeProfile.js')['default']
   const storeSubscribe: typeof import('../src/stores/storeSubscribe.js')['default']
@@ -188,6 +189,7 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
+    readonly storeFollow: UnwrapRef<typeof import('../src/stores/storeFollow.js')['default']>
     readonly storeMenu: UnwrapRef<typeof import('../src/stores/storeMenu.js')['default']>
     readonly storeProfile: UnwrapRef<typeof import('../src/stores/storeProfile.js')['default']>
     readonly storeSubscribe: UnwrapRef<typeof import('../src/stores/storeSubscribe.js')['default']>

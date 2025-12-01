@@ -123,6 +123,7 @@
     "useScreen": true,
     "vSize": true,
     "tinymce": true,
-    "useKeyboard": true
+    "useKeyboard": true,
+    "storeFollow": true
   }
 }

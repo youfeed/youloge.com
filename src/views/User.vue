@@ -15,8 +15,8 @@
       <div class="hidden sm:block">
         <!-- <div class="i-tdesign:setting-1 w-6 h-6"></div> -->
       </div>
-      <div class="search">
-        <div class="i-tdesign:notification w-6 h-6"></div>订阅
+      <div class="search flex items-center gap-2">
+        <you-profile></you-profile>
       </div>
     </div>
   </header>
@@ -36,13 +36,10 @@ const state = reactive({
   profile:{}
 }),{user,profile} = toRefs(state)
 
+
 onMounted(()=>{
-  state.user = route.params.user
+  state.user = route.params.user;
   state.profile = useStorage('profile');
-  onStorage('profile',(res)=>{
-    console.log(res)
-    state.profile = res;
-  });
 });
 </script>
 

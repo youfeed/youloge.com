@@ -16,6 +16,7 @@ declare module 'vue' {
     YouDrawer: typeof import('./../src/components/YouDrawer.vue')['default']
     YouDropdown: typeof import('./../src/components/YouDropdown.vue')['default']
     YouEditor: typeof import('./../src/components/YouEditor.vue')['default']
+    YouFollow: typeof import('./../src/components/YouFollow.vue')['default']
     YouGuide: typeof import('./../src/components/YouGuide.vue')['default']
     YouIcon: typeof import('./../src/components/YouIcon.vue')['default']
     YouImage: typeof import('./../src/components/YouImage.vue')['default']
