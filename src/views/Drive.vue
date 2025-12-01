@@ -21,7 +21,7 @@
       </div>
       <div class="flex items-center gap-2">
         <div class="hover:bg-gray-2  md:hidden rounded-full flex items-center justify-center p-1">
-          <router-link to="/drive/search?q=*">
+          <router-link to="/drive/search">
             <YouIcon name="carbon:search" size="24"></YouIcon>
           </router-link>
         </div>

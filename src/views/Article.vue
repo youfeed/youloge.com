@@ -1,5 +1,5 @@
 <template>
-  <header class="h-14 px-2 border-b border-slate-900/10 border-b-solid sticky top-0 bg-[length:4px_4px]"
+  <header class="h-14 px-2 border-b border-slate-900/10 border-b-solid sticky top-0 bg-[length:4px_4px] z-10"
     style="backdrop-filter: saturate(50%) blur(4px);">
     <!-- 侧边按钮 Loge 用户/内容 --- 搜索 用户 -->
     <div class="w-full flex justify-between items-center h-full">
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <router-link to="/drive/search?q=*" class="md:hidden">
+        <router-link to="/drive/search" class="md:hidden">
           <you-svg name="carbon:search" size="24"></you-svg>
         </router-link>
         <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer"
