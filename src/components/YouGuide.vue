@@ -42,8 +42,8 @@
                     <div class="menu-section">
                         <h3 class="text-gray-600 text-sm font-medium mb-2">订阅</h3>
                         <ul class="menu-list">
-                            <li class="menu-item" @click="onMenuClick('my-personal')">
-                                <you-svg name="carbon:user-avatar" size="10" class="mr-2"></you-svg>个人中心
+                            <li class="menu-item" @click="onMenuClick('my-personal')" v-for="account in stateSubscribe.account">
+                                <img :src="useImage(account.avatar)" class="w-6 h-6 rounded-full mr-2">{{ account.name || 'Unnamed' }}
                             </li>
                         </ul>
                     </div>
@@ -92,6 +92,8 @@
 <!-- guide -->
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue';
+// 订阅 store
+const stateSubscribe = storeSubscribe()
 // 使用 useTemplateRef 替代普通 ref
 const dialog = useTemplateRef('dialog');
 const content = useTemplateRef('content');
@@ -172,6 +174,8 @@ watch(modelValue, (newVal) => {
 });
 
 onMounted(() => {
+    //
+    console.log('stateSubscribe', stateSubscribe)
     // 初始状态不自动打开
     if (modelValue.value) {
         onShow();

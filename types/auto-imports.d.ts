@@ -189,7 +189,6 @@ declare module 'vue' {
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
-    readonly storeFollow: UnwrapRef<typeof import('../src/stores/storeFollow.js')['default']>
     readonly storeMenu: UnwrapRef<typeof import('../src/stores/storeMenu.js')['default']>
     readonly storeProfile: UnwrapRef<typeof import('../src/stores/storeProfile.js')['default']>
     readonly storeSubscribe: UnwrapRef<typeof import('../src/stores/storeSubscribe.js')['default']>
