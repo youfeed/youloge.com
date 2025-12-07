@@ -50,13 +50,11 @@ const state = reactive({
   user:'',
   name:'',
   mail:'',
-  query:{},
-  profile:{}
-}),{uuid,user,name,query,profile} = toRefs(state);
+  query:{}
+}),{uuid,user,name,query} = toRefs(state);
 
 onMounted(()=>{
   state.query = route.query;
-  state.profile = useStorage('profile');
 
 });
 </script>

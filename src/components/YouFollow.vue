@@ -2,15 +2,15 @@
     <div class="you-follow select-none">
         <slot v-if="stateProfile.uuid" :status="status">
             <template v-if="status == -1">
-                <div class="bg-green-500 text-white rounded-full px-2 py-1 cursor-pointer">正在处理</div>
+                <span class="bg-green-500 text-white rounded-full px-2 py-1 cursor-pointer">正在处理</span>
             </template>
             <template v-else-if="status == 0">
-                <div class="bg-blue-500 text-white rounded-full px-2 py-1 cursor-pointer"
-                    @click="stateSubscribe.toggle('account', props.uuid)">关注</div>
+                <span class="bg-blue-500 text-white rounded-full px-2 py-1 cursor-pointer"
+                    @click="stateSubscribe.toggle('account', props.uuid)">关注</span>
             </template>
             <template v-else-if="status == 1">
-                <div class="border-blue-500 border-2 text-blue-500 rounded-full px-2 py-1 hover:border-red-500 hover:text-red-500 cursor-pointer"
-                    @click="stateSubscribe.toggle('account', props.uuid)">正在关注</div>
+                <span class="border-blue-500 border-2 text-blue-500 rounded-full px-2 py-1 hover:border-red-500 hover:text-red-500 cursor-pointer"
+                    @click="stateSubscribe.toggle('account', props.uuid)">正在关注</span>
             </template>
         </slot>
         <div v-else v-login="()=>{}" class="bg-gray-500 text-white rounded-full px-2 py-1 cursor-pointer">请登录</div>

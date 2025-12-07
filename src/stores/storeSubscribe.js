@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import apiBatch from "../composables/apiBatch";
 
 /**
@@ -184,7 +184,10 @@ export default defineStore('subscribe', () => {
     onMounted(() => {
         console.log('subscribe', stateProfile);
     });
-
+    watch(() => stateProfile.uuid, (newVal, oldVal) => {
+        console.log('subscribe.watch', newVal, oldVal);
+        load();
+    });
     return {
         ...toRefs(state),
         filter,
