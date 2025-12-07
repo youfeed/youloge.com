@@ -37,7 +37,7 @@
                             </div>
                             <div class="flex flex-col gap-1">
                                 <div class="font-semibold text-gray-700">{{ data.account?.name }}@{{ data.account?.user }}</div>
-                                <you-follow type="video" :uuid="data.uuid" v-slot="{status}"></you-follow>
+                                <you-follow type="account" :uuid="data.account.uuid" v-slot="{status}"></you-follow>
                             </div>
                         </div>
                         
