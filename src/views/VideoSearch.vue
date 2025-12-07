@@ -6,24 +6,29 @@
 	</template>
 	<template v-else-if="err == 200">
 		<div class="max-w-2xl mx-auto px-4 sm:px-6 md:px-8">
-			<template v-for="item in list" :key="item.uuid">
-				<div class="border-b my-4">
-					<div class="flex items-center gap-2">
-						<router-link :to="`/video/${item.uuid}`">
-							<img :src="useImage(item.poster,120)" :alt="item.title">
-						</router-link>
-						<div class="flex-1">
-							<div class="font-bold text-blue-400">
+			<div>约有 {{search.estimatedTotalHits}} 条结果</div>
+			<div class="lists border-gray-200 rounded-sm border-1 mt-5">
+				<template v-for="item in list" :key="item.uuid">
+					<div class="border-b border-gray-200 my-4">
+						<div class="flex items-center gap-2 p-2">
+							<div>
 								<router-link :to="`/video/${item.uuid}`">
-									{{ item.title }}
+									<img :src="useImage(item.poster,120)" :alt="item.title" class="w-20 h-20 rounded-sm">
 								</router-link>
 							</div>
-							<div>{{ useBytes(item.views) }}</div>
-							<div>{{ item.description }}</div>
+							<div class="flex-1">
+								<div class="font-bold text-blue-400">
+									<router-link :to="`/video/${item.uuid}`">
+										{{ item.title }}
+									</router-link>
+								</div>
+								<div>{{ useBytes(item.views) }}</div>
+								<div>{{ item.description }}</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
+				</template>
+			</div>
 		</div>
 	</template>
 	<template v-else>
@@ -54,14 +59,12 @@ const onSearch = (isfirst = false) => {
 		offset: offset,
 		limit: limit
 	}).then(({hits,...search}) => {
-		console.log(888,hits)
 		state.search = search;
         hits.forEach(is=>{
             let index = state.list.findIndex(it=>it.uuid == is.uuid);
             index == -1 && state.list.push(is)
         })
 	}).catch(err => {
-		console.log(888,err)
 		state.err = err.code;
 		useMessage().error(err.message)
 	});
