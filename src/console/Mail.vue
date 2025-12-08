@@ -17,7 +17,7 @@
             <div>
                 <template v-for="item in list" :key="item.uuid">
                     <div class="mb-4 hover:bg-gray-100 p-2" @click="onDetail(item)">
-                        {{ item.subject }}.{{ item.size }}
+                        {{ item.subject }}.{{ useBytes(item.size) }}
                     </div>
                 </template>
             </div>
