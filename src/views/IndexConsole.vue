@@ -12,37 +12,14 @@
         </button> -->
         </button>
       </div>
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-4">
         <div class="hidden md:flex  items-center gap-3">
           <router-link to="/article">新闻</router-link>
           <router-link to="/video">视频</router-link>
           <router-link to="/drive">云盘</router-link>
           <router-link to="/goods">购物</router-link>
         </div>
-        <you-dropdown>
-          <img :src="useImage(stateProfile.avatar,'80')" width="35" class="rounded-full" />
-          <template #panel>
-            <div class="p-2 flex flex-col gap-2 w-40">
-              <div class="bg-gray-50">
-                <div>{{ stateProfile.name }}</div>
-                <div class="font-2">@{{ stateProfile.user }}</div>
-                <div>{{ stateProfile.mail }}</div>
-              </div>
-              <div>
-                <span class="i-tdesign:logout"></span>
-                钱包零钱  
-              </div>
-              <div>
-                <span class="i-tdesign:logout"></span>
-                切换账号  
-              </div>
-              <div @click="onLogout">
-                <span class="i-tdesign:logout"></span>
-                退出登录  
-              </div>
-            </div>
-          </template>
-        </you-dropdown>
+        <you-profile></you-profile>
       </div>
     </div>
   </header>

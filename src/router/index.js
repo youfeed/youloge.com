@@ -167,7 +167,7 @@ export const setupRouter = (app) => {
     // whitelist.includes(to.name) || useAuth() ? next() : next({ name: 'login' });
     document.title = to.meta.title ? to.meta.title : 'Youloge.com';
     next();
-  })
+  });
   app.use(router)
 }
 export default router

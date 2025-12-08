@@ -45,7 +45,7 @@
           <li class="menu-item text-red-500" @click="onMenuClick('logout')">
             <you-svg name="carbon:logout" class="mr-2"></you-svg>切换账户
           </li>
-          <li class="menu-item text-red-500" @click="onMenuClick('logout')">
+          <li class="menu-item text-red-500" @click="stateProfile.logout">
             <you-svg name="carbon:logout" class="mr-2"></you-svg>退出登录
           </li>
         </ul>

@@ -26,7 +26,7 @@
           </router-link>
         </div>
         <div class="flex gap-2">
-          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" @click="useSetup('setupVideo')">
+          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" v-login="()=>useSetup('setupVideo')">
             <you-svg name="ic:sharp-add" size="24"></you-svg>
             <span class="hidden md:block">创建</span>
           </div>

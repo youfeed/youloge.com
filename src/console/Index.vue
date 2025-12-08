@@ -2,24 +2,24 @@
     <div class="max-w-7xl mx-auto p-4">
         <div class="profile flex items-center mb-4 relative bg-light p-2 rounded-sm">
             <div class="hover:scale-90 cursor-pointer" @click="chooseAvatar">
-                <img :src="useImage(profile.avatar, '80')" alt="avatar" class="rounded-full w-12 h-12 border" />
+                <img :src="useImage(stateProfile.avatar, '80')" alt="avatar" class="rounded-full w-12 h-12 border" />
             </div>
             <div class="ml-2">
                 <div class="text-sm font-bold flex items-center">
                     <div class="flex items-center ">
-                        <div class="name">{{ profile.name }} </div>
+                        <div class="name">{{ stateProfile.name }} </div>
                         <div class="flex items-center cursor-pointer" @click="changeName">
                             <YouIcon name="tdesign:edit" color="#2196F3" />
                         </div>
                     </div>
                     <div class="flex items-center">
-                        <div class="user max-w-40 truncate">@{{ profile.user }} </div>
+                        <div class="user max-w-40 truncate">@{{ stateProfile.user }} </div>
                         <span class="flex items-center cursor-pointer" @click="changeUser">
                             <YouIcon name="tdesign:edit" color="#2196F3" />
                         </span>
                     </div>
                 </div>
-                <div class="text-sm text-gray-400">{{ profile.uuid }} · {{ profile.mail }}</div>
+                <div class="text-sm text-gray-400">{{ stateProfile.uuid }} · {{ stateProfile.mail }}</div>
             </div>
             <div class="absolute right-1 top-1 text-sm text-blue-500 cursor-pointer">V</div>
         </div>
@@ -80,12 +80,9 @@
 </template>
 
 <script setup>
-import { usePrompt } from '../composables/usePrompt';
-import useSetup from '../composables/useSetup';
-
+const stateProfile = storeProfile();
 const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
-    profile: {},
     mode: "preview",
     html: '', prismKey: 0,
 }), { profile, mode, html, prismKey } = toRefs(state);
@@ -93,7 +90,7 @@ const state = reactive({
 
 // 获得用户介绍
 const getReadme = () => {
-    let { uuid } = state.profile;
+    let { uuid } = stateProfile;
     let t = Date.now();
     fetch(`https://cdn.youloge.com/readme/${uuid}?t=${t}`).then(r => {
         if (r.ok) {
@@ -110,7 +107,7 @@ const getReadme = () => {
 // 保存介绍
 const saveReadme = () => {
     let load = useLoading()
-    let { uuid } = state.profile;
+    let { uuid } = stateProfile;
     let bolb = new Blob([state.html], { type: 'text/html' });
     apiFetch('account/readme', { size: bolb.size }).then(res => {
         let form = new FormData();
@@ -135,7 +132,7 @@ const saveReadme = () => {
 const chooseAvatar = () => {
     useMaterial({ type: 'image', limit: 1 }).then(([item]) => {
         apiFetch('account/avatar', { avatar: item.etag }).then(res => {
-            state.profile.avatar = item.etag;
+            stateProfile.avatar = item.etag;
             useMessage().success('保存成功');
             useStorage('profile', { avatar: item.etag });
         }).catch(err => {
@@ -145,7 +142,7 @@ const chooseAvatar = () => {
 }
 // 修改别称
 const changeUser = () => {
-    let { user } = state.profile;
+    let { user } = stateProfile;
     usePrompt({
         title: '修改别称',
         placeholder: '字母+数字组合',
@@ -153,7 +150,7 @@ const changeUser = () => {
         pattern: '[A-Za-z0-9]{2,12}'
     }).then(({ user }) => {
         apiFetch('account/user', { user: user }).then(result => {
-            state.profile.user = user
+            stateProfile.user = user
             useMessage().success('修改成功');
             useStorage('profile', { user: user });
         }).catch(err => {
@@ -165,10 +162,7 @@ const changeUser = () => {
 }
 // 修改昵称
 const changeName = () => {
-    let { name } = state.profile;
-    useSetup('setupBilling').then(res => {
-        console.log(res)
-    })
+    let { name } = stateProfile;
     usePrompt({
         title: '修改昵称',
         placeholder: '2-12个字',
@@ -176,7 +170,7 @@ const changeName = () => {
         pattern: '.{2,12}'
     }).then(({ name }) => {
         apiFetch('account/name', { name: name }).then(result => {
-            state.profile.name = name
+            stateProfile.name = name
             useMessage().success('修改成功');
             useStorage('profile', { name: name });
         }).catch(err => {
@@ -188,9 +182,6 @@ const changeName = () => {
 }
 //
 onMounted(() => {
-    state.profile = useAuth();
-    const profile = useAuth();
-    // console.log('profile',profile)
     getReadme();
 });
 </script>

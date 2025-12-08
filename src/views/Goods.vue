@@ -45,10 +45,6 @@ onMounted(()=>{
   state.query = route.query;
   state.user = route.params.user
   state.profile = useStorage('profile');
-  onStorage('profile',(res)=>{
-    console.log(res)
-    state.profile = res;
-  });
 });
 </script>
 

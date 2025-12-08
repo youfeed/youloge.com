@@ -59,6 +59,7 @@ const state = reactive({
         integral:0
     }
 }), { err, msg, data, overage,charge } = toRefs(state);
+const stateProfile = storeProfile();
 // 获取余额
 const loadOverage = () => {
     let load = useLoading();
@@ -117,7 +118,6 @@ const showQrcode = (href) => {
 }
 
 onMounted(() => {
-    state.profile = useAuth();
     loadOverage();
 });
 </script>

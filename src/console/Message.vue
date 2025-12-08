@@ -23,7 +23,7 @@
             <!-- 我发送的 -->
             <template v-if="item.sender == message.item.master">
               <div class="self-end bg-indigo-300 max-w-3/5 p-2 rounded">
-                <div>{{ profile.name }}</div>
+                <div>{{ stateProfile.name }}</div>
                 <div>{{ item.type }}</div>
                 <div>{{ item.payload.content }}</div>
               </div>
@@ -46,12 +46,14 @@
 </template>
 
 <script setup>
+
 const props = defineProps(['params']),emit = defineEmits(['jump']);
 const state = reactive({
-  err:0,msg:'',data:{},profile:{},
+  err:0,msg:'',data:{},
   cookies:{},cookiesList:[],
   message:{},messageList:[]
-}),{err,msg,data,list,profile,cookies,cookiesList,message,messageList} = toRefs(state);
+}),{err,msg,data,list,cookies,cookiesList,message,messageList} = toRefs(state);
+const stateProfile = storeProfile();
 // 会话列表
 const getCokies = ()=>{
   let {next_cursor} = state.cookies;
@@ -77,7 +79,6 @@ const onCookies = (item)=>{
   getMessage();
 }
 onMounted(()=>{
-    state.profile = useAuth();
     getCokies();
 })
 onActivated(() => {
@@ -90,11 +91,7 @@ onDeactivated(() => {
   console.log(100,'onDeactivated')
   // 在从 DOM 上移除、进入缓存
   // 以及组件卸载时调用
-})
-// 路由跳转(动态组件内部跳转)
-const navigateTo = (path,params='')=>{
-    emit('jump',path,params);
-}
+});
 </script>
 
 <style>

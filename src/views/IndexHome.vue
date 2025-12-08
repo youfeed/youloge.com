@@ -68,28 +68,32 @@
                 </div>
             </div>
             <!-- 宫格卡片 -->
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid md:grid-cols-2 gap-8 px-4">
                 <!-- 特性卡片 1 -->
                 <div class="bg-white p-8 rounded-lg border border-gray-200 card-hover">
                     <div class="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-6">
-                        <i class="fa fa-code text-primary text-xl"></i>
+                        <YouIcon name="carbon:code" size="40" color="primary"></YouIcon>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-secondary">API接口</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-secondary">
+                        <a href="https://s.apifox.cn/7302e0d5-18da-4730-adc5-4b532b346923" target="_blank">API接口&#8594;</a>
+                    </h3>
                     <p class="text-gray-600">
-                        平台所有接口、服务API请求方式
+                        开放所有接口、服务API请求方式
                     </p>
-                    <a href="https://s.apifox.cn/7302e0d5-18da-4730-adc5-4b532b346923" target="_blank">查看</a>
                 </div>
                 <!-- 特性卡片 2 -->
                 <div class="bg-white p-8 rounded-lg border border-gray-200 card-hover">
                     <div class="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mb-6">
-                        <i class="fa fa-users text-primary text-xl"></i>
+                        <YouIcon name="carbon:mac-command" size="40" color="primary"></YouIcon>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3 text-secondary">开放组件</h3>
+                    <h3 class="text-xl font-semibold mb-3 text-secondary">
+                        <a href="https://docs.youloge.com/" target="_blank">
+                            文档中心&#8594;
+                        </a>
+                    </h3>
                     <p class="text-gray-600">
                         平台配套组件服务
                     </p>
-                    <a href="https://docs.youloge.com/" target="_blank">查看</a>
                 </div>
                 <!-- 特性卡片 4 -->
             </div>

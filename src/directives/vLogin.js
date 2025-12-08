@@ -16,13 +16,13 @@ export default {
                 stateProfile.login(profile);
                 value();
             }).catch(err=>{
-                useMessage().error(err.msg)
+                console.log(err)
+                useMessage().error(err.message)
             });
         }
         el._eventName = eventName;
         el._eventFunc = eventHandle;
         el.addEventListener(eventName,eventHandle);
-        
     },
     unmounted(el){
         const {_eventName,_eventFunc} = el;
