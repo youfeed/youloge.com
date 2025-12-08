@@ -32,8 +32,11 @@
                     </div>
                 </div>
             </div>
+            <div class="subject">
+                {{ mailInfo.subject }} {{ mailInfo.from }}
+            </div>
             <div>
-                <div v-html="mailInfo.htmlText"></div>
+                <div v-html="mailInfo.html"></div>
             </div>
         </template>
     </div>
@@ -66,10 +69,21 @@ const loadMailist = () => {
 const onDetail = (item) => {
     state.mode = 'detail';
     state.detail = item;
-    fetch(`https://mail.youloga.com`).then(r => r.text()).then(text => {
-        parseMail(text)
-        console.log(mailInfo)
-    })
+    
+    // 使用实际的邮件获取接口，传入邮件ID
+    fetch(`https://mail.youloga.com`).then(response => {
+        if (!response.ok) {
+            throw new Error(`请求失败：${response.status} ${response.statusText}`);
+        }
+        return response.text();
+    }).then(text => {
+        parseMail(text);
+        console.log('解析后的邮件信息:', mailInfo.value);
+        console.log('发件人:', mailInfo.value.from);
+        console.log('收件人:', mailInfo.value.to);
+    }).catch(error => {
+        console.error('获取邮件失败:', error);
+    });
 }
 // 下载邮件
 

@@ -1,209 +1,307 @@
 import { ref } from 'vue'
 
 /**
- * 邮件解析 Composable
- * 功能：解析邮件原始正文，提取纯文本和HTML内容
+ * 邮件解析 Composable - 基于专业EML解析库模式重写
  */
 
 /**
- * 解码邮件头中的编码字符串（如 =?utf-8?B?WW91bG9nZQ==?=）
- * @param {string} str 待解码的字符串
- * @returns {string} 解码后的字符串
+ * 解码RFC 2047编码的邮件头
+ * @param {string} value 邮件头值
+ * @returns {string} 解码后的值
  */
-const decodeHeader = (str) => {
-  if (!str) return '';
-  
-  // 匹配 =?charset?B/Q?content?= 格式
-  const match = str.match(/=\?([\w-]+)\?(B|Q)\?([^\?]+)\?=/i);
-  if (!match) return str;
-  
-  const [, charset, encoding, content] = match;
-  
-  try {
-    if (encoding.toUpperCase() === 'B') {
-      // Base64 解码
-      return decodeURIComponent(escape(atob(content)));
-    } else if (encoding.toUpperCase() === 'Q') {
-      // Quoted-Printable 解码
-      return decodeURIComponent(content.replace(/_/g, ' ').replace(/=([0-9A-F]{2})/gi, (_, hex) => `%${hex}`));
+const decodeHeaderValue = (value) => {
+  if (!value) return ''
+
+  return value.replace(/=\?([^?]+)\?([BQbq])\?([^?]+)\?=/gi, (match, charset, encoding, encodedText) => {
+    try {
+      if (encoding.toUpperCase() === 'B') {
+        const bytes = Uint8Array.from(atob(encodedText), c => c.charCodeAt(0))
+        return new TextDecoder('utf-8').decode(bytes)
+      } else if (encoding.toUpperCase() === 'Q') {
+        return decodeURIComponent(encodedText.replace(/_/g, '%20').replace(/=([0-9A-F]{2})/gi, (_, hex) => `%${hex}`))
+      }
+    } catch (e) {
+      console.warn('邮件头解码失败:', e)
     }
-  } catch (e) {
-    console.warn('邮件头解码失败:', e);
-  }
-  
-  return content;
-};
+    return match
+  })
+}
 
 /**
- * 提取邮件正文内容
- * @param {string} rawMail 原始邮件文本
- * @returns {object} 包含纯文本和HTML内容的对象
+ * 解码内容根据传输编码
+ * @param {string} content 原始内容
+ * @param {string} encoding 传输编码
+ * @returns {string} 解码后的内容
  */
-const extractBodyContent = (rawMail) => {
-  if (!rawMail) return { plain: '', html: '' };
-  
-  const result = { plain: '', html: '' };
-  
-  // 查找邮件内容边界
-  const bodyMatch = rawMail.match(/\r?\n\r?\n([\s\S]*)/);
-  if (!bodyMatch) return result;
-  
-  const body = bodyMatch[1];
-  
-  // 检查是否为MIME格式
-  const boundaryMatch = rawMail.match(/boundary="([^"]+)"/i);
-  
-  if (boundaryMatch) {
-    // MIME多部分邮件处理
-    const boundary = boundaryMatch[1];
-    const parts = body.split(`--${boundary}`).filter(part => part.trim());
-    
-    parts.forEach(part => {
-      const contentTypeMatch = part.match(/content-type:\s*text\/(\w+)/i);
-      const encodingMatch = part.match(/content-transfer-encoding:\s*(\w+)/i);
-      
-      if (!contentTypeMatch) return;
-      
-      const contentType = contentTypeMatch[1].toLowerCase();
-      const encoding = encodingMatch?.[1]?.toLowerCase();
-      
-      // 提取实际内容（跳过空行和头部）
-      const contentMatch = part.match(/\r?\n\r?\n([\s\S]*)/);
-      const content = contentMatch ? contentMatch[1].trim() : '';
-      
-      // 根据编码解码
-      let decodedContent = content;
-      if (encoding === 'base64') {
-        try {
-          decodedContent = decodeURIComponent(escape(atob(content)));
-        } catch (e) {
-          console.warn('Base64解码失败:', e);
-        }
-      }
-      
-      // 存储到结果对象
-      if (contentType === 'plain') {
-        result.plain = decodedContent;
-      } else if (contentType === 'html') {
-        result.html = decodedContent;
-      }
-    });
+const decodeContent = (content, encoding) => {
+  if (!encoding) return content
+
+  const enc = encoding.toLowerCase()
+  if (enc === 'base64') {
+    try {
+      // 移除所有空白字符后解码
+      const cleanContent = content.replace(/\s/g, '')
+      const bytes = Uint8Array.from(atob(cleanContent), c => c.charCodeAt(0))
+      return new TextDecoder('utf-8').decode(bytes)
+    } catch (e) {
+      console.warn('Base64解码失败:', e)
+      return content
+    }
+  } else if (enc === 'quoted-printable') {
+    return content
+      .replace(/=\r?\n/g, '') // 移除软换行
+      .replace(/=([0-9A-F]{2})/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)))
+  }
+
+  return content
+}
+
+/**
+ * 清理和标准化邮箱地址
+ * @param {string} address 邮件地址
+ * @returns {string} 清理后的邮箱地址
+ */
+const cleanEmailAddress = (address) => {
+  if (!address) return ''
+
+  // 先解码
+  address = decodeHeaderValue(address)
+
+  // 提取邮箱地址
+  const emailMatch = address.match(/<([^>]+)>/)
+  if (emailMatch) {
+    return emailMatch[1]
+  }
+
+  // 直接匹配邮箱格式
+  const directMatch = address.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/)
+  if (directMatch) {
+    return directMatch[0]
+  }
+
+  return address.trim()
+}
+
+/**
+ * 解析MIME部分
+ * @param {string} partContent MIME部分内容
+ * @returns {object} 解析结果
+ */
+const parseMimePart = (partContent) => {
+  const lines = partContent.split('\n')
+  const partHeaders = {}
+  let partBodyStart = 0
+  let currentHeader = ''
+
+  // 解析部分头部
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+
+    if (line === '') {
+      partBodyStart = i + 1
+      break
+    }
+
+    if (line.match(/^[A-Za-z-]+:/)) {
+      const colonIndex = line.indexOf(':')
+      const key = line.substring(0, colonIndex).toLowerCase().trim()
+      const value = line.substring(colonIndex + 1).trim()
+      partHeaders[key] = value
+      currentHeader = key
+    } else if (line.match(/^\s+/) && currentHeader) {
+      partHeaders[currentHeader] += ' ' + line.trim()
+    }
+  }
+
+  const partBody = lines.slice(partBodyStart).join('\n').trim()
+  const contentType = partHeaders['content-type'] || ''
+  const contentTransferEncoding = partHeaders['content-transfer-encoding'] || ''
+
+  // 检查是否为附件
+  const isAttachment = partHeaders['content-disposition']?.toLowerCase().includes('attachment')
+
+  if (isAttachment) {
+    return { isAttachment: true }
   } else {
-    // 简单文本邮件处理
-    const encodingMatch = rawMail.match(/content-transfer-encoding:\s*(\w+)/i);
-    const encoding = encodingMatch?.[1]?.toLowerCase();
-    
-    let decodedContent = body;
-    if (encoding === 'base64') {
-      try {
-        decodedContent = decodeURIComponent(escape(atob(body)));
-      } catch (e) {
-        console.warn('Base64解码失败:', e);
-      }
-    }
-    
-    // 默认为纯文本
-    result.plain = decodedContent;
-    
-    // 如果内容包含HTML标签，也存储到html字段
-    if (/<[a-z][\s\S]*>/i.test(decodedContent)) {
-      result.html = decodedContent;
+    // 文本内容
+    const decodedContent = decodeContent(partBody, contentTransferEncoding)
+    return {
+      content: decodedContent,
+      contentType: contentType.split(';')[0].trim(),
+      isAttachment: false
     }
   }
-  
-  return result;
-};
+}
 
 /**
- * 解析邮件基本信息
- * @param {string} rawMail 原始邮件文本
- * @returns {object} 邮件头信息
+ * 解析MIME多部分内容
+ * @param {string} body 邮件正文
+ * @param {string} contentType Content-Type头
+ * @returns {object} 解析结果
  */
-const parseHeaders = (rawMail) => {
-  const lines = rawMail.split('\n');
-  const headers = {
-    from: '',
-    to: '',
-    subject: '',
-    date: ''
-  };
+const parseMultipart = (body, contentType) => {
+  const result = { plain: '', html: '' }
   
-  lines.forEach(line => {
-    const trimmedLine = line.trim();
-    if (!trimmedLine) return;
-    
-    if (trimmedLine.toLowerCase().startsWith('from:')) {
-      headers.from = decodeHeader(trimmedLine.replace(/^from:\s*/i, ''));
-    } else if (trimmedLine.toLowerCase().startsWith('to:')) {
-      headers.to = decodeHeader(trimmedLine.replace(/^to:\s*/i, ''));
-    } else if (trimmedLine.toLowerCase().startsWith('subject:')) {
-      headers.subject = decodeHeader(trimmedLine.replace(/^subject:\s*/i, ''));
-    } else if (trimmedLine.toLowerCase().startsWith('date:')) {
-      const dateStr = trimmedLine.replace(/^date:\s*/i, '');
-      try {
-        headers.date = new Date(dateStr).toLocaleString();
-      } catch (e) {
-        headers.date = dateStr; // 解析失败则使用原始字符串
+  const boundaryMatch = contentType.match(/boundary=([^;\s]+)/i)
+  if (!boundaryMatch) return result
+
+  const boundary = boundaryMatch[1].replace(/['"]/g, '')
+
+  // 分割MIME部分
+  const parts = body.split(new RegExp(`--${boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'g'))
+
+  parts.forEach(part => {
+    part = part.trim()
+    if (!part || part === '--' || part.startsWith('--')) return
+
+    const partResult = parseMimePart(part)
+    if (partResult && !partResult.isAttachment) {
+      if (partResult.contentType?.toLowerCase().includes('text/html')) {
+        result.html = partResult.content
+      } else if (partResult.contentType?.toLowerCase().includes('text/plain')) {
+        result.plain = partResult.content
       }
     }
-  });
-  
-  return headers;
-};
+  })
+
+  return result
+}
 
 /**
- * 邮件解析 Composable
- * 功能：解析邮件正文，提取纯文本和HTML内容
- * @returns {object} 响应式邮件信息 + 解析方法
+ * Composables：邮件解析工具
  */
 export const useMailParser = () => {
-  // 响应式存储解析后的邮件信息
   const mailInfo = ref({
-    from: '',
-    to: '',
-    subject: '',
-    date: '',
-    plainText: '',
-    htmlText: '',
-    raw: '',
-    error: ''
-  });
-  
+    from: '',        // 发件人
+    to: '',          // 收件人
+    subject: '',     // 主题
+    date: '',        // 发送日期
+    plain: '',       // 纯文本正文
+    html: '',        // HTML正文
+    raw: '',         // 原始文本
+    error: ''        // 错误信息
+  })
+
   /**
-   * 解析邮件正文
+   * 核心解析方法
    * @param {string} rawMail 原始邮件文本
    */
   const parseMail = (rawMail) => {
     try {
-      mailInfo.value.error = '';
+      mailInfo.value.error = ''
       
       if (!rawMail) {
-        mailInfo.value = { ...mailInfo.value, plainText: '', htmlText: '', raw: '' };
-        return;
+        mailInfo.value = { ...mailInfo.value, from: '', to: '', subject: '', date: '', plain: '', html: '', raw: '' }
+        return
       }
+
+      console.log('开始解析邮件...')
+
+      // 步骤1：分割行并解析邮件头
+      const lines = rawMail.split(/\r?\n/)
+      const headers = {}
+      let bodyStart = 0
+      let currentHeader = ''
+
+      // 解析邮件头（支持多行）
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i]
+
+        if (line.trim() === '') {
+          bodyStart = i + 1
+          break
+        }
+
+        if (line.match(/^[A-Za-z-]+:/)) {
+          const colonIndex = line.indexOf(':')
+          const key = line.substring(0, colonIndex).toLowerCase().trim()
+          const value = line.substring(colonIndex + 1).trim()
+          headers[key] = value
+          currentHeader = key
+        } else if (line.match(/^\s+/) && currentHeader) {
+          // 续行处理
+          headers[currentHeader] += ' ' + line.trim()
+        }
+      }
+
+      console.log('邮件头解析完成:', headers)
+
+      // 步骤2：提取关键信息
+      const from = cleanEmailAddress(headers.from)
+      const to = cleanEmailAddress(headers.to)
+      const subject = decodeHeaderValue(headers.subject)
+      let date = headers.date || ''
       
-      // 解析邮件头
-      const headers = parseHeaders(rawMail);
+      try {
+        date = new Date(date).toLocaleString()
+      } catch (e) {
+        console.warn('日期解析失败:', e)
+      }
+
+      // 步骤3：解析正文
+      const body = lines.slice(bodyStart).join('\n')
+      const contentType = headers['content-type'] || ''
       
-      // 提取正文内容
-      const { plain, html } = extractBodyContent(rawMail);
-      
-      // 更新响应式数据
+      let plain = '', html = ''
+
+      if (contentType.toLowerCase().includes('multipart')) {
+        const result = parseMultipart(body, contentType)
+        plain = result.plain
+        html = result.html
+      } else {
+        // 单部分邮件
+        const encoding = headers['content-transfer-encoding'] || ''
+        const decodedBody = decodeContent(body, encoding)
+
+        if (contentType.toLowerCase().includes('text/html')) {
+          html = decodedBody
+        } else {
+          plain = decodedBody
+        }
+      }
+
+      console.log('邮件解析结果:', { from, to, subject, date, hasPlain: !!plain, hasHTML: !!html })
+
+      // 步骤4：更新响应式数据
       mailInfo.value = {
-        ...headers,
-        plainText: plain,
-        htmlText: html,
-        raw: rawMail,
-        error: ''
-      };
+        ...mailInfo.value,
+        from,
+        to,
+        subject,
+        date,
+        plain,
+        html,
+        raw: rawMail
+      }
+
     } catch (e) {
-      mailInfo.value.error = `解析失败：${e.message}`;
-      console.error('邮件解析异常:', e);
+      mailInfo.value.error = `解析失败：${e.message}`
+      console.error('邮件解析异常:', e)
     }
-  };
-  
+  }
+
+  /**
+   * 下载并解析邮件
+   * @param {string} url 邮件下载接口地址
+   */
+  const fetchAndParseMail = async (url) => {
+    try {
+      mailInfo.value.error = ''
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`请求失败：${response.status} ${response.statusText}`)
+      }
+      const rawMail = await response.text()
+      parseMail(rawMail)
+    } catch (e) {
+      mailInfo.value.error = `下载/解析失败：${e.message}`
+      console.error('邮件下载异常:', e)
+    }
+  }
+
   return {
-    mailInfo,  // 响应式邮件信息
-    parseMail  // 解析邮件方法
-  };
-};
+    mailInfo,
+    parseMail,
+    fetchAndParseMail
+  }
+}
