@@ -33,23 +33,31 @@
                 </div>
             </div>
             <div class="subject">
-                {{ mailInfo.subject }} {{ mailInfo.from }}
+                {{ eml.subject }} {{ eml.from }}
             </div>
             <div class="mx-auto max-w-screen-md">
-                <div v-html="mailInfo.html"></div>
+                <div v-html="eml.html"></div>
             </div>
         </template>
     </div>
 </template>
 
 <script setup>
-const { mailInfo, parseMail } = useMailParser();
+
 const state = reactive({
     err: 0, msg: '',
     mode: 'list', // list:邮件列表,detail:邮件详情
-    detail: {},
+    detail: {},eml:{
+        from:'',
+        to:'',
+        subject:"",
+        date:'',
+        plain:'',
+        html:'',
+        raw: ''
+    },
     list: [], cursor: [],
-}), { err, msg, mode, cursor, list } = toRefs(state);
+}), { err, msg, mode, cursor, list,eml } = toRefs(state);
 // 返回列表
 const returnList = () => {
     state.mode = 'list';
@@ -76,11 +84,12 @@ const onDetail = (item) => {
             throw new Error(`请求失败：${response.status} ${response.statusText}`);
         }
         return response.text();
-    }).then(text => {
-        parseMail(text);
-        console.log('解析后的邮件信息:', mailInfo.value);
-        console.log('发件人:', mailInfo.value.from);
-        console.log('收件人:', mailInfo.value.to);
+    }).then(raw => {
+        eml.raw = raw;
+        useMailParser(raw).then(info=>{
+            console.log('解析后的邮件信息:', info);
+            Object.assign(state.eml,info)
+        });
     }).catch(error => {
         console.error('获取邮件失败:', error);
     });

@@ -1,9 +1,19 @@
 <template>
     <dialog ref="dialog" @close="onCancel" class="y-material">
         <div class="">
-            <div class="head flex justify-between items-center border-b">
+            <div class="head flex justify-between items-center border-b border-gray-200 pb-2">
                 <div>素材选择({{ onConut }}/{{ props.limit }})</div>
                 <label class="bg-blue-600 text-sm rounded-sm px-2 py-1 border-none text-white cursor-pointer" for="file">上传素材</label>
+            </div>
+            <!-- 上传进度条 -->
+            <div v-if="upload.isUploading" class="upload-progress px-4 pb-3">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs text-gray-600">上传中</span>
+                    <span class="text-xs font-medium">{{ upload.progress }}%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="bg-blue-600 h-1.5 rounded-full transition-all" :style="{ width: upload.progress + '%' }"></div>
+                </div>
             </div>
             <div class="body py-4">
                 <div class="flow grid grid-cols-6 gap-2">
@@ -16,13 +26,20 @@
                         </template>
                         <template v-else-if="props.type == 'video'">
                             <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
-                                <img :src="useImage(`${item.etag}`, 80)" alt="">
+                                <!-- status 9 表示视频正在转码 -->
+                                <div v-if="item.status == 9" class="relative w-full h-20 bg-gray-100 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                                        <div class="text-xs text-gray-600">转码中</div>
+                                    </div>
+                                </div>
+                                <img v-else :src="useImage(`${item.etag}`, 80)" alt="">
                                 <div class="truncate">{{ item.title }}</div>
                             </div>
                         </template>
                         <template v-else-if="props.type == 'drive'">
                             <div class="relative porter-bottom-1/2" @click="onSelect(item)" :title="item.title">
-                                <img :src="useImage(`mime/${item.mime}`, 80)" alt="">
+                                <img :src="useImage(`${item.mime}`, 80)" alt="">
                                 <div class="truncate">{{ item.title }}</div>
                             </div>
                         </template>
@@ -36,9 +53,9 @@
             </div>
             <div class="foot flex justify-end items-center mt-1">
                 <button @click="onCancel"
-                    class="bg-gray-200 rounded-sm px-4 py-2 border-none cursor-pointer">取消</button>
+                    class="bg-gray-200 rounded-sm px-4 py-1 border-none cursor-pointer">取消</button>
                 <button @click="onConfirm"
-                    class="bg-blue-600 rounded-sm px-4 py-2 border-none text-white ml-2 cursor-pointer">确认</button>
+                    class="bg-blue-600 rounded-sm px-4 py-1 border-none text-white ml-2 cursor-pointer">确认</button>
             </div>
         </div>
     </dialog>
@@ -67,6 +84,10 @@ const onAccept = computed(() => {
 });
 const state = reactive({
     err: 0, msg: '', data: {}, list: [],
+    upload: {
+        progress: 0,
+        isUploading: false
+    },
     cursor: {
         limit:10,
         path: '',
@@ -76,7 +97,7 @@ const state = reactive({
         prev_cursor: '',
         prev_page_url: '',
     }
-}), { err, msg, data, list, profile } = toRefs(state);
+}), { err, msg, data, list, profile, upload } = toRefs(state);
 
 // 素材列表
 const loadMaterial = (isFirst = false) => {
@@ -127,24 +148,31 @@ const onFileChange = (e) => {
 const onUpload = (url, file) => {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    console.log('formData', formData)
+    
+    // 重置进度
+    state.upload.progress = 0;
+    state.upload.isUploading = true;
+    
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url, true);
-    // xhr.setRequestHeader('Content-Type',file.mime);
-    xhr.send(formData);
-    xhr.onload = () => {
-        console.log(xhr.responseText)
+    
+    // 上传进度
+    xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+            state.upload.progress = Math.round((e.loaded / e.total) * 100);
+        }
     };
-    xhr.onerror = () => {
-        console.log(xhr.responseText)
-    }
-    xhr.onprogress = (e) => {
-        console.log(e)
-    }
-    xhr.onloadend = () => {
+    
+    xhr.onload = () => {
+        state.upload.isUploading = false;
         loadMaterial();
-    }
-
+    };
+    
+    xhr.onerror = () => {
+        state.upload.isUploading = false;
+    };
+    
+    xhr.send(formData);
 }
 // 暴漏方法 props
 // 初始加载
