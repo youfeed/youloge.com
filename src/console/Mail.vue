@@ -35,7 +35,7 @@
             <div class="subject">
                 {{ mailInfo.subject }} {{ mailInfo.from }}
             </div>
-            <div>
+            <div class="mx-auto max-w-screen-md">
                 <div v-html="mailInfo.html"></div>
             </div>
         </template>
