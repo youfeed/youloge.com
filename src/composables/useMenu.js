@@ -63,6 +63,16 @@ export default [
           }
         ]
     },{
+        title: '邮箱邮件',
+        name: 'mail',
+        icon:'tdesign:mail',
+        children: [
+          {
+            title: '收信箱',
+            name: 'mail'
+          }
+        ]
+    },{
         title: '钱包余额',
         name: 'wallet',
         icon:'tdesign:wallet',

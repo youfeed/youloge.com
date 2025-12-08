@@ -1,3 +1,11 @@
+/**
+ * @param {string} traget 
+ * @param {object} options 
+ * @returns 
+ * @description 
+ * Youloge.Plus
+ * 打开登录 人机 支付 付款 收款 购物车等组件
+ */
 export default (traget,options={})=>{
     const {APIKEY,NOTIFY} = useConfig('youloge'),HASH = `#${crypto.randomUUID()}`;
     options.apikey = APIKEY;options.notify = NOTIFY;

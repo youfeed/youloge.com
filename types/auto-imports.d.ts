@@ -91,6 +91,7 @@ declare global {
   const useLoading: typeof import('../src/composables/useLoading.js')['useLoading']
   const useLoge: typeof import('../src/composables/useLoge.js')['default']
   const useLogo: typeof import('../src/composables/useLogo.js')['default']
+  const useMailParser: typeof import('../src/composables/useMailParser.js')['useMailParser']
   const useMaterial: typeof import('../src/composables/useMaterial.js')['useMaterial']
   const useMenu: typeof import('../src/composables/useMenu.js')['default']
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
@@ -110,6 +111,7 @@ declare global {
   const useTimeago: typeof import('../src/composables/useTimeago.js')['default']
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
+  const userAgent: typeof import('../src/composables/userAgent.js')['default']
   const vCopy: typeof import('../src/directives/vCopy.js')['default']
   const vDom: typeof import('../src/directives/vDom.js')['default']
   const vLogin: typeof import('../src/directives/vLogin.js')['default']
@@ -215,6 +217,7 @@ declare module 'vue' {
     readonly useLoading: UnwrapRef<typeof import('../src/composables/useLoading.js')['useLoading']>
     readonly useLoge: UnwrapRef<typeof import('../src/composables/useLoge.js')['default']>
     readonly useLogo: UnwrapRef<typeof import('../src/composables/useLogo.js')['default']>
+    readonly useMailParser: UnwrapRef<typeof import('../src/composables/useMailParser.js')['useMailParser']>
     readonly useMaterial: UnwrapRef<typeof import('../src/composables/useMaterial.js')['useMaterial']>
     readonly useMenu: UnwrapRef<typeof import('../src/composables/useMenu.js')['default']>
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
@@ -234,6 +237,7 @@ declare module 'vue' {
     readonly useTimeago: UnwrapRef<typeof import('../src/composables/useTimeago.js')['default']>
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
+    readonly userAgent: UnwrapRef<typeof import('../src/composables/userAgent.js')['default']>
     readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
     readonly vDom: UnwrapRef<typeof import('../src/directives/vDom.js')['default']>
     readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>

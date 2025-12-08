@@ -124,6 +124,8 @@
     "vSize": true,
     "tinymce": true,
     "useKeyboard": true,
-    "storeFollow": true
+    "storeFollow": true,
+    "userAgent": true,
+    "useMailParser": true
   }
 }
