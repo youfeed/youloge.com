@@ -100,6 +100,20 @@ const onDetail = (item) => {
 onMounted(() => {
     loadMailist();
     // downloadMail();
+    let fo = {
+        from:'11@qq.com ',
+        to:'',
+        subject:"",
+        date:'',
+        plain:'',
+        html:'',
+        raw: ''
+    }
+    const validate =  useValidate(fo,{
+        from:'required|trim|email',
+    })
+    console.log(validate)
+
 })
 </script>
 

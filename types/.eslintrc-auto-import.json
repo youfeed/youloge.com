@@ -126,6 +126,7 @@
     "useKeyboard": true,
     "storeFollow": true,
     "userAgent": true,
-    "useMailParser": true
+    "useMailParser": true,
+    "useValidate": true
   }
 }

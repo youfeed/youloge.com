@@ -109,6 +109,7 @@ declare global {
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTheme: typeof import('../src/composables/useTheme.js')['default']
   const useTimeago: typeof import('../src/composables/useTimeago.js')['default']
+  const useValidate: typeof import('../src/composables/useValidate.js')['default']
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
   const userAgent: typeof import('../src/composables/userAgent.js')['default']
@@ -235,6 +236,7 @@ declare module 'vue' {
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTheme: UnwrapRef<typeof import('../src/composables/useTheme.js')['default']>
     readonly useTimeago: UnwrapRef<typeof import('../src/composables/useTimeago.js')['default']>
+    readonly useValidate: UnwrapRef<typeof import('../src/composables/useValidate.js')['default']>
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly userAgent: UnwrapRef<typeof import('../src/composables/userAgent.js')['default']>
