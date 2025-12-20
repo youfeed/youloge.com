@@ -127,6 +127,7 @@
     "storeFollow": true,
     "userAgent": true,
     "useMailParser": true,
-    "useValidate": true
+    "useValidate": true,
+    "vCheck": true
   }
 }

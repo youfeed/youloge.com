@@ -68,7 +68,7 @@
 </template>
 <script setup>
 const youPlus = YouPlus({
-  // debug:'http://localhost:4173/'
+  debug:'http://localhost:4173/'
 })
 const stateProfile = storeProfile();
 const route = useRoute();
@@ -110,16 +110,16 @@ const onBuyDrive = ()=>{
       uuid:payee_uuid,
     }
   }).then(res=>{
-    console.log('购买成功',res)
     useMessage().success('购买成功');
     onDownload();
   }).catch(err=>{
+    console.log('购买失败',err)
     useMessage().error(err.message)
   });
 }
 // 请求下载地址
 const onDownload = ()=>{
-    let load = useLoading()
+    let load = useLoading();
     apiFetch('drive/download',{uuid:state.uuid}).then(res=>{
       console.log(res)
       // 原生下载资源

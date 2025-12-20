@@ -44,7 +44,7 @@
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-6 leading-tight">
                         为开发者打造的<br class="md:hidden">基建服务平台
                     </h1>
-                    <p class="text-xl text-gray-600 mb-8 text-balance">
+                    <p class="text-xl text-gray-600 mb-8 text-balance" @click="onCaptcha">
                         快速、零权限、零成本
                     </p>
                     <!-- 快速统计 -->
@@ -113,9 +113,9 @@
 <script setup>
 const { success, warning, error, info } = useMessage();
 const useYouPlus = YouPlus({
-    debug: false
+    // debug: 'http://localhost:4173/'
 });
-
+console.log('captcha',useYouPlus)
 const state = reactive({
     color: '#23ca92', hover: {},
     width: 0, height: 0,
@@ -135,7 +135,13 @@ const state = reactive({
     mouseX: 0,
     mouseY: 0,
 }), { canvas, color, width, height, hover } = toRefs(state);
+// 测试人机验证
+const onCaptcha = ()=>{
+    useYouPlus.useCaptcha().then(res=>{
+        console.log(6666,res)
+    })
 
+}
 const onLogin = () => {
     useYouPlus.useLogin().then(profile => {
         console.log(profile)

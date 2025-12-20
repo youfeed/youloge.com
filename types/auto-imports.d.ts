@@ -113,6 +113,7 @@ declare global {
   const useViews: typeof import('../src/composables/useViews.js')['default']
   const useVmodel: typeof import('../src/composables/useVmodel.js')['default']
   const userAgent: typeof import('../src/composables/userAgent.js')['default']
+  const vCheck: typeof import('../src/directives/vCheck.js')['default']
   const vCopy: typeof import('../src/directives/vCopy.js')['default']
   const vDom: typeof import('../src/directives/vDom.js')['default']
   const vLogin: typeof import('../src/directives/vLogin.js')['default']
@@ -240,6 +241,7 @@ declare module 'vue' {
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly userAgent: UnwrapRef<typeof import('../src/composables/userAgent.js')['default']>
+    readonly vCheck: UnwrapRef<typeof import('../src/directives/vCheck.js')['default']>
     readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
     readonly vDom: UnwrapRef<typeof import('../src/directives/vDom.js')['default']>
     readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>

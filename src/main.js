@@ -33,6 +33,7 @@ const app = createApp(App), pinia = createPinia();
 app.use(pinia);
 app.directive('dom', vDom);
 app.directive('copy', vCopy);
+app.directive('check', vCheck);
 app.directive('size', vSize);
 app.directive('login', vLogin);
 app.directive('ripple', vRipple);
