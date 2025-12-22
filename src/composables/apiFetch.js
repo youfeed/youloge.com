@@ -24,6 +24,7 @@ export default (pathname,body={},timeout=5000)=>{
             body: JSON.stringify(body),
         }).then(res=>res.json()).then(({error,result})=>{
             if(error && error.code === 401){
+                // 务必清楚本地Token 否则陷入无限循环
                 useStorage('profile',{expire:0});
                 location.reload();
                 reject(error);
