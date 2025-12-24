@@ -68,7 +68,7 @@
 </template>
 <script setup>
 const youPlus = YouPlus({
-  debug:'http://localhost:4173/'
+  // debug:'http://localhost:4173/'
 })
 const stateProfile = storeProfile();
 const route = useRoute();
