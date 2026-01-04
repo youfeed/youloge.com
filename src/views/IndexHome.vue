@@ -111,6 +111,8 @@
     </footer>
 </template>
 <script setup>
+import useSocket from '../composables/useSocket';
+
 const { success, warning, error, info } = useMessage();
 const useYouPlus = YouPlus({
     // debug: 'http://localhost:4173/'

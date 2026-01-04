@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tencentcloud/lite-chat": "^4.2.1",
     "pako": "^2.1.0",
     "pinia": "^3.0.2",
     "tinymce": "^7.4.1",

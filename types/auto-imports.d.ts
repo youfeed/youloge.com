@@ -105,6 +105,7 @@ declare global {
   const useSetup: typeof import('../src/composables/useSetup.js')['default']
   const useSingle: typeof import('../src/composables/useSingle.js')['default']
   const useSlots: typeof import('vue')['useSlots']
+  const useSocket: typeof import('../src/composables/useSocket.js')['default']
   const useStorage: typeof import('../src/composables/useStorage.js')['default']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTheme: typeof import('../src/composables/useTheme.js')['default']
@@ -233,6 +234,7 @@ declare module 'vue' {
     readonly useSetup: UnwrapRef<typeof import('../src/composables/useSetup.js')['default']>
     readonly useSingle: UnwrapRef<typeof import('../src/composables/useSingle.js')['default']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
+    readonly useSocket: UnwrapRef<typeof import('../src/composables/useSocket.js')['default']>
     readonly useStorage: UnwrapRef<typeof import('../src/composables/useStorage.js')['default']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTheme: UnwrapRef<typeof import('../src/composables/useTheme.js')['default']>
