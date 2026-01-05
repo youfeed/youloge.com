@@ -17,7 +17,7 @@
     "vue-router": "^4.3.0",
     "youloge": "^2.1.2",
     "youloge.custom": "^0.0.9",
-    "youloge.plus": "^2.1.4"
+    "youloge.plus": "^2.1.6"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.1",
