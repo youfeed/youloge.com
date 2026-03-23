@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG Image Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .container {
+      text-align: center;
+      padding: 40px;
+    }
+    .og-image {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.4);
+      margin-bottom: 30px;
+    }
+    .og-image .logo {
+      font-size: 72px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+    .og-image .subtitle {
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+    }
+    .og-image .badge {
+      margin-top: 30px;
+      padding: 12px 32px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    button {
+      padding: 15px 40px;
+      font-size: 18px;
+      background: #4F46E5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: #4338CA;
+      transform: translateY(-2px);
+    }
+    .instructions {
+      margin-top: 30px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" contenteditable>
+    <div class="og-image" id="ogImage">
+      <div class="logo">Youloge.Drive</div>
+      <div class="subtitle">专业云盘文件分享平台</div>
+      <div class="badge">快速 · 安全 · 稳定</div>
+    </div>
+    <button onclick="downloadImage()">下载 OG 图片</button>
+    <p class="instructions">
+      点击下载后,使用截图工具截取上方图片,保存为 og-image.png
+      <br>推荐尺寸: 1200 x 630 像素
+    </p>
+  </div>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    function downloadImage() {
+      const element = document.getElementById('ogImage');
+      html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: null
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'og-image.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
