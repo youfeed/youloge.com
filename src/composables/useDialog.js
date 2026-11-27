@@ -1,4 +1,5 @@
 import YouDialog from '@components/YouDialog.vue'
+import vDom from '@directives/vDom.js'
 /**
  * 组件调用 YouDialog 适用于有交互的弹窗 
  * 函数调用 useDialog() → 设 option.visible = true → 子组件挂载 → onMounted 触发 → dialogRef.showModal() → 弹窗显示

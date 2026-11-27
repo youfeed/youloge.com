@@ -73,10 +73,10 @@
                         class="mt-1 flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-100"
                         :title="state.moreOpen ? '收起更多' : '展开更多'"
                         @click="state.moreOpen = !state.moreOpen">
-                        <i :style="useIcon(state.moreOpen ? 'mdi:unfold-less-vertical' : 'mdi:unfold-more-vertical', 20)"
+                        <i :style="useIcon(state.moreOpen ? 'mdi:chevron-double-up' : 'mdi:chevron-double-down', 20)"
                             class="shrink-0"></i>
-                        <span class="md:hidden">更多</span>
-                        <span v-if="!state.collapsed" class="hidden truncate md:inline">更多</span>
+                        <span class="md:hidden">{{ moreLabel }}</span>
+                        <span v-if="!state.collapsed" class="hidden truncate md:inline">{{ moreLabel }}</span>
                     </button>
                 </div>
             </template>
@@ -166,6 +166,8 @@ const moreMenus = [
 ];
 // 是否登录
 const isLogin = computed(() => Boolean(stateProfile.uuid));
+// 更多按钮文案:展开时提示向上收起
+const moreLabel = computed(() => state.moreOpen ? '收起' : '更多');
 // 菜单高亮:首页精确匹配,其余按前缀匹配
 const isActive = (path) => path === '/' ? route.path === '/' : route.path === path || route.path.startsWith(`${path}/`);
 // 按屏幕宽度与登录状态设置默认模式:中屏图标,大屏已登录完整

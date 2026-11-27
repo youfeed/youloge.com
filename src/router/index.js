@@ -20,7 +20,7 @@ const IndexHome = defineComponent({
 
 const routes = [
   { path: '/', component: IndexHome },
-  { path: '/about', component: page('About') },
+  { path: '/about', component: page('About'), meta: { title: '关于我们 - Youloge.com' } },
   // 公共列表页:由 pages 承载,搜索作为 query 参数(?q=)由页面内部处理
   { path: '/feed', component: page('Feed') },
   { path: '/video', component: page('Video') },
@@ -35,10 +35,10 @@ const routes = [
   { path: '/chat', component: view('Message') },
   { path: '/profile', component: view('Home') },
   { path: '/setting', component: view('Setting'), meta: { title: '账户设置 - Youloge.com' } },
-  { path: '/apikey', component: view('Apikey') },
-  { path: '/wallet', component: view('Wallet') },
+  { path: '/apikey', component: view('Apikey'), meta: { title: '开发密钥 - Youloge.com' } },
+  { path: '/wallet', component: view('Wallet'), meta: { title: '我的钱包 - Youloge.com' } },
   { path: '/mail', component: view('Mail') },
-  { path: '/billing', component: view('Billing') },
+  { path: '/billing', component: view('Billing'), meta: { title: '消费账单 - Youloge.com' } },
   // 个人主页
   { path: '/:user', component: view('UserIndex'), children: [
     { path: 'article', component: view('UserArticle') },
