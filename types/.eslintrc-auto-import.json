@@ -129,6 +129,9 @@
     "useMailParser": true,
     "useValidate": true,
     "vCheck": true,
-    "useSocket": true
+    "useSocket": true,
+    "vOutside": true,
+    "useProgress": true,
+    "useIcon": true
   }
 }

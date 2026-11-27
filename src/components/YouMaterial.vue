@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <dialog ref="dialog" @close="onCancel" class="y-material">
         <div class="">
             <div class="head flex justify-between items-center border-b border-gray-200 pb-2">
@@ -183,7 +183,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style>
 .y-material-container {
     user-select: none;
     position: fixed;
@@ -193,7 +193,7 @@ onMounted(() => {
     bottom: 0;
     z-index: 1000; /* 降低z-index值，确保不会覆盖消息提示 */
 
-    // background-color: rgba(0, 0, 0, .5);
+    /* background-color: rgba(0, 0, 0, .5);*/
     .y-material {
         position: fixed;
         top: 40px;
@@ -202,7 +202,7 @@ onMounted(() => {
         z-index: 1000;
         background-color: #fff;
         width: 600px;
-        // height: 100%;
+        /* height: 100%;*/
         overflow-y: auto;
         margin: 5px;
         padding: 10px;
@@ -212,6 +212,6 @@ onMounted(() => {
 
 dialog::backdrop {
     background-color: rgba(0, 0, 0, .1);
-    // opacity: 0.75;
+    /* opacity: 0.75;*/
 }
 </style>

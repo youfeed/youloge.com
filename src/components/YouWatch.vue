@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="y-video">
     <div class="y-player">
       <div class="mse"><video id="video" ref="video" muted poster></video></div>
@@ -468,7 +468,7 @@ const postMessage = (method,params={})=>{
 }
 const {video,addeo,progress,volume,paused,muted,src,dynamic,select,adloading} = toRefs(state)
 </script>
-<style lang="scss">
+<style>
 *{margin: 0;padding: 0;}
 html, body {
   width: 100vw;
@@ -563,7 +563,7 @@ html, body {
         align-items: center;
         justify-content: space-between;
         padding: 0 10px;
-        // height: 100%;
+        /* height: 100%;*/
         .tool{
           height: 2rem;
           width: 2rem;
@@ -614,15 +614,15 @@ html, body {
       color: #cfcfcf2e;
       .played{
         width: 30%;
-        // background: #ff00004f;
+        /* background: #ff00004f;*/
       }
       .rewind{
         width: 35%;
-        // background: #2f6d4b4f;
+        /* background: #2f6d4b4f;*/
       }
       .towind{
         width: 35%;
-        // background: #ff572247;
+        /* background: #ff572247;*/
       }
     }
     .setting{
@@ -643,28 +643,28 @@ html, body {
           display: flex;
           align-items: center;
           justify-content: center;
-          // height: 2rem;
+          /* height: 2rem;*/
           &:hover{
             opacity: .7;
           }
         }
       }
     }
-    // .played{
-    //   display: flex;
-    //   align-items: center;
-    //   justify-content: center;
-    //   height: min(80vw,80vh);
-    //   width: min(80vw,80vh);
-    //   background: #c3c3c336;
-    //   color: #fff;
-    //   z-index: 8;
-    //   position: absolute;
-    //   top: 50%;
-    //   left: 50%;
-    //   transform: translate(-50%,-50%);
-    //   cursor: pointer;
-    // }
+    /* .played{*/
+    /*   display: flex;*/
+    /*   align-items: center;*/
+    /*   justify-content: center;*/
+    /*   height: min(80vw,80vh);*/
+    /*   width: min(80vw,80vh);*/
+    /*   background: #c3c3c336;*/
+    /*   color: #fff;*/
+    /*   z-index: 8;*/
+    /*   position: absolute;*/
+    /*   top: 50%;*/
+    /*   left: 50%;*/
+    /*   transform: translate(-50%,-50%);*/
+    /*   cursor: pointer;*/
+    /* }*/
     .advertise{
       position: absolute;
       z-index: 100;
@@ -707,7 +707,7 @@ html, body {
   }
 }
 
-// 横屏
+/* 横屏*/
 @media screen and (orientation: portrait) {
   html:fullscreen,body:fullscreen {
     transform-origin: top left;

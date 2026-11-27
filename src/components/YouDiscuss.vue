@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <template v-if="err == 0">
     <div class="flex items-center justify-center h-screen-sm">
       <div class="i-line-md:loading-twotone-loop font-size-2xl  w-20 h-20 color-gray-400"></div>
@@ -297,6 +297,6 @@ onMounted(()=>{
 
 </script>
 
-<style lang="scss">
+<style>
 
 </style>

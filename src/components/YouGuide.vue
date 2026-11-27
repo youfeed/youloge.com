@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <!-- 菜单触发按钮 -->
     <div class="menu-trigger" @click="onShow">
         <you-svg :name="props.icon" size="16" class="text-sm mr-1"></you-svg>
@@ -189,8 +189,8 @@ defineExpose({
 });
 </script>
 
-<style lang="scss">
-// 菜单触发按钮样式
+<style>
+/* 菜单触发按钮样式*/
 .menu-trigger {
     display: inline-flex;
     align-items: center;
@@ -312,7 +312,7 @@ defineExpose({
 
 /* 已移除旧样式，使用新的类名和布局 */
 
-// 响应式设计
+/* 响应式设计*/
 @media (max-width: 768px) {
     .you-guide-content {
         width: 80vw !important;

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="yousearch ">
     <form :action="`/${model.selectd}/search`" class="flex">
       <div class="left">
@@ -22,6 +22,6 @@
 
 </script>
 
-<style style lang="scss">
+<style>
 
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="profile-trigger" v-login="onTrigger" ref="trigger">
       <div class="w-6 h-6">
         <img :src="useImage(stateProfile.avatar,'80')" alt="" class="w-full h-full rounded-full">
@@ -193,7 +193,7 @@ defineExpose({
 });
 </script>
 
-<style lang="scss">
+<style>
 .profile-trigger {
   display: inline-flex;
   align-items: center;

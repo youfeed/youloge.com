@@ -2,7 +2,7 @@
   <header class="sticky top-0 h-15 md:h-14 w-full bg-gray-100 border-b border-gray-200">
     <div class="flex h-full items-center justify-between px-3">
       <div class="flex items-center " @click="toggleSidebar">
-        <YouIcon name="mdi-light:menu" size="32"></YouIcon>
+        <i :style="useIcon('mdi-light:menu', 32)"></i>
         <button  class="flex items-center px-2 py-1 text-gray-900 rounded-lg border-0 hover:bg-gray-300">
           <img :src="useLogo()" class="w-5 h-5" />
           <div class="font-bold text-5 text-gray-900 pl-1">Youloge</div>
@@ -69,13 +69,13 @@
 </template>
 <script setup>
 const components = {};
-const modules = import.meta.glob('@/console/*.vue');
+const modules = import.meta.glob('@/views/*.vue');
 Object.entries(modules).forEach(([path, module]) => {
-	let name = path.replace('/src/console/','').replace('.vue','').toLowerCase();
-	components[name] = defineAsyncComponent(module);
-  console.log('组件注册：', name, path,module);
+    let name = path.replace('/src/views/','').replace('.vue','').toLowerCase();
+    components[name] = defineAsyncComponent(module);
 })
-console.log('components',components)
+// 侧栏「个人主页」指向登录后的 Home 页面
+components['index'] = components['home'];
 // 
 const stateProfile = storeProfile()//,{} = storeToRefs(stateProfile);
 const state = reactive({
@@ -85,7 +85,7 @@ const state = reactive({
 }),{current,menuItems,sidebarCollapsed} = toRefs(state);
 // 动态路由
 const currentParams = ref({});
-const currentComponent = shallowRef(components['index']);
+const currentComponent = shallowRef(components['home']);
 // 展开收缩菜单
 const toggleSidebar = () => {
   sidebarCollapsed.value = !sidebarCollapsed.value;

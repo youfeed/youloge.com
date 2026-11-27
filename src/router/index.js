@@ -1,173 +1,76 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { defineAsyncComponent, defineComponent, computed, h } from 'vue'
 
-import NotFound from '@/views/NotFound.vue'
-import Index from '@/views/Index.vue'
+// 视图懒加载:pages 公共页面 + views 登录后页面统一收集
+const pages = import.meta.glob('/src/pages/*.vue')
+const views = import.meta.glob('/src/views/*.vue')
+const page = (name) => pages[`/src/pages/${name}.vue`]
+const view = (name) => views[`/src/views/${name}.vue`]
 
-import User from '@/views/User.vue'
-import UserIndex from '@/views/UserIndex.vue'
-import UserProfile from '@/views/UserProfile.vue'
-import UserArticle from '@/views/UserArticle.vue'
-import UserMessage from '@/views/UserMessage.vue'
-
-import Article from '@/views/Article.vue'
-import ArticleIndex from '@/views/ArticleIndex.vue'
-import ArticleSearch from '@/views/ArticleSearch.vue'
-import ArticlePreview from '@/views/ArticlePreview.vue'
-// import ArticleDraft from '@/views/ArticleDraft.vue' // 编辑草稿
-
-import Drive from '@/views/Drive.vue'
-import DriveIndex from '@/views/DriveIndex.vue'
-import DriveSearch from '@/views/DriveSearch.vue'
-import DrivePreview from '@/views/DrivePreview.vue'
-
-import Video from '@/views/Video.vue'
-import VideoIndex from '@/views/VideoIndex.vue'
-import VideoSearch from '@/views/VideoSearch.vue'
-import VideoWatch from '@/views/VideoWatch.vue'
-
-import Goods from '@/views/Goods.vue'
-import GoodsIndex from '@/views/GoodsIndex.vue'
-import GoodsSearch from '@/views/GoodsSearch.vue'
-import GoodsPreview from '@/views/GoodsPreview.vue'
-
-
-import Risk from '@/views/Risk.vue'
-import RiskIndex from '@/views/RiskIndex.vue'
-import RiskHistory from '@/views/RiskHistory.vue'
-import RiskProcess from '@/views/RiskProcess.vue'
+// 首页:未登录展示公共 Index,已登录展示 Home
+const IndexHome = defineComponent({
+  setup() {
+    const profile = storeProfile()
+    const isLogin = computed(() => Boolean(profile.uuid))
+    const Index = defineAsyncComponent(page('Index'))
+    const Home = defineAsyncComponent(view('Home'))
+    return () => h(isLogin.value ? Home : Index)
+  },
+})
 
 const routes = [
-  {
-    path: '/',
-    component: Index,
-    beforeEnter: (to, from) => {}
-  },{
-    path: '/video',
-    component: Video,
-    children:[
-      {
-        path: '',
-        component: VideoIndex,
-      },{
-        path: 'search',
-        component: VideoSearch,
-      },{
-        path: ':uuid',
-        component: VideoWatch,
-      }
-      
-    ]
-  },{
-    path: '/article',
-    component: Article,
-    children:[
-      {
-        path: '',
-        component: ArticleIndex,
-      },{
-        path: 'search',
-        component: ArticleSearch,
-      },{
-        path: ':uuid',
-        component: ArticlePreview,
-      }
-    ]
-  },{
-    path: '/drive',
-    component: Drive,
-    children:[
-      {
-        path: '',
-        component: DriveIndex,
-      },{
-        path: 'search',
-        component: DriveSearch,
-      },{
-        path: ':uuid',
-        component: DrivePreview,
-      }
-    ]
-  },{
-    path: '/goods',
-    component: Goods,
-    children:[
-      {
-        path: '',
-        component: GoodsIndex,
-      },{
-        path: 'search',
-        component: GoodsSearch,
-      },{
-        path: ':uuid',
-        component: GoodsPreview,
-      }
-    ]
-  },{
-    path:'/risk',
-    component: Risk,
-    children:[
-      {
-        path:"",
-        component:RiskIndex
-      },
-      {
-        path:"history",
-        component:RiskHistory
-      },{
-        path: ':uuid',
-        component: RiskProcess,
-      }
+  { path: '/', component: IndexHome },
+  { path: '/about', component: page('About') },
+  // 公共列表页:由 pages 承载,搜索作为 query 参数(?q=)由页面内部处理
+  { path: '/feed', component: page('Feed') },
+  { path: '/video', component: page('Video') },
+  { path: '/article', component: page('Article') },
+  { path: '/drive', component: page('Drive') },
+  { path: '/goods', component: page('Goods') },
+  { path: '/risk', component: view('RiskIndex') },
+  { path: '/risk/history', component: view('RiskHistory') },
+  { path: '/risk/:uuid', component: view('RiskProcess') },
+  // 布局侧栏入口:登录后页面(复用现有视图)
+  { path: '/history', component: view('RiskHistory') },
+  { path: '/chat', component: view('Message') },
+  { path: '/profile', component: view('Home') },
+  { path: '/setting', component: view('Setting'), meta: { title: '账户设置 - Youloge.com' } },
+  { path: '/apikey', component: view('Apikey') },
+  { path: '/wallet', component: view('Wallet') },
+  { path: '/mail', component: view('Mail') },
+  { path: '/billing', component: view('Billing') },
+  // 个人主页
+  { path: '/:user', component: view('UserIndex'), children: [
+    { path: 'article', component: view('UserArticle') },
+    { path: 'profile', component: view('UserProfile') },
+    { path: 'message', component: view('UserMessage') },
+  ] },
+  // 详情页(Twitter 模式):贴文 / 视频
+  { path: '/:user/feed/:uuid', component: view('ArticlePreview') },
+  // 图片预览:与详情页共用组件,路由切换时复用实例不重载,详情页保持在底层弹窗展示
+  { path: '/:user/feed/:uuid/image/:id', component: view('ArticlePreview') },
+  { path: '/:user/video/:uuid', component: view('VideoWatch') },
+  { path: '/:user/drive/:uuid', component: view('DrivePreview') },
+  { path: '/:user/goods/:uuid', component: view('GoodsPreview') },
+  { path: '/:pathMatch(.*)', component: view('NotFound') },
+]
 
-    ]
-  },{
-    path: '/:user',
-    component: User,
-    children:[
-      {
-        path: '',
-        component: UserIndex,
-      },{
-        path: 'article',
-        component: UserArticle,
-      },{
-        path: 'profile',
-        component: UserProfile,
-      },{
-        path: 'message',
-        component: UserMessage,
-      },{
-        path: 'message',
-        component: UserProfile,
-      },
-    ]
-  },{
-    path: '/:pathMatch(.*)',
-    component: NotFound
-  }
-];
-// 
 const router = createRouter({
-  history:createWebHistory(),
-  strict:true,
-  routes:routes,
-  scrollBehavior:()=>({left:0,top:0})
+  history: createWebHistory(),
+  strict: true,
+  routes,
+  scrollBehavior: () => ({ left: 0, top: 0 }),
 })
-export const resetRouter = (app) => {
-  router.beforeEach((to, from, next) => {
-    if (to.meta.title) {
-      document.title = to.meta.title
-    }
-    next()
-  })
-}
-export const setupRouter = (app) => {
-  // 未登录 加载不同的路由
-  router.beforeEach((to, from, next) => {
-    // console.log(to, from)
-    // whitelist.includes(to.name) || useAuth() ? next() : next({ name: 'login' });
-    document.title = to.meta.title ? to.meta.title : 'Youloge.com';
-    next();
-  });
-  app.use(router)
-}
+
+// 进度条 + 页面标题
+router.beforeEach((to) => {
+  useProgress.start();
+  document.title = to.meta.title ?? 'Youloge.com';
+});
+router.afterEach(() => useProgress.done());
+router.onError((err) => {
+  console.error('路由加载异常：', err);
+  useProgress.error();
+});
+
 export default router

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="y-drawer-container">
         <dialog ref="dialog" :open="props.visible" @close="onCancel" popover="auto" :style="dialogStyle" class="y-drawer rounded-sm shadow-sm">
             <div class="head flex justify-between items-center border-b">
@@ -104,34 +104,34 @@ onMounted(()=>{
 })
 // 暴漏方法
 </script>
-<style lang="scss">
-// .y-drawer-container {
-//     user-select: none;
-//     position: fixed;
-//     top: 0;
-//     left: 0;
-//     right: 0;
-//     bottom: 0;
-//     z-index: 999999999;
-//     background-color: rgba(0, 0, 0, .5);
-//     .y-drawer {
-//         position: fixed;
-//         top: 20%;
-//         left: 50%;
-//         transform: translate(-50%, -50%);
-//         z-index: 999999999;
-//         background-color: #fff;
-//         width: 300px;
-//         // height: 100%;
-//         overflow-y: auto;
-//         margin: 5px;
-//         padding: 10px;
-//         border: 0;
-//     }
-// }
+<style>
+/* .y-drawer-container {*/
+/*     user-select: none;*/
+/*     position: fixed;*/
+/*     top: 0;*/
+/*     left: 0;*/
+/*     right: 0;*/
+/*     bottom: 0;*/
+/*     z-index: 999999999;*/
+/*     background-color: rgba(0, 0, 0, .5);*/
+/*     .y-drawer {*/
+/*         position: fixed;*/
+/*         top: 20%;*/
+/*         left: 50%;*/
+/*         transform: translate(-50%, -50%);*/
+/*         z-index: 999999999;*/
+/*         background-color: #fff;*/
+/*         width: 300px;*/
+/*         // height: 100%;*/
+/*         overflow-y: auto;*/
+/*         margin: 5px;*/
+/*         padding: 10px;*/
+/*         border: 0;*/
+/*     }*/
+/* }*/
 dialog::backdrop {
     background-color: rgba(0, 0, 0, .5);
-    // opacity: 0.75;
+    /* opacity: 0.75;*/
 }
 /* 打开状态：滑入视图（translateX(0)） */
 .y-drawer[open],.y-drawer:modal {

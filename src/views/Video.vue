@@ -1,64 +1,120 @@
 <template>
-  <header class="h-14 px-2 flex  items-center border-b border-slate-900/10 border-b-solid sticky top-0">
-    <div class="w-full flex justify-between items-center h-10">
-      <div class="left flex  items-center justify-start gap-2">
-        <div class="flex justify-between items-center ">
-          <you-guide icon="ic:sharp-apps">
-            <div>Youloge</div>
-          </you-guide>
-          <div>/</div>
-          <router-link to="/video" class="color-dark-500 no-underline font-bold px-2 py-1 rounded hover:bg-light-500 ">
-            <div >Video</div>
-          </router-link>
-        </div>
-      </div>
-      <div class="search hidden md:block">
-        <div class="max-w-40">
-          <form action="/video/search" method="get">
-            <input type="search" name="q" v-model="query.q" placeholder="搜索视频资源" class="border rounded px-2 py-1 w-full"/>
-          </form>
-        </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <div class="hover:bg-gray-2  md:hidden rounded-full flex items-center justify-center p-1">
-          <router-link to="/video/search">
-            <YouIcon name="carbon:search" size="24"></YouIcon>
-          </router-link>
-        </div>
-        <div class="flex gap-2">
-          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" v-login="()=>useSetup('setupVideo')">
-            <you-svg name="ic:sharp-add" size="24"></you-svg>
-            <span class="hidden md:block">创建</span>
-          </div>
-          <you-profile></you-profile>
-        </div>
-      </div>
+    <div class="max-w-screen-md mx-auto">
+        <template v-if="mode == 'preview'">
+            <div class="flex justify-start items-center gap-2">
+                <div @click="onCreate" class="">上传视频</div>
+                <div>视频短片</div>
+            </div>
+            <div class="panel-body">
+                <template v-for="item in list" :key="item.id">
+                    <div class="border-b-1 border-gray-200 p-2">
+                        <div class="flex gap-2">
+                            <div class="w-12 h-12 rounded-sm overflow-hidden">
+                                <img :src="useImage(item.poster, 120)" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium line-clamp-1">
+                                    <router-link :to="`/video/${item.uuid}`" target="_blank"
+                                        class="text-current decoration-none hover:opacity-80">
+                                        {{ item.title }}{{ item.ext }}
+                                    </router-link>
+                                </div>
+                                <div class="text-sm text-gray-500 line-clamp-2">{{ item.description }}</div>
+                            </div>
+                        </div>
+                        <div class="text-sm flex gap-2 justify-between">
+                            <div>
+                                <span>时长：{{ item.duration }}</span>
+                                <span>{{ useBytes(item.size) }}</span>
+                                <span>{{ useTimeago(item.created) }}</span>
+                            </div>
+                            <div>
+                                <template v-if="item.status == 0">
+                                    <span @click="onModify(item)"
+                                        class="cursor-pointer text-green hover:opacity-60">修改</span>
+                                    <span @click="onModify(item)"
+                                        class="cursor-pointer text-green hover:opacity-60">上架</span>
+                                </template>
+                                <template v-if="item.status == 1">
+                                    <span @click="useKeyboard()"
+                                        class="cursor-pointer text-green hover:opacity-60">强制下架</span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <div v-if="cursor.next_cursor" @click="getDrive">加载更多</div>
+            </div>
+        </template>
+        <template v-else-if="mode == 'draft'">
+            
+        </template>
     </div>
-  </header>
-  <nav></nav>
-  <aside></aside>
-  <main class="video">
-    <router-view></router-view>
-  </main>
-  <footer></footer>
 </template>
 
 <script setup>
-const route = useRoute();
+const props = defineProps(['params']), emit = defineEmits(['jump']);
 const state = reactive({
-  uuid:'',
-  user:'',
-  name:'',
-  mail:'',
-  query:{}
-}),{uuid,user,name,query} = toRefs(state);
+    err: 0, msg: '',
+    mode: 'preview', // preview 预览 draft 草稿
+    list: [],
+    cursor: {
+        next_cursor: null,
+        status: ''
+    },
+    draft:{}
+}), { err, msg, mode, list, cursor,draft } = toRefs(state);
+//
+// 加载列表
+const loadVideo = (isFirst = false) => {
+    let { next_cursor, status } = state.cursor;
+    apiFetch('video/list', { cursor: next_cursor, status: status }).then(res => {
+        let { data, ...cursor } = res
+        // 去重追加
+        data.forEach(is => {
+            let findIndex = state.list.findIndex(it => it.uuid == is.uuid);
+            if (findIndex == -1) {
+                state.list.push(is);
+            }
+        });
+        state.err = 200;
+        state.cursor = cursor;
+    }).catch(error => {
+        state.msg = error.message;
+    });
 
-onMounted(()=>{
-  state.query = route.query;
+}
+// 创建视频
+const onCreate = () => {
+    useMaterial({ type: 'video', limit: 1 }).then(([material]) => {
+        console.log(material)
+        apiFetch('video/create', { uuid: material.uuid }).then(res => {
+            console.log(res)
+            loadVideo(true)
+        }).catch(err => {
+            useMessage().error(err.message)
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+// 修改视频
+const onModify = (item) => {
+    state.draft = item;
+    state.mode = 'draft';
 
+
+}
+// 刷新列表
+const reFresh = () => {
+    state.cursor.next_cursor = null;
+    state.list = [];
+    loadVideo(true)
+}
+//
+onMounted(() => {
+    loadVideo();
 });
 </script>
 
-<style>
-
-</style>
+<style></style>

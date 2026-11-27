@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="you-follow select-none">
         <slot v-if="stateProfile.uuid" :status="status">
             <template v-if="status == -1">
@@ -49,4 +49,4 @@ onMounted(() => {
 })
 </script>
 
-<style style lang="scss"></style>
+<style></style>

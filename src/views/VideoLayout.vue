@@ -1,0 +1,64 @@
+<template>
+  <header class="h-14 px-2 flex  items-center border-b border-slate-900/10 border-b-solid sticky top-0">
+    <div class="w-full flex justify-between items-center h-10">
+      <div class="left flex  items-center justify-start gap-2">
+        <div class="flex justify-between items-center ">
+          <you-guide icon="ic:sharp-apps">
+            <div>Youloge</div>
+          </you-guide>
+          <div>/</div>
+          <router-link to="/video" class="color-dark-500 no-underline font-bold px-2 py-1 rounded hover:bg-light-500 ">
+            <div >Video</div>
+          </router-link>
+        </div>
+      </div>
+      <div class="search hidden md:block">
+        <div class="max-w-40">
+          <form action="/video/search" method="get">
+            <input type="search" name="q" v-model="query.q" placeholder="搜索视频资源" class="border rounded px-2 py-1 w-full"/>
+          </form>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="hover:bg-gray-2  md:hidden rounded-full flex items-center justify-center p-1">
+          <router-link to="/video/search">
+            <i :style="useIcon('carbon:search', 24)"></i>
+          </router-link>
+        </div>
+        <div class="flex gap-2">
+          <div class="flex items-center hover:bg-gray-100 rounded-full px-2 py-1 cursor-pointer" v-login="()=>useSetup('setupVideo')">
+            <you-svg name="ic:sharp-add" size="24"></you-svg>
+            <span class="hidden md:block">创建</span>
+          </div>
+          <you-profile></you-profile>
+        </div>
+      </div>
+    </div>
+  </header>
+  <nav></nav>
+  <aside></aside>
+  <main class="video">
+    <router-view></router-view>
+  </main>
+  <footer></footer>
+</template>
+
+<script setup>
+const route = useRoute();
+const state = reactive({
+  uuid:'',
+  user:'',
+  name:'',
+  mail:'',
+  query:{}
+}),{uuid,user,name,query} = toRefs(state);
+
+onMounted(()=>{
+  state.query = route.query;
+
+});
+</script>
+
+<style>
+
+</style>

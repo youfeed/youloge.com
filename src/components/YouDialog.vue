@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <dialog ref="dialog" @close="onCancel" class="y-dialog rounded-sm shadow-sm">
         <div>
             <div class="head flex justify-between items-center border-b">
@@ -70,7 +70,7 @@ onUnmounted(() => {
   dialogRef.value?.close();
 });
 </script>
-<style lang="scss">
+<style>
     .y-dialog{
         user-select: none;
         position: fixed;

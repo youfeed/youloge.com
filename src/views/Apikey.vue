@@ -7,7 +7,7 @@
             </div>
             <button @click="onCreate" v-ripple
                 class="bg-blue-600 rounded-sm px-2 py-1 border-none text-white ml-2 cursor-pointer">
-                <YouIcon name="mdi-light:plus" />
+                <i :style="useIcon('mdi-light:plus')"></i>
                 <span>申请新密钥</span>
             </button>
         </div>
@@ -25,7 +25,7 @@
                         <div class="flex items-center">
                             <div class="max-w-30 truncate">{{ item.apikey }}</div>
                             <div class="cursor-pointer" v-copy="item.apikey">
-                                <YouIcon name="mdi-light:clipboard-text"></YouIcon>
+                                <i :style="useIcon('mdi-light:clipboard-text')"></i>
                             </div>
                         </div>
                         <div>{{ item.created }} / {{ item.expired }}</div>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="y-dropdown" ref="dropdownRef">
         <div class="y-dropdown-trigger" ref="triggerRef" @click="handleClick" @contextmenu="handleContextMenu"
             @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
@@ -289,7 +289,7 @@ defineExpose({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .y-dropdown {
     position: relative;
     display: inline-flex;
@@ -322,7 +322,7 @@ defineExpose({
     background-color: #fff;
     border: 1px solid #e1e4e8;
     border-radius: 8px;
-    // 阴影盒子效果
+    /* 阴影盒子效果*/
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
     padding: 8px;
     box-sizing: border-box;

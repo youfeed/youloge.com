@@ -5,7 +5,7 @@
 </template>
 <script setup>
 import 'youloge.custom'
-import IndexHome from './IndexHome.vue'
+import IndexHome from '@pages/Index.vue'
 import IndexConsole from './IndexConsole.vue'
 //
 const stateProfile = storeProfile();

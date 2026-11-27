@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <Teleport :to="targetRef">
         <div class="y-message-container">
             <TransitionGroup tag="div" mode="out-in">
@@ -40,7 +40,7 @@ const create = (options) => {
 
 defineExpose({ create,close,destroy });
 </script>
-<style lang="scss">
+<style>
 .y-message-container {
     user-select: none;
     position: fixed;
@@ -64,7 +64,7 @@ defineExpose({ create,close,destroy });
         padding: 10px;
         box-shadow: 0 0 2px 1px #e1e1e1;
         border-radius: 4px;
-        // 左侧状态竖线（核心：通过伪元素实现，不增加DOM）
+        /* 左侧状态竖线（核心：通过伪元素实现，不增加DOM）*/
         &::before {
             content: '';
             position: absolute;
@@ -72,10 +72,10 @@ defineExpose({ create,close,destroy });
             top: 4px;
             bottom: 4px;
             width: 4px;
-            border-radius: 2px; // 竖线圆角，更美观
+            border-radius: 2px; /* 竖线圆角，更美观*/
         }
     
-        // hover效果：轻微上浮+加深阴影
+        /* hover效果：轻微上浮+加深阴影*/
         &:hover {
             transform: translate(-50%) translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
@@ -84,16 +84,16 @@ defineExpose({ create,close,destroy });
 
 }
 
-// 1. info状态：蓝色系
+/* 1. info状态：蓝色系*/
 .y-message-info {
     background-color: #f0f7ff;
-    color: #1890ff; // 文字色与竖线色一致
+    color: #1890ff; /* 文字色与竖线色一致*/
     &::before {
         background-color: #1890ff;
     }
 }
 
-// 2. success状态：绿色系
+/* 2. success状态：绿色系*/
 .y-message-success {
     background-color: #f0fff4;
     color: #52c41a;
@@ -103,7 +103,7 @@ defineExpose({ create,close,destroy });
     }
 }
 
-// 3. error状态：红色系
+/* 3. error状态：红色系*/
 .y-message-error {
     background-color: #fff1f0;
     color: #ff4d4f;
@@ -113,7 +113,7 @@ defineExpose({ create,close,destroy });
     }
 }
 
-// 4. warning状态：黄色系（修正derge为常见warning）
+/* 4. warning状态：黄色系（修正derge为常见warning）*/
 .y-message-warning {
     background-color: #fffbe6;
     color: #faad14;

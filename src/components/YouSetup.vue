@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <dialog id="top-layer" class="y-setup" ref="dialog">
         <div class="y-setup-capsule">
             <div @click="reFresh" class="y-setup-capsule__fresh">刷新</div>
@@ -113,7 +113,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style>
 /* 默认情况下不设置全局CSS变量，仅在小屏模式下设置 */
 /* 小屏模式下的全局CSS变量，供其他页面使用 */
 @media (max-width: 680px) {
@@ -154,13 +154,13 @@ onUnmounted(() => {
     border: 1px solid;
 }
 
-// 自适应
+/* 自适应*/
 .y-setup-transition {
     width: 768px;
     max-height: 100%;
     margin: auto;
-    // width: 100vh;
-    // height: 100vw;
+    /* width: 100vh;*/
+    /* height: 100vw;*/
     overflow-x: hidden;
     overflow-y: auto;
     background-color: #f1f1f1;
@@ -176,13 +176,13 @@ onUnmounted(() => {
     .y-setup-transition {
         width: 100% !important;
         height: 100% !important;
-        // max-width: none;
-        // max-height: none;
-        // border-radius: 0;
-        // padding: 0;
-        // top: 0;
-        // left: 0;
-        // transform: none;
+        /* max-width: none;*/
+        /* max-height: none;*/
+        /* border-radius: 0;*/
+        /* padding: 0;*/
+        /* top: 0;*/
+        /* left: 0;*/
+        /* transform: none;*/
     }
 }
 .y-setup-capsule__fresh,.y-setup-capsule__close{

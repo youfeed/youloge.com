@@ -7,12 +7,12 @@ import { h, render } from 'vue'
 // 动态加载路由
 
 const routes = () => {
-    const modules = import.meta.glob('@/console/*.vue');
+    const modules = import.meta.glob('@/views/*.vue');
     let components = {};
     // 路由文件
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     Object.entries(modules).forEach(([path, asyncModule]) => {
-        const name = path.match(/\/console\/(.+?)\.vue/)?.[1];
+        const name = path.match(/\/views\/(.+?)\.vue/)?.[1];
         const capitalizeName = "setup" + name.split('.').map(is => capitalize(is)).join('');
         components[capitalizeName] = asyncModule;
     });

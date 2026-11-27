@@ -84,6 +84,7 @@ declare global {
   const useDialog: typeof import('../src/composables/useDialog.js')['useDialog']
   const useDrawer: typeof import('../src/composables/useDrawer.js')['useDrawer']
   const useDuration: typeof import('../src/composables/useDuration.js')['default']
+  const useIcon: typeof import('../src/composables/useIcon.js')['default']
   const useId: typeof import('vue')['useId']
   const useImage: typeof import('../src/composables/useImage.js')['useImage']
   const useKeyboard: typeof import('../src/composables/useKeyboard.js')['default']
@@ -97,6 +98,7 @@ declare global {
   const useMessage: typeof import('../src/composables/useMessage.js')['useMessage']
   const useModel: typeof import('vue')['useModel']
   const usePlus: typeof import('../src/composables/usePlus.js')['default']
+  const useProgress: typeof import('../src/composables/useProgress.js')['useProgress']
   const usePrompt: typeof import('../src/composables/usePrompt.js')['usePrompt']
   const useQrcode: typeof import('../src/composables/useQrcode.js')['default']
   const useRoute: typeof import('vue-router')['useRoute']
@@ -118,6 +120,7 @@ declare global {
   const vCopy: typeof import('../src/directives/vCopy.js')['default']
   const vDom: typeof import('../src/directives/vDom.js')['default']
   const vLogin: typeof import('../src/directives/vLogin.js')['default']
+  const vOutside: typeof import('../src/directives/vOutside.js')['default']
   const vRipple: typeof import('../src/directives/vRipple.js')['default']
   const vSize: typeof import('../src/directives/vSize.js')['default']
   const vipFetch: typeof import('../src/composables/vipFetch.js')['default']
@@ -213,6 +216,7 @@ declare module 'vue' {
     readonly useDialog: UnwrapRef<typeof import('../src/composables/useDialog.js')['useDialog']>
     readonly useDrawer: UnwrapRef<typeof import('../src/composables/useDrawer.js')['useDrawer']>
     readonly useDuration: UnwrapRef<typeof import('../src/composables/useDuration.js')['default']>
+    readonly useIcon: UnwrapRef<typeof import('../src/composables/useIcon.js')['default']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImage: UnwrapRef<typeof import('../src/composables/useImage.js')['useImage']>
     readonly useKeyboard: UnwrapRef<typeof import('../src/composables/useKeyboard.js')['default']>
@@ -226,6 +230,7 @@ declare module 'vue' {
     readonly useMessage: UnwrapRef<typeof import('../src/composables/useMessage.js')['useMessage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePlus: UnwrapRef<typeof import('../src/composables/usePlus.js')['default']>
+    readonly useProgress: UnwrapRef<typeof import('../src/composables/useProgress.js')['useProgress']>
     readonly usePrompt: UnwrapRef<typeof import('../src/composables/usePrompt.js')['usePrompt']>
     readonly useQrcode: UnwrapRef<typeof import('../src/composables/useQrcode.js')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
@@ -242,12 +247,6 @@ declare module 'vue' {
     readonly useViews: UnwrapRef<typeof import('../src/composables/useViews.js')['default']>
     readonly useVmodel: UnwrapRef<typeof import('../src/composables/useVmodel.js')['default']>
     readonly userAgent: UnwrapRef<typeof import('../src/composables/userAgent.js')['default']>
-    readonly vCheck: UnwrapRef<typeof import('../src/directives/vCheck.js')['default']>
-    readonly vCopy: UnwrapRef<typeof import('../src/directives/vCopy.js')['default']>
-    readonly vDom: UnwrapRef<typeof import('../src/directives/vDom.js')['default']>
-    readonly vLogin: UnwrapRef<typeof import('../src/directives/vLogin.js')['default']>
-    readonly vRipple: UnwrapRef<typeof import('../src/directives/vRipple.js')['default']>
-    readonly vSize: UnwrapRef<typeof import('../src/directives/vSize.js')['default']>
     readonly vipFetch: UnwrapRef<typeof import('../src/composables/vipFetch.js')['default']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

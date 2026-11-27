@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <transition>
   <div :class="payment">
     <div class="head">
@@ -283,7 +283,7 @@ const postMessage = (method,params)=>{
 }
 const {profile,pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,account,selected,captcha,refPay,version} = toRefs(state)
 </script>
-<style lang="scss">
+<style>
 *{margin:0;padding: 0;box-sizing: border-box;}
 .grecaptcha-badge{visibility: hidden;}
 .stop{opacity: .5;pointer-events: none;}
@@ -386,7 +386,7 @@ const {profile,pass,word,code,sign,msg,host,mode,close,deposit,blur,paysign,acco
         }
       }
     }
-    // 
+    /* */
     .profile{
       display: flex;
       align-items: center;

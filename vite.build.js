@@ -7,7 +7,7 @@ export const copyFile = (options)=>{
   return {
     name: 'vite-plugin-copy-file', 
     apply: 'build',
-    closeBundle:()=>{
+    writeBundle:()=>{
       options.targets.forEach(({src,dest})=>{
         const oldPath = path.resolve(process.cwd(), src);
         const newPath = path.resolve(process.cwd(), dest);

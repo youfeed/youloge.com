@@ -11,7 +11,7 @@
                     <form action="/drive/search" method="get" class="relative">
                         <input type="search" name="q" v-model="query.q" placeholder="搜索云盘资源" class="border rounded px-4 py-2 w-full"/>
                         <button type="submit" class="absolute top-2 right-1 border-0 outline-0 bg-transparent">
-                            <YouIcon name="mdi-light:magnify"></YouIcon>
+                            <i :style="useIcon('mdi-light:magnify')"></i>
                             搜索
                         </button>
                     </form>

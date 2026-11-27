@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <dialog ref="dialog" @close="onCancel" class="y-prompt rounded-sm shadow-sm">
         <div>
             <div class="head flex justify-between items-center border-b">
@@ -124,7 +124,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style>
 .y-prompt {
     user-select: none;
     position: fixed;
