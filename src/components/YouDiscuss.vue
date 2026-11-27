@@ -1,302 +1,245 @@
-﻿<template>
-  <template v-if="err == 0">
-    <div class="flex items-center justify-center h-screen-sm">
-      <div class="i-line-md:loading-twotone-loop font-size-2xl  w-20 h-20 color-gray-400"></div>
-    </div>
-  </template>
-  <template v-if="err == 200">
-    <div class="disscuss flex flex-col gap-2 overflow-y-auto">
+﻿<script setup>
 
-      <div class="head flex items-center justify-between h-10" @click="onExpand">
-        <div class="text-lg"> {{info.total}} 条点评</div>
-        <div class="flex items-center gap-2 uppercase cursor-pointer" @click="loadReviews(true)"> 
-          <span class="i-tdesign:format-horizontal-align-center"></span>
-          <span>{{props.mode}}/{{props.code}}</span>
-        </div>
-      </div>
-      
-      <!-- 加载数据 -->
-      <div class="reviews max-h-xs overflow-y-auto">
-        <template v-if="reviews.err == 0">
-          <div class="flex items-center justify-center h-screen-sm">
-            <div class="i-line-md:loading-twotone-loop font-size-2xl  w-20 h-20 color-gray-400"></div>
-          </div>
-        </template>
-        <template v-if="reviews.err == 200">
-            <!-- 评论数据 -->
-            <template v-for="item in reviews.data" :key="item.uuid">
-              <div class="review flex gap-2  my-4">
-                <div class="avatar"><img :src="useImage(item.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
-                <div class="content w-full">
-                  <div class="user flex items-center justify-between">
-                    <span class="named">{{item.account.name}}@{{ item.account.user }}</span>
-                    <span class="timed">{{useTimeago(item.created)}} - {{useTimeago(item.updated)}}</span>
-                  </div>
-                  <div class="rich whitespace-pre-wrap">
-                    <template v-for="(block,index) in item.content" :key="index">
-                        <span v-if="block.type == 'text'">{{block.text}}</span>
-                    </template>
-                  </div>
-                  <div class="feedback flex gap-2 items-center">
-                    <div class="cursor-pointer flex gap-2 items-center">
-                      <div class="i-tdesign:thumb-up-2"></div> <span>{{ item.liked }}</span>
-                    </div>
-                    <div class="cursor-pointer flex gap-2 items-center">
-                      <div class="i-tdesign:chat-bubble-1"></div> <span>{{ item.reply }} </span>
-                    </div>
-                    <div class="cursor-pointer flex gap-2 items-center" @click="onReply(item)">
-                      回复
-                    </div>
-                  </div>
-                  <div class="replys  my-2" v-if="item.reply_count > 0">
-                    <template v-for="items in item.replys" :key="items.uuid">
-                      <div class="reply flex gap-2 my-2">
-                        <div class="avatar"><img :src="useImage(items.account.avatar,'80')" class="w-8 h-8 rounded-full"></div>
-                        <div class="content w-full">
-                          <div class="user flex items-center justify-between">
-                            <span class="named">{{items.account.name}} 回复 {{items.quote.name}}</span>
-                            <span class="timed">{{useTimeago(items.created)}} - {{useTimeago(items.updated)}}</span>
-                          </div>
-                          <div class="rich">
-                            <template v-for="(block,index) in items.content" :key="index">
-                              <span v-if="block.type == 'text'">{{block.text}}</span>
-                            </template>
-                          </div>
-                          <div class="feedback flex gap-2 items-center">
-                            <div>
-                              <div class="i-tdesign:thumb-up-2"></div> <span>{{ items.liked }}</span>
-                            </div>
-                            <div>
-                              <div class="i-tdesign:chat-bubble-1"></div> 
-                            </div>
-                            <div @click="onReply(items)">
-                              <span> 回复 </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                    
-                    <div class="loadreply cursor-pointer" @click="loadReply(item)" v-if="item.reply_count - (item.replys.length || 0) > 0">加载 余下{{item.reply_count - (item.replys.length || 0)}} 条回复 </div>
-                    
-                  </div>
-                </div>
-              </div>
-            </template>
-            <!-- 评论数据 -->
-            <template v-if="reviews.data.length == 0">
-              <div class="flex items-center justify-center">
-                <div class="font-size-2xl color-gray-400">暂无评论</div>
-              </div>
-            </template>
-        </template>
-        <template v-else>
-          <div class="flex items-center justify-center h-screen-sm">
-            <div class="font-size-2xl  w-40 h-40 color-gray-400">{{reviews.msg}}</div>
-          </div>
-        </template>
-      </div>
-      <!-- 加载数据 -->
-      <div class="dianping relative">
-        <div class="collapse flex gap-2">
-          <div class="avatar">
-            <img :src="useImage(stateProfile.avatar,'80')" class="w-8 h-8 rounded-full">
-          </div>
-          <div class="content b-1 b-gray-200 w-full relative">
-            <div class="flex gap-2 items-center justify-between my-1">
-              <div class="max-w-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                <span>
-                  {{ stateProfile.name }} 
-                </span>
-              </div>
-              <div class="">
-                <span class="color-blue-500" v-if="!comment">发表点评</span>
-                <span class="color-blue-500" v-else-if="stateProfile.uuid == comment.account?.uuid">编辑点评</span>
-                <span class="color-blue-500" v-else>回复评论</span>
-              </div>
-            </div>
-            <form action="" @submit.prevent="onSubmit" @reset.prevent="onReset">
-              <div class="textarea">
-                <textarea class="w-full h-full p-2 min-h-12 rounded-md " name="content" v-model="content" rows="4" placeholder="每个作品仅能发表一个点评 48小时内可编辑" required></textarea>
-                <!-- <div class="rich w-full h-full p-2 min-h-12 focus:min-h-30" contenteditable ></div> -->
-                <div class="counter absolute left-2 bottom-2 text-gray-400 pointer-events-none">点评 编辑 回复</div>
-              </div>
-              <div class="navbar absolute right-0 bottom-0 flex gap-2 items-center p-2">
-                <div class="emoji">
-                  <!-- <ul class="nav">
-                    <li><img src="https://open.youloge.com/sticker/default/default!50"></li>
-                    <li><img src="https://open.youloge.com/sticker/default/default!50"></li>
-                    <li><img src="https://open.youloge.com/sticker/default/default!50"></li>
-                  </ul> -->
-                </div>
-                <div class="button flex gap-2">
-                  <button type="reset" class="cancel bg-light-blue-200 color-white px-2 py-1 rounded-md b-0 cursor-pointer">取消</button>
-                  <button type="submit" class="submit bg-blue-800 color-white px-2 py-1 rounded-md b-0 cursor-pointer">评论</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="w-full h-full absolute flex items-center justify-center top-0 backdrop-blur-sm border border-gray-500 rounded-lg" v-if="!stateProfile.uuid">
-          <div @click="onLogin" class="w-40 h-10 bg-blue-500 color-white rounded-lg flex items-center justify-center cursor-pointer">点击登录</div>
-        </div>
-      </div>
-    </div>
-  </template>
-  <template v-else>
-    <div class="flex items-center justify-center h-screen-sm">
-      <div class="font-size-2xl color-gray-400">{{ msg }}</div>
-    </div>
-  </template>
-</template>
-<script setup>
-const stateProfile = storeProfile();
-const props = defineProps(['mode','code']);
+const props = defineProps({
+  type: { type: String, required: true, validator: (val) => ['notes', 'drive', 'goods', 'article', 'tweet'].includes(val) },
+  uuid: { type: String, required: true },
+  cursor: { type: String, default: '' }
+})
+
+const emit = defineEmits(['created'])
+
 const state = reactive({
-  // 元数据
-  info:{
-    total:0,
-  },
-  err:200,msg:'',data:{},
-  cursor:0,
-  limit:10,
-  // 评论数据
-  reviews:{
-    err:200,msg:'',
-    data:[],
-    cursor:{
-      next_cursor:''
-    }
-  },
-  mask:false,
-  
-  parmas:{
-    content:''
-  },
-  content:'',
-  sticker:[],
-  // 评论数据
-  discuss:{
-    cursor: {
+  data: [],
+  loading: false,
+  cursor: props.cursor || null,
+  hasMore: false
+})
 
-    },
-    data:[],
-  },
-  // 评论内容
-  comment:null,
-  method:'review',
-  parmas:{
-    content:[],
-  }
-}),{err,msg,data,mode,code,info,profile,reviews,comment,content} = toRefs(state);
-// 加载评论元数据
-const loadInfo = ()=>{
-  let {mode,code} = props;
-  apiFetch('discuss/info',{mode:mode,code:code}).then(result=>{
-    state.info = result;
-    result.total && loadReviews();
-    console.log(result)
-    loadReviews();
-    loadMine();
-  });
-}
-// 加载点评
-const loadMine = ()=>{
-  let {mode,code} = props;
-  apiFetch('discuss/mine',{mode:mode,code:code}).then(result=>{
-    result.account = stateProfile;
-    state.comment = result
-    onReview()
-  }).catch(err=>{
-    console.log(err.message)
-  });
-}
-// 获取评论 - 分页 
-const loadReviews = (isfirst=false)=>{
-  isfirst && (state.reviews.data = [],state.reviews.cursor.next_cursor = '');
-  let {mode,code} = props;
-  let {next_cursor} = state.reviews.cursor
-  apiFetch('discuss/review',{
-    mode:mode,code:code,
-    cursor:next_cursor,limit:10
-  }).then(({data,...cursor})=>{
-    state.reviews.cursor = cursor;
-    data.forEach(is=>{
-      let Findex = state.reviews.data.findIndex(it=>it.uuid == is.uuid);
-      is.cursor = {};is.replys = []; // 回复预设
-      Findex == -1 && state.reviews.data.push(is);
-    });
-  }).catch(err=>{
-    useMessage().error(err.message)
-  });
-}
-// 获取回复 - 分页
-const loadReply = (item)=>{
-  let {uuid,cursor} = item;
-  console.log(item)
-  apiFetch('discuss/reply',{review:uuid,cursor:cursor?.next_cursor}).then(({data,...cursor})=>{
-    item.cursor = cursor;
-    data.forEach(is=>{
-      let Findex = item.replys.findIndex(it=>it.uuid == is.uuid);
-      Findex == -1 && item.replys.push(is);
+// 评论框内容
+const content = ref('')
+// 提交中
+const submitting = ref(false)
+
+// 加载评论列表
+const fetchList = async (append = false) => {
+  if (state.loading) return
+  state.loading = true
+  try {
+    const params = { root: 0, uuid: props.uuid }
+    if (append && state.cursor) params.cursor = state.cursor
+
+    const res = await apiFetch(`/discuss/${props.type}`, params)
+    const list = res.data || []
+
+    // 给每个评论初始化 replies 相关状态
+    list.forEach(item => {
+      item._repliesLoading = false
+      item._repliesCursor = null
     })
-  })
-}
-/**
- * 发表评论
- * atReview: type mode content signatrue 
- * atReply: review:uuid content signature
- */
-const onReview = ()=>{
-  let {mode,code} = props;
-  state.method ='review';
-  state.params = {
-    mode:mode,
-    code:code,
-  };
-  state.content = '';
-}
-const onReply = (item)=>{
-  state.method ='reply';
-  state.params = {
-    review:item.uuid,
-    quote:item.account.uuid,
-  };
-  state.comment = item;
-  state.content = '';
-  console.log(item)
-}
 
-
-// 发表评论 mode atReview atReply
-const onSubmit = ()=>{
-  let {method,params,content} = state;
-  let contents = [
-    {
-      type:'text',
-      text:content
+    if (append) {
+      state.data.push(...list)
+    } else {
+      state.data = list
     }
-  ]
-  const form = {...params,...{type:method,content:contents}}
-  console.log(666666666666666666666,form)
-  // 发布评论
-  apiFetch(`discuss/create`,form).then(result=>{
-    let find = state.reviews.data.find(is=>is.uuid == result.uuid);
-    find ? find = result : loadReply(state.comment,true);
-  });
-}
-// 登录
-const onLogin = ()=>{
-
+    state.cursor = res.next_cursor || null
+    state.hasMore = !!res.next_cursor
+  } catch (err) {
+    useMessage().error('加载评论失败')
+  } finally {
+    state.loading = false
+  }
 }
 
-onMounted(()=>{
-  console.log(999,stateProfile)
-  loadInfo();
-});
+// 加载全部回复
+const loadAllReplies = async (comment) => {
+  if (comment._repliesLoading) return
+  comment._repliesLoading = true
+  try {
+    const params = { root: comment.uuid, uuid: props.uuid }
+    if (comment._repliesCursor) params.cursor = comment._repliesCursor
 
+    const res = await apiFetch(`/discuss/${props.type}`, params)
+    const more = res.data || []
+
+    comment.replies = [...(comment.replies || []), ...more]
+    comment._repliesCursor = res.next_cursor || null
+  } catch (err) {
+    useMessage().error('加载回复失败')
+  } finally {
+    comment._repliesLoading = false
+  }
+}
+
+// 加载更多评论
+const loadMore = () => {
+  if (!state.hasMore || state.loading) return
+  fetchList(true)
+}
+
+// 是否还有更多回复未加载
+const hasMoreReplies = (comment) => {
+  const current = comment.replies?.length || 0
+  const total = comment.repli || 0
+  return current < total
+}
+
+// 剩余回复数
+const remainingReplies = (comment) => {
+  return (comment.repli || 0) - (comment.replies?.length || 0)
+}
+
+// 发表评论：POST /discuss/create
+const submitComment = async () => {
+  const text = content.value.trim()
+  if (!text) {
+    useMessage().warning('请输入评论内容')
+    return
+  }
+  const profile = useAccount()
+  if (!profile?.access_token) {
+    useMessage().warning('请先登录后再评论')
+    return
+  }
+
+  submitting.value = true
+  try {
+    const result = await apiFetch('/discuss/create', {
+      type: props.type,
+      uuid: props.uuid,
+      content: text
+    })
+
+    // 兼容后端直接返回评论对象 / 包装在 data 字段 / 仅返回状态三种情况
+    const newItem = (result && result.uuid)
+      ? result
+      : (result && result.data && result.data.uuid) ? result.data : null
+
+    if (newItem) {
+      newItem._repliesLoading = false
+      newItem._repliesCursor = null
+      state.data.unshift(newItem)
+    } else {
+      // 后端未返回详情，重新拉取列表
+      await fetchList()
+    }
+
+    content.value = ''
+    emit('created', newItem || {})
+    useMessage().success('评论发表成功')
+  } catch (err) {
+    useMessage().error(err?.message || '评论发表失败')
+  } finally {
+    submitting.value = false
+  }
+}
+
+fetchList()
 </script>
 
-<style>
+<template>
+  <div class="you-discuss bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        留言评论
+      </h2>
+      <span class="text-xs text-slate-400"></span>
+    </div>
+    <!-- 加载中 -->
+    <div v-if="state.loading && state.data.length === 0" class="flex items-center justify-center py-8">
+      <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      </svg>
+    </div>
 
-</style>
+    <!-- 空状态 -->
+    <div v-else-if="!state.loading && state.data.length === 0" class="text-center py-6 text-xs text-gray-400">
+      <div class="py-12 text-center">
+        <svg class="w-12 h-12 mx-auto text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <p class="text-sm text-slate-400 mt-3">暂无留言，快来抢沙发</p>
+      </div>
+    </div>
+
+    <!-- 评论列表 -->
+    <div v-else class="px-6 py-5 space-y-5">
+      <div v-for="(item, idx) in state.data" :key="item.uuid || idx" class="group">
+        <!-- 主评论 -->
+        <div class="flex gap-2.5">
+          <!-- {{ item }} -->
+          <img :src="useImage(item.account.avatar, 80)" :alt="item.name"
+            class="w-7 h-7 rounded-full object-cover shrink-0 bg-gray-100" />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-medium text-gray-800">{{ item.name }}</span>
+              <span class="text-[11px] text-gray-400">{{ useTimeago(item.created) }}</span>
+            </div>
+            <p class="text-xs text-gray-600 mt-0.5 leading-relaxed break-words">{{ item.content }}</p>
+          </div>
+        </div>
+
+        <!-- 回复区域 -->
+        <div v-if="item.replies && item.replies.length > 0" class="ml-9 mt-2 space-y-2">
+          <div v-for="(reply, ri) in item.replies" :key="reply.uuid || ri" class="flex gap-2">
+            <img :src="useImage(reply.account.avatar, 80)" :alt="reply.name"
+              class="w-5 h-5 rounded-full object-cover shrink-0 bg-gray-100" />
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[11px] font-medium text-gray-700">{{ reply.name }}</span>
+                <span class="text-[10px] text-gray-400">{{ useTimeago(reply.created) }}</span>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-0.5 leading-relaxed break-words">
+                <span v-if="reply.reply_name" class="text-blue-500 mr-1">@{{ reply.reply_name }}</span>
+                {{ reply.content }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 查看全部回复 / 加载更多 -->
+          <div v-if="item._repliesLoading" class="ml-0 text-center py-1">
+            <svg class="animate-spin w-3.5 h-3.5 text-blue-400 inline-block" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          </div>
+          <button v-else-if="hasMoreReplies(item)" @click="loadAllReplies(item)"
+            class="text-[11px] text-blue-500 hover:text-blue-600 transition-colors ml-0">
+            — 查看全部回复 ({{ remainingReplies(item) }})
+          </button>
+        </div>
+      </div>
+
+      <!-- 加载更多评论 -->
+      <div v-if="state.hasMore" class="text-center pt-1">
+        <button @click="loadMore" :disabled="state.loading"
+          class="text-xs text-blue-500 hover:text-blue-600 disabled:text-gray-300 transition-colors">
+          <span v-if="state.loading">加载中...</span>
+          <span v-else>加载更多评论</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 评论输入框（任何状态下都展示） -->
+    <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+      <div class="flex gap-3">
+        <textarea rows="2" v-model="content" :disabled="submitting" placeholder="说点什么..."
+          class="flex-1 resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 disabled:bg-slate-50 disabled:cursor-not-allowed"></textarea>
+        <button @click="submitComment" :disabled="submitting || !content.trim()"
+          class="self-end px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-1.5">
+          <svg v-if="submitting" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          {{ submitting ? '发表中…' : '发表评论' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

@@ -58,7 +58,7 @@ const state = reactive({
 const route = useRoute();
 const router = useRouter();
 // 详情页地址
-const detailPath = (item) => `/${item.user ?? 'youloge'}/feed/${item.uuid}`;
+const detailPath = (item) => `/${item.user ?? 'youloge'}/article/${item.uuid}`;
 // 加载文章列表
 const loadList = () => {
     state.loading = true;

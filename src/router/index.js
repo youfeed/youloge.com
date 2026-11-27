@@ -46,9 +46,10 @@ const routes = [
     { path: 'message', component: view('UserMessage') },
   ] },
   // 详情页(Twitter 模式):贴文 / 视频
-  { path: '/:user/feed/:uuid', component: view('ArticlePreview') },
-  // 图片预览:与详情页共用组件,路由切换时复用实例不重载,详情页保持在底层弹窗展示
+  { path: '/:user/feed/:uuid', component: view('FeedPreview'), meta: { title: '贴文详情 - Youloge.com' } },
+  // 图片预览:与详情页共用组件,在详情页上叠加第 N 张图片预览
   { path: '/:user/feed/:uuid/image/:id', component: view('FeedPreview'), meta: { title: '图片预览 - Youloge.com' } },
+  { path: '/:user/article/:uuid', component: view('ArticlePreview') },
   { path: '/:user/video/:uuid', component: view('VideoWatch') },
   { path: '/:user/drive/:uuid', component: view('DrivePreview') },
   { path: '/:user/goods/:uuid', component: view('GoodsPreview') },
